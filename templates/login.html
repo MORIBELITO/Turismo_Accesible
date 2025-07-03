@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Web Turismo - Login / Registro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" xintegrity="sha512-Fo3rljxXtqP0s/bVq8+7N2yL1t/eD1K/0/3e+fL3i8j/bN5jW1+K1z/1W4g+7K+A6e+bF/4w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles-login.css') }}">
+  <style>
+    /* Este CSS en línea puede ser movido a styles-login.css para una mejor organización */
+    .google-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: white;
+      color: #444;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .google-button:hover {
+      background-color: #f5f5f5;
+    }
+
+    .google-button img {
+      height: 20px;
+      margin-right: 10px;
+    }
+
+    footer {
+      display: none;
+    }
+    /* Estilos corregidos para los textos de registro/login */
+    #showRegister,
+    #showLogin {
+        /* Se mantiene display, position, margin-top, font-weight, font-size,
+           cursor, user-select, padding, z-index, line-height, transition, white-space
+           del CSS externo.
+           Solo se añade text-decoration aquí para asegurar que aparezca subrayado.
+           El color ya se gestiona por el CSS externo con !important */
+        text-decoration: underline; /* Agregado para asegurar el subrayado */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="hero-text">
+      <h1>Bienvenidos a la aventura</h1>
+      <p>Explora los mejores destinos turísticos de Huancayo</p>
+    </div>
+
+    <div class="login-form" id="loginFormContainer">
+      <h2>Iniciar Sesión</h2>
+
+      <button id="googleLogin" class="google-button">
+        <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google logo" />
+        Iniciar con Google
+      </button>
+
+      <hr style="margin: 20px 0;" />
+
+      <form id="loginForm" novalidate>
+        <label for="loginEmail">Correo</label>
+        <input type="email" id="loginEmail" required />
+        <label for="loginPassword">Contraseña</label>
+        <input type="password" id="loginPassword" required />
+        <button type="submit">Iniciar Sesión con Email</button>
+        <p id="loginErrorMsg" style="color: red; margin-top: 10px;"></p>
+      </form>
+
+      <!-- SE CAMBIÓ AQUÍ: ELIMINADO style="color: white;" -->
+      <p style="margin-top: 15px; text-align: center;">
+        ¿No tienes una cuenta?
+        <span id="showRegister">
+          Registrarse
+        </span>
+      </p>
+    </div>
+
+    <div class="login-form" id="registerFormContainer" style="display:none;">
+      <h2>Registrarse</h2>
+
+      <button id="googleRegister" class="google-button" style="margin-bottom: 20px;">
+        <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google logo" />
+        Registrarse con Google
+      </button>
+
+      <form id="registerForm" novalidate>
+        <label for="registerEmail">Correo</label>
+        <input type="email" id="registerEmail" required />
+        <label for="registerPassword">Contraseña</label>
+        <input type="password" id="registerPassword" required minlength="6" />
+        <button type="submit">Crear Cuenta</button>
+        <p id="registerErrorMsg" style="color: red; margin-top: 10px;"></p>
+      </form>
+      <!-- SE CAMBIÓ AQUÍ: ELIMINADO style="color: white;" -->
+      <p style="margin-top: 15px; text-align: center;">
+        ¿Ya tienes cuenta?
+        <span id="showLogin">
+          Iniciar sesión
+        </span>
+      </p>
+    </div>
+  </div>
+
+  <footer></footer>
+
+  <script type="module">
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithPopup,
+      createUserWithEmailAndPassword,
+      onAuthStateChanged
+      // signOut // No necesitamos signOut aquí para la lógica de redirección
+    } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyARMkC0EBYElA8wVOpefSgMD4oADAIqD4o",
+      authDomain: "turismo-4e958.firebaseapp.com",
+      projectId: "turismo-4e958",
+      storageBucket: "turismo-4e958.firebasestorage.app",
+      messagingSenderId: "442508451378",
+      appId: "1:442508451378:web:65bed298dffe5b22e6262b",
+      measurementId: "G-XSDKJ73NKW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // MODIFICACIÓN CLAVE 1: Redirigir si ya hay un usuario logueado en la página de login
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Si hay un usuario logueado, redirigir a la página principal
+        window.location.href = "/principal";
+      }
+    });
+
+    const loginFormContainer = document.getElementById('loginFormContainer');
+    const registerFormContainer = document.getElementById('registerFormContainer');
+    const showRegister = document.getElementById('showRegister');
+    const showLogin = document.getElementById('showLogin');
+
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+
+    const loginErrorMsg = document.getElementById('loginErrorMsg');
+    const registerErrorMsg = document.getElementById('registerErrorMsg');
+
+    showRegister.addEventListener('click', () => {
+      loginFormContainer.style.display = 'none';
+      registerFormContainer.style.display = 'block';
+      loginErrorMsg.textContent = '';
+      registerErrorMsg.textContent = '';
+    });
+
+    showLogin.addEventListener('click', () => {
+      registerFormContainer.style.display = 'none';
+      loginFormContainer.style.display = 'block';
+      loginErrorMsg.textContent = '';
+      registerErrorMsg.textContent = '';
+    });
+
+    document.getElementById("googleLogin").addEventListener("click", () => {
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          console.log("Login con Google exitoso:", result.user);
+          window.location.href = "/principal"; // Redirige a la página principal
+        })
+        .catch((error) => {
+          console.error("Error al iniciar sesión con Google:", error);
+          // Usar una modal en lugar de alert
+          const errorMessage = "Error al iniciar sesión con Google: " + error.message;
+          // Implementar aquí la lógica para mostrar un mensaje en la UI, por ejemplo, un div temporal.
+          console.error(errorMessage); // Para depuración
+        });
+    });
+
+    // MODIFICACIÓN CLAVE 2: Eliminar signOut después del registro con Google
+    document.getElementById("googleRegister").addEventListener("click", () => {
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          console.log("Registro con Google exitoso:", result.user);
+          window.location.href = "/principal"; // Redirige directamente a la página principal
+        })
+        .catch((error) => {
+          console.error("Error al registrarse con Google:", error);
+          // Usar una modal en lugar de alert
+          const errorMessage = "Error al registrarse con Google: " + error.message;
+          // Implementar aquí la lógica para mostrar un mensaje en la UI, por ejemplo, un div temporal.
+          console.error(errorMessage); // Para depuración
+        });
+    });
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      loginErrorMsg.textContent = '';
+
+      const email = loginForm.loginEmail.value.trim();
+      const password = loginForm.loginPassword.value.trim();
+
+      if (!email || !password) {
+        loginErrorMsg.textContent = "Por favor ingresa correo y contraseña.";
+        return;
+      }
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          window.location.href = "/principal";
+        })
+        .catch((error) => {
+          if (error.code === 'auth/user-not-found') {
+            loginErrorMsg.textContent = "Usuario no encontrado.";
+          } else if (error.code === 'auth/wrong-password') {
+            loginErrorMsg.textContent = "Contraseña incorrecta.";
+          } else if (error.code === 'auth/invalid-email') {
+            loginErrorMsg.textContent = "Correo no válido.";
+          } else {
+            loginErrorMsg.textContent = error.message;
+          }
+        });
+    });
+
+    // MODIFICACIÓN CLAVE 3: Eliminar signOut después del registro con Email/Contraseña
+    registerForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      registerErrorMsg.textContent = '';
+
+      const email = registerForm.registerEmail.value.trim();
+      const password = registerForm.registerPassword.value.trim();
+
+      if (!email || !password) {
+        registerErrorMsg.textContent = "Por favor completa todos los campos.";
+        return;
+      }
+      if (password.length < 6) {
+        registerErrorMsg.textContent = "La contraseña debe tener al menos 6 caracteres.";
+        return;
+      }
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          window.location.href = "/principal"; // Redirige directamente a la página principal
+        })
+        .catch((error) => {
+          if (error.code === 'auth/email-already-in-use') {
+            registerErrorMsg.textContent = "El correo ya está registrado.";
+          } else if (error.code === 'auth/invalid-email') {
+            registerErrorMsg.textContent = "Correo no válido.";
+          } else if (error.code === 'auth/weak-password') {
+            registerErrorMsg.textContent = "Contraseña demasiado débil.";
+          } else {
+            registerErrorMsg.textContent = error.message;
+          }
+        });
+    });
+
+  </script>
+
+</body>
+<div class="background-blur"></div>
+</html>

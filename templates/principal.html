@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}{{ translate('Página Principal') }}{% endblock %} {# Translate the title #}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles-principal.css') }}" />
+  <div class="background-blur">
+    <div class="welcome-message text-center mt-5">
+      <h1>{{ translate('Bienvenido') }}, <span id="nombreUsuario">...</span></h1> {# Translate "Bienvenido" #}
+      <p>{{ translate('Empecemos con esta guía turística a los mejores destinos de Huancayo') }}</p> {# Translate the entire sentence #}
+    </div>
+  </div>
+{% endblock %}

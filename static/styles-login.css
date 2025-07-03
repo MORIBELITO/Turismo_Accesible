@@ -1,0 +1,397 @@
+/* ========================================= */
+/* PALETA DE COLORES Y VARIABLES       */
+/* ========================================= */
+:root {
+    --light-background-transparent: rgba(255, 255, 255, 0.75);
+    --lighter-background-transparent: rgba(255, 255, 255, 0.85);
+    --dark-text: #0F52BA; /* Azul Zafiro */
+    --light-dark-text: #173F7A; /* Azul Zafiro más claro */
+    --accent-color: #58A6FF; /* Azul Cielo Suave */
+    --border-color: rgba(15, 82, 186, 0.3); /* Borde más visible */
+    --shadow-color: rgba(15, 82, 186, 0.2); /* Sombra más visible */
+
+    /* Colores para elementos heredados del diseño anterior, ajustados a la nueva paleta */
+    --header-title-color: var(--dark-text);
+    --nav-link-color: var(--dark-text);
+    --nav-link-hover-color: var(--accent-color);
+    --hero-heading-color: white; /* Actualizado a blanco */
+    --hero-text-color: white; /* Actualizado a blanco */
+    --form-background: var(--light-background-transparent);
+    --input-background: var(--lighter-background-transparent);
+    --input-text-color: var(--dark-text);
+    --input-border-focus: var(--accent-color);
+    --button-background: var(--dark-text);
+    --button-text-color: white; /* El texto del botón es blanco para un mejor contraste con el fondo azul zafiro */
+    --button-hover-background: var(--light-dark-text);
+    --clickable-text-color: var(--dark-text); /* Asegurado a azul oscuro */
+    --clickable-text-hover-color: var(--accent-color); /* Asegurado a azul claro para el hover */
+}
+
+/* =================== */
+/* BASE STYLES     */
+/* =================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', 'Roboto', sans-serif; /* Nueva fuente principal */
+    line-height: 1.6;
+    color: var(--dark-text);
+    background-image: url('https://explorandomaravillas.com/wp-content/uploads/lugares-turisticos-de-huancayo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Efecto de fondo borroso y oscurecido con pseudo-elemento */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+    background-color: rgba(0, 30, 80, 0.3);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* =================== */
+/* CONTENT WRAPPER   */
+/* =================== */
+.content-wrapper {
+    max-width: 1200px;
+    margin: 0px auto;
+    padding: 0 20px;
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* =================== */
+/* CONTENT CARD     */
+/* =================== */
+.content-card {
+    background: var(--light-background-transparent);
+    border-radius: 16px;
+    padding: 2rem 2.5rem;
+    margin-bottom: 2.5rem;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 32px 0 var(--shadow-color);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* =================== */
+/* PAGE HEADER       */
+/* =================== */
+.page-header {
+    text-align: center;
+    padding: 0.8rem 2rem; /* Márgenes superiores e inferiores reducidos aún más */
+}
+.page-header h1 {
+    font-size: 2.8em; /* Reducido ligeramente */
+    font-weight: 800;
+    color: var(--dark-text);
+    margin: 0 0 8px 0; /* Reducido ligeramente */
+}
+.page-header p {
+    font-size: 1.1em; /* Reducido ligeramente */
+    color: var(--light-dark-text);
+    max-width: 700px; /* Reducido ligeramente */
+    margin: 0 auto;
+}
+.page-header h1 i {
+    color: var(--accent-color);
+    margin-right: 10px;
+}
+
+/* =================== */
+/* HEADER        */
+/* =================== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 30px; /* Márgenes superiores e inferiores reducidos y laterales */
+    color: var(--header-title-color);
+    font-weight: bold;
+    font-size: 26px; /* Reducido ligeramente */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: transparent;
+}
+
+header i { /* Estilo para iconos en el encabezado */
+    color: var(--accent-color);
+    margin-right: 8px; /* Reducido ligeramente */
+    font-size: 0.85em; /* Reducido ligeramente */
+    vertical-align: middle;
+}
+
+/* =================== */
+/* NAVIGATION      */
+/* =================== */
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px; /* Reducido ligeramente */
+}
+
+nav ul li a {
+    color: var(--nav-link-color);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px; /* Reducido ligeramente */
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: var(--nav-link-hover-color);
+}
+
+/* =================== */
+/* HERO         */
+/* =================== */
+.hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 30px; /* Márgenes superiores e inferiores y laterales reducidos aún más */
+    gap: 60px; /* Reducido de 80px a 60px */
+    flex: 1;
+    max-width: 1200px; /* Reducido ligeramente */
+    margin: auto;
+    flex-wrap: wrap;
+}
+
+/* =================== */
+/* LEFT TEXT      */
+/* =================== */
+.hero-text {
+    max-width: 400px; /* Reducido de 450px a 400px */
+    text-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+
+.hero-text h1 {
+    font-size: 34px; /* Reducido de 38px a 34px */
+    font-weight: 900;
+    color: var(--hero-heading-color);
+    margin-bottom: 12px; /* Reducido de 15px a 12px */
+    animation: fadeInLeft 1s ease;
+}
+
+.hero-text h1 i { /* Estilo para iconos en el título del héroe */
+    color: var(--accent-color);
+    margin-right: 12px; /* Reducido ligeramente */
+    font-size: 0.9em; /* Reducido ligeramente */
+    vertical-align: middle;
+}
+
+.hero-text p {
+    font-size: 17px; /* Reducido de 18px a 17px */
+    line-height: 1.5; /* Ajustado ligeramente */
+    color: var(--hero-text-color);
+    animation: fadeInLeft 1.4s ease;
+}
+
+/* =================== */
+/* LOGIN FORM      */
+/* =================== */
+.login-form {
+    background: var(--form-background);
+    border-radius: 18px; /* Reducido ligeramente */
+    padding: 30px 25px; /* Reducido de 35px 30px */
+    width: 350px; /* Reducido de 380px a 350px */
+    animation: fadeInUp 1.2s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 1000;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 6px 28px 0 var(--shadow-color); /* Sombra ligeramente ajustada */
+}
+
+/* =================== */
+/* FORM ITEMS      */
+/* =================== */
+.login-form h2 {
+    margin-bottom: 18px; /* Reducido de 20px a 18px */
+    color: var(--dark-text);
+    font-size: 20px; /* Reducido de 22px a 20px */
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 9px 12px; /* Reducido de 10px 14px */
+    border: 2px solid var(--border-color);
+    border-radius: 9px; /* Reducido ligeramente */
+    background: var(--input-background);
+    color: var(--input-text-color);
+    font-size: 14px; /* Reducido de 15px a 14px */
+    margin-bottom: 12px; /* Reducido de 15px a 12px */
+    transition: border-color 0.3s, box-shadow 0.3s;
+    pointer-events: auto;
+}
+
+input:focus {
+    border-color: var(--input-border-focus);
+    box-shadow: 0 0 8px var(--accent-color); /* Reducido ligeramente */
+    outline: none;
+}
+
+/* =================== */
+/* BUTTONS COMMON   */
+/* =================== */
+button,
+.google-btn {
+    width: 100%;
+    padding: 10px; /* Reducido de 12px a 10px */
+    border: none;
+    border-radius: 10px; /* Reducido ligeramente */
+    background-color: var(--button-background); /* Fondo azul zafiro */
+    color: var(--button-text-color); /* Texto blanco */
+    font-size: 15px; /* Reducido de 16px a 15px */
+    font-weight: bold; /* Negrita */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1); /* Sombra ligeramente ajustada */
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px; /* Reducido de 8px a 6px */
+    pointer-events: auto;
+}
+
+button:hover,
+.google-btn:hover {
+    background-color: var(--button-hover-background);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.15); /* Sombra al hover ligeramente ajustada */
+    transform: translateY(-1px); /* Reducido ligeramente */
+}
+
+/* =================== */
+/* GOOGLE BUTTON     */
+/* =================== */
+.google-btn {
+    margin-bottom: 18px; /* Reducido de 20px a 18px */
+    flex-direction: row;
+    background-color: var(--button-background) !important;
+    color: var(--button-text-color) !important;
+}
+
+.google-btn img {
+    width: 20px; /* Reducido de 22px a 20px */
+    height: 20px; /* Reducido de 22px a 20px */
+}
+
+/* =================== */
+/* RESPONSIVE       */
+/* =================== */
+@media (max-width: 900px) {
+    header {
+        padding: 6px 15px; /* Márgenes superiores e inferiores reducidos para móvil */
+        font-size: 20px; /* Reducido para móvil */
+    }
+
+    nav ul {
+        gap: 10px; /* Reducir gap en nav */
+    }
+
+    .hero {
+        flex-direction: column;
+        gap: 30px; /* Reducido de 40px a 30px */
+        padding: 15px 15px; /* Márgenes superiores e inferiores reducidos para móvil */
+    }
+
+    .hero-text {
+        text-align: center;
+    }
+
+    .hero-text h1 {
+        font-size: 28px; /* Reducido para móviles */
+    }
+
+    .hero-text p {
+        font-size: 15px; /* Reducido para móviles */
+    }
+
+    .login-form {
+        width: 100%;
+        max-width: 320px; /* Reducido de 350px a 320px */
+        padding: 20px 18px; /* Reducido de 25px 20px */
+    }
+
+    .page-header h1 {
+        font-size: 2em; /* Reducido para pantallas pequeñas */
+    }
+
+    .page-header p {
+        font-size: 0.85em; /* Reducido para pantallas pequeñas */
+    }
+}
+
+/* =================== */
+/* ANIMATIONS      */
+/* =================== */
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =================== */
+/* CLICKABLE TEXTS    */
+/* =================== */
+#showRegister,
+#showLogin {
+    display: inline-block;
+    position: relative;
+    margin-top: 10px; /* Reducido de 12px a 10px */
+    font-weight: bold; /* Asegurado en negrita */
+    font-size: 14px; /* Reducido de 15px a 14px */
+    color: var(--dark-text) !important; /* Forzado a azul zafiro */
+    cursor: pointer;
+    user-select: none;
+    padding: 6px 4px; /* Reducido de 8px 6px */
+    z-index: 20;
+    line-height: 1.6;
+    transition: transform 0.3s ease, color 0.3s ease;
+    white-space: nowrap;
+}
+
+#showRegister:hover,
+#showLogin:hover {
+    color: var(--accent-color) !important; /* Forzado a azul claro en hover */
+    transform: scale(1.06) rotate(0.5deg); /* Reducido ligeramente */
+}
+

@@ -1,0 +1,512 @@
+/* styles-lugares.css */
+
+/* --- Variables de color y tamaño --- */
+:root {
+    --color-primary: #4a90e2; /* Azul más vibrante */
+    --color-secondary: #0bbcdb; /* Cian más brillante */
+    --color-accent: #ffdb58; /* Amarillo dorado más rico */
+    --color-dark-bg: #1c1c1c; /* Fondo más oscuro */
+    --color-medium-bg: #282828; /* Fondo intermedio un poco más claro */
+    --color-light-text: #e0e0e0;
+    --color-lighter-text: #f0f0f0;
+    --color-border: rgba(255, 255, 255, 0.15); /* Bordes más visibles pero sutiles */
+    --color-shadow-dark: rgba(0, 0, 0, 0.6); /* Sombra más pronunciada y oscura */
+    --color-shadow-light: rgba(0, 0, 0, 0.3); /* Sombra suave */
+    --border-radius-lg: 18px; /* Ligeramente más redondeado */
+    --border-radius-md: 12px; /* Ligeramente más redondeado */
+}
+
+/* --- Estilos Generales y Tipografía --- */
+body {
+    font-family: 'Poppins', sans-serif; /* Usando una fuente moderna y legible */
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-dark-bg); /* Fondo general oscuro */
+    color: var(--color-light-text); /* Texto claro */
+    line-height: 1.6;
+    overflow-x: hidden; /* Evita el scroll horizontal no deseado */
+    transition: background-color 0.3s ease; /* Transición suave para el fondo */
+}
+
+/* Clase para controlar el scroll del body cuando la VR está activa */
+body.vr-active {
+    overflow: hidden; /* Evita el scroll cuando la vista 360° está abierta */
+}
+
+.main-container {
+    max-width: 1600px; /* Un poco más de ancho para contenido inmersivo */
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box; /* Incluye padding en el ancho total */
+}
+
+h1, h2, h5 {
+    color: var(--color-lighter-text);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4); /* Ligera sombra para los títulos */
+    margin-bottom: 1rem;
+    font-weight: 600; /* Semibold para los títulos */
+}
+
+h1 {
+    font-size: 3.5rem;
+    letter-spacing: -0.05em; /* Ajuste para un look moderno */
+    animation: slideInFromLeft 0.8s ease-out forwards; /* Animación de entrada */
+    opacity: 0; /* Inicialmente oculto para la animación */
+}
+
+h2 {
+    font-size: 2.5rem;
+    border-bottom: 2px solid var(--color-primary); /* Subrayado sutil */
+    padding-bottom: 0.5rem;
+    display: inline-block; /* Para que el borde solo cubra el texto */
+    margin-bottom: 2rem;
+    animation: fadeIn 1s ease-out forwards; /* Animación de entrada */
+    opacity: 0;
+    animation-delay: 0.2s;
+}
+
+.lead {
+    font-size: 1.35rem;
+    color: var(--color-light-text);
+    margin-bottom: 2rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 1s ease-out forwards;
+    opacity: 0;
+    animation-delay: 0.4s;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* --- Animaciones Reutilizables --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInFromLeft {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInFromRight {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.7); }
+    70% { transform: scale(1.02); box-shadow: 0 0 0 15px rgba(74, 144, 226, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(74, 144, 226, 0); }
+}
+
+@keyframes wavePulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(11, 188, 219, 0.7);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 0 20px rgba(11, 188, 219, 0);
+        transform: scale(1.05);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(11, 188, 219, 0);
+        transform: scale(1);
+    }
+}
+
+
+/* --- Estilos para el Mapa Inmersivo --- */
+.map-immersive-container {
+    position: relative;
+    width: 100%;
+    height: 70vh; /* Altura más grande para un efecto más inmersivo */
+    min-height: 500px; /* Altura mínima para asegurar visibilidad en dispositivos pequeños */
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 15px 30px var(--color-shadow-dark); /* Sombra profunda */
+    transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transición suave para todos los cambios */
+    background: linear-gradient(135deg, var(--color-medium-bg) 0%, var(--color-dark-bg) 100%); /* Degradado sutil */
+    border: 1px solid var(--color-border);
+    animation: fadeIn 1.2s ease-out forwards; /* Animación de entrada */
+    opacity: 0;
+    animation-delay: 0.6s;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    filter: brightness(0.95); /* Ligero oscurecimiento para mejor contraste con popups */
+    transition: filter 0.5s ease;
+}
+
+#map:hover {
+    filter: brightness(1); /* Se ilumina al pasar el mouse */
+}
+
+
+/* --- Estilos para la Realidad Virtual Inmersiva --- */
+.vr-immersive-container {
+    margin-top: 40px;
+    position: fixed; /* Posición fija para que cubra la pantalla */
+    top: 0;
+    left: 0;
+    width: 100vw; /* Ocupa todo el ancho del viewport */
+    height: 100vh; /* Ocupa toda la altura del viewport */
+    background-color: rgba(28, 28, 28, 0.85); /* Fondo oscuro semi-transparente para efecto blur */
+    backdrop-filter: blur(10px); /* Efecto de cristal esmerilado */
+    -webkit-backdrop-filter: blur(10px); /* Para compatibilidad con Safari */
+    display: flex; /* Para centrar el iframe */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Asegura que esté por encima de todo lo demás, incluyendo la navbar */
+    opacity: 0; /* Inicialmente transparente */
+    visibility: hidden; /* Inicialmente oculto para que no ocupe espacio */
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out, background-color 0.5s ease;
+}
+
+.vr-immersive-container.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#mapIframe {
+    width: calc(100% - 60px); /* Deja un margen para el botón de cierre y bordes */
+    height: calc(100% - 60px);
+    max-width: 1000px; /* Limita el ancho máximo para pantallas muy grandes */
+    max-height: 500px; /* Limita la altura máxima */
+    border-radius: var(--border-radius-lg);
+    border: 3px solid var(--color-primary); /* Borde que resalta la vista 360 */
+    box-shadow: 0 15px 30px var(--color-shadow-dark); /* Sombra más pronunciada */
+    transition: all 0.4s ease-out;
+    background-color: var(--color-dark-bg); /* Fondo de fallback para el iframe */
+}
+
+#closeIframe {
+    position: absolute;
+    /* Ubicación inferior izquierda */
+    bottom: 75px; /* Distancia desde la parte inferior */
+    left: 175px; /* Distancia desde la parte izquierda */
+    
+    background-color: var(--color-medium-bg); /* Fondo del botón */
+    color: var(--color-lighter-text);
+    border: none; /* Sin borde inicial */
+    border-radius: 50%;
+    width: 45px; /* Tamaño más pequeño */
+    height: 45px; /* Tamaño más pequeño */
+    font-size: 1.6rem; /* Tamaño de la X más estilizado */
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* Siempre por encima del iframe y cualquier otra cosa */
+    /* Neomorfismo */
+    box-shadow: 7px 7px 15px var(--color-shadow-dark),
+                -7px -7px 15px rgba(255, 255, 255, 0.05);
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+}
+
+#closeIframe:hover {
+    background-color: var(--color-secondary); /* Color secundario al pasar el mouse */
+    color: var(--color-lighter-text);
+    transform: scale(1.08) rotate(90deg); /* Pequeña rotación y escala al pasar el mouse */
+    /* Sombra al pasar el mouse */
+    box-shadow: 5px 5px 12px var(--color-shadow-dark),
+                -5px -5px 12px rgba(255, 255, 255, 0.1),
+                0 0 20px var(--color-secondary); /* Resplandor */
+}
+
+
+/* --- Estilos para los Popups de Leaflet --- */
+.leaflet-popup-content-wrapper {
+    background-color: var(--color-medium-bg);
+    color: var(--color-light-text);
+    border-radius: var(--border-radius-md);
+    box-shadow: 0 8px 20px var(--color-shadow-dark);
+    padding: 0; /* Eliminamos el padding por defecto para que la imagen se extienda */
+    border: 1px solid var(--color-border);
+    transition: all 0.3s ease-out; /* Transición suave al abrir/cerrar */
+}
+
+.leaflet-popup-content {
+    margin: 0;
+    padding: 18px; /* Restauramos el padding dentro del contenido */
+    text-align: center;
+}
+
+.leaflet-popup-tip {
+    background-color: var(--color-medium-bg);
+    box-shadow: 0 8px 20px var(--color-shadow-dark); /* Sombra para la "cola" */
+}
+
+.popup-content h5 {
+    font-size: 1.35rem;
+    margin-top: 0;
+    margin-bottom: 0.8rem;
+    color: var(--color-lighter-text);
+}
+
+.popup-content img {
+    max-width: 100%;
+    height: 180px; /* Altura fija para las imágenes del popup */
+    object-fit: cover; /* Asegura que la imagen cubra el espacio */
+    border-radius: var(--border-radius-md);
+    margin-bottom: 12px;
+    border: 1px solid var(--color-border);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.popup-content img:hover {
+    transform: scale(1.03) rotate(1deg); /* Ligeramente más grande y rotado al pasar el mouse */
+    box-shadow: 0 0 20px var(--color-secondary), 0 0 30px var(--color-primary); /* Resplandor doble */
+}
+
+.popup-content p {
+    font-size: 0.98rem;
+    color: var(--color-light-text);
+    line-height: 1.5;
+    margin-bottom: 18px;
+}
+
+.popup-button-group {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los botones se envuelvan en pantallas pequeñas */
+    justify-content: center;
+    gap: 12px;
+}
+
+.popup-button {
+    background-color: var(--color-primary);
+    color: var(--color-lighter-text);
+    border: none;
+    padding: 10px 22px;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-size: 1.05rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px var(--color-shadow-light);
+    flex-grow: 1; /* Permite que los botones se expandan */
+    text-decoration: none; /* Si fuera un enlace */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-button:hover {
+    background-color: var(--color-secondary);
+    transform: translateY(-4px); /* Elevación más pronunciada */
+    box-shadow: 0 7px 15px var(--color-shadow-dark);
+}
+
+.popup-button.vr-btn {
+    background-color: var(--color-secondary); /* Cian brillante para VR */
+    animation: wavePulse 2.5s infinite ease-in-out; /* Nueva animación de pulsación de onda */
+    font-weight: 700; /* Más audaz */
+    position: relative; /* Necesario para el pseudo-elemento */
+    overflow: hidden; /* Oculta el pseudo-elemento desbordante */
+}
+
+.popup-button.vr-btn:hover {
+    background-color: var(--color-primary);
+    animation: none; /* Detiene la pulsación al interactuar */
+    transform: translateY(-4px);
+    box-shadow: 0 7px 15px var(--color-shadow-dark);
+}
+
+.not-available {
+    font-size: 0.9rem;
+    color: var(--color-border);
+    margin-top: 8px;
+    font-style: italic;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+
+/* --- Estilos para las Tarjetas de Lugares (Lista) --- */
+#places-list {
+    margin-top: 5rem; /* Espacio superior para separar del mapa */
+    animation: fadeIn 1.2s ease-out forwards; /* Animación de entrada para la sección */
+    opacity: 0;
+    animation-delay: 0.8s;
+}
+
+.place-card {
+    background-color: var(--color-medium-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 10px 25px var(--color-shadow-dark); /* Sombra más intensa */
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex; /* Para hacer las tarjetas flexbox */
+    flex-direction: column; /* Contenido apilado verticalmente */
+    height: 100%; /* Asegura que todas las tarjetas tengan la misma altura si la fila lo permite */
+}
+
+.place-card:hover {
+    transform: translateY(-12px); /* Elevación más pronunciada */
+    box-shadow: 0 18px 35px var(--color-shadow-dark), 0 0 25px var(--color-primary); /* Sombra más intensa con resplandor */
+    border-color: var(--color-primary);
+}
+
+.place-card img {
+    height: 220px; /* Altura generosa para las imágenes de las tarjetas */
+    object-fit: cover;
+    width: 100%; /* Asegura que la imagen ocupe todo el ancho */
+    transition: transform 0.4s ease-out, filter 0.3s ease; /* Añadida transición para el filtro */
+}
+
+.place-card:hover img {
+    transform: scale(1.1); /* Zoom más pronunciado en la imagen al pasar el mouse */
+    filter: brightness(1.1); /* Ligero brillo al pasar el mouse */
+}
+
+.card-body {
+    padding: 1.8rem; /* Mayor padding */
+    flex-grow: 1; /* Permite que el cuerpo ocupe el espacio restante */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Espacia el contenido y los botones */
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.8rem;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: var(--color-light-text);
+    flex-grow: 1; /* Permite que el texto se expanda */
+    margin-bottom: 1.5rem;
+}
+
+.card-body .btn {
+    width: 100%; /* Botones de ancho completo */
+    padding: 13px; /* Mayor padding */
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: var(--border-radius-md);
+    margin-top: 0.6rem;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, border-color 0.3s ease; /* Transiciones unificadas */
+    box-shadow: 0 5px 10px var(--color-shadow-light);
+}
+
+.card-body .btn-primary {
+    background-color: var(--color-secondary); /* Cian para el botón principal (VR) */
+    border-color: var(--color-secondary);
+    color: var(--color-lighter-text);
+}
+
+.card-body .btn-primary:hover {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    transform: translateY(-4px);
+    box-shadow: 0 7px 15px var(--color-shadow-dark);
+}
+
+.card-body .btn-outline-secondary {
+    background-color: transparent;
+    border: 2px solid var(--color-primary); /* Borde con color primario */
+    color: var(--color-primary);
+}
+
+.card-body .btn-outline-secondary:hover {
+    background-color: var(--color-primary);
+    color: var(--color-lighter-text);
+    transform: translateY(-4px);
+    box-shadow: 0 7px 15px var(--color-shadow-dark);
+}
+
+.text-muted {
+    color: var(--color-border) !important;
+    font-size: 0.9rem;
+    margin-top: 0.6rem;
+    font-style: italic;
+    text-align: center;
+}
+
+/* --- Media Queries para Responsividad --- */
+@media (max-width: 1200px) {
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2.2rem; }
+    .lead { font-size: 1.25rem; }
+    .place-card img { height: 200px; }
+    .card-title { font-size: 1.4rem; }
+    .card-text { font-size: 0.95rem; }
+}
+
+@media (max-width: 992px) {
+    .map-immersive-container {
+        height: 60vh;
+        min-height: 450px;
+    }
+    .place-card img { height: 180px; }
+    .card-title { font-size: 1.3rem; }
+    .card-body { padding: 1.5rem; }
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        padding: 15px;
+    }
+    h1 { font-size: 2.8rem; }
+    h2 { font-size: 2rem; margin-bottom: 1.8rem;}
+    .lead { font-size: 1.15rem; }
+    .map-immersive-container {
+        height: 50vh;
+        min-height: 380px;
+    }
+    #closeIframe {
+        width: 45px; /* Ajuste para responsividad */
+        height: 45px; /* Ajuste para responsividad */
+        font-size: 1.6rem; /* Ajuste para responsividad */
+        bottom: 20px; /* Posición inferior */
+        left: 20px; /* Posición izquierda */
+        top: auto; /* Anula la propiedad 'top' */
+        right: auto; /* Anula la propiedad 'right' */
+    }
+    .popup-content img { height: 160px; }
+    .popup-button { padding: 9px 18px; font-size: 1rem; }
+    .card-body .btn { padding: 11px; font-size: 1rem; }
+}
+
+@media (max-width: 576px) {
+    .main-container {
+        padding: 10px;
+    }
+    h1 { font-size: 2.2rem; text-align: center;}
+    h2 { font-size: 1.8rem; margin-bottom: 1.5rem; text-align: center; border-bottom: none;}
+    .lead { font-size: 1rem; text-align: center;}
+    .map-immersive-container {
+        height: 45vh;
+        min-height: 280px;
+    }
+    .vr-immersive-container {
+        padding: 5px; /* Menor padding para dejar más espacio al iframe */
+    }
+    #mapIframe {
+        width: calc(100% - 40px);
+        height: calc(100% - 40px);
+        border-radius: var(--border-radius-md);
+    }
+    #closeIframe {
+        width: 40px; /* Más pequeño para móviles */
+        height: 40px; /* Más pequeño para móviles */
+        font-size: 1.4rem; /* Tamaño de la X más pequeño */
+        bottom: 15px; /* Posición inferior */
+        left: 15px; /* Posición izquierda */
+        top: auto; /* Anula la propiedad 'top' */
+        right: auto; /* Anula la propiedad 'right' */
+    }
+    .place-card img { height: 150px; }
+    .card-title { font-size: 1.2rem; }
+    .card-text { font-size: 0.9rem; }
+    .card-body { padding: 1.2rem; }
+    .popup-content h5 { font-size: 1.2rem; }
+    .popup-content p { font-size: 0.9rem; }
+    .popup-button-group { gap: 8px; }
+}

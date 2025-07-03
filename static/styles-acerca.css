@@ -1,0 +1,216 @@
+/* ========= Paleta de Colores Definida ========= */
+:root {
+    --sapphire-blue-transparent: rgba(15, 82, 186, 0.8);
+    --sapphire-darker-transparent: rgba(13, 71, 161, 0.85);
+    --sapphire-text-color: #0F52BA; /* Zafiro Sólido para mejor legibilidad */
+    --white-text: #FFFFFF;
+    --light-text: #E0E0E0;
+    --container-bg: #ffffff;
+    --text-color: #212529;
+    --dark-border-color: rgba(15, 82, 186, 0.3);
+    --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    --hover-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+    --border-radius: 12px;
+}
+
+/* ========= Estilos Generales y del Contenedor Principal ========= */
+.acerca-main {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa; /* Fondo general muy claro */
+    color: var(--text-color);
+    line-height: 1.7;
+}
+
+/* ========= Cabecera de Introducción ========= */
+.intro-header {
+    background: var(--sapphire-blue-transparent);
+    color: var(--white-text);
+    padding: 5rem 2rem;
+    text-align: center;
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+    margin-bottom: 4rem;
+    box-shadow: var(--shadow);
+}
+
+.intro-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.intro-header .title {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--white-text);
+}
+
+.intro-header .intro-text {
+    font-size: 1.1rem;
+    color: var(--light-text);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* ========= Animaciones de Entrada para la Introducción ========= */
+@keyframes fadeInSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-on-load {
+    animation: fadeInSlideUp 0.8s ease-out forwards;
+}
+
+.animate-on-load.delay-1 {
+    animation-delay: 0.2s;
+}
+
+
+/* ========= Estructura de la Línea de Tiempo de Destinos ========= */
+.destinos-timeline {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* La línea vertical central */
+.destinos-timeline::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    background-color: var(--dark-border-color);
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -2px;
+    border-radius: 2px;
+    z-index: 1;
+}
+
+.timeline-item {
+    padding: 20px 40px;
+    position: relative;
+    background-color: inherit;
+    width: 50%;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+/* Alineación de los items a izquierda y derecha */
+.timeline-item:nth-child(odd) {
+    left: 0;
+    flex-direction: row-reverse; /* Imagen a la derecha, texto a la izquierda */
+    padding-left: 0;
+}
+
+.timeline-item:nth-child(even) {
+    left: 50%;
+    padding-right: 0;
+}
+
+/* El círculo en la línea de tiempo */
+.timeline-item::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    right: -10px;
+    background-color: var(--white-text);
+    border: 4px solid var(--sapphire-text-color);
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.timeline-item:nth-child(even)::after {
+    left: -10px;
+}
+
+/* Contenido de la tarjeta */
+.timeline-content, .timeline-img-container {
+    background-color: var(--container-bg);
+    padding: 25px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+}
+
+.timeline-item:hover .timeline-content,
+.timeline-item:hover .timeline-img-container {
+    transform: translateY(-10px);
+    box-shadow: var(--hover-shadow);
+}
+
+.timeline-img-container {
+    padding: 0; /* Sin padding para que la imagen ocupe todo */
+    overflow: hidden; /* Asegura que la imagen no se salga de los bordes redondeados */
+}
+
+.timeline-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.timeline-content h3 {
+    color: var(--sapphire-text-color);
+    font-size: 1.8rem;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.timeline-content p {
+    margin-bottom: 10px;
+}
+
+.timeline-content p strong {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+/* ========= Diseño Responsivo para Móviles ========= */
+@media screen and (max-width: 768px) {
+    .intro-header {
+        padding: 3rem 1rem;
+    }
+    .intro-header .title {
+        font-size: 2.2rem;
+    }
+
+    /* La línea de tiempo se convierte en un bloque vertical */
+    .destinos-timeline::after {
+        left: 20px; /* Mueve la línea a la izquierda */
+    }
+
+    .timeline-item {
+        width: 100%;
+        padding-left: 50px; /* Espacio para el contenido */
+        padding-right: 10px;
+        flex-direction: column; /* Apila imagen y texto */
+        align-items: flex-start;
+    }
+    
+    .timeline-item:nth-child(odd),
+    .timeline-item:nth-child(even) {
+        left: 0;
+        flex-direction: column; /* Apila imagen y texto */
+        align-items: flex-start;
+    }
+
+    .timeline-item::after {
+        left: 10px; /* Coloca el círculo sobre la línea */
+    }
+}

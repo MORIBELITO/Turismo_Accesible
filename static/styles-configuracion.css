@@ -1,0 +1,531 @@
+/* Importa la fuente Montserrat desde Google Fonts. Asegúrate de que el link en el HTML también la cargue. */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+/* --- Variables CSS Globales con tu nueva paleta --- */
+:root {
+    --color-primary: #4a90e2; /* Azul más vibrante */
+    --color-secondary: #0bbcdb; /* Cian más brillante */
+    --color-accent: #ffdb58; /* Amarillo dorado más rico */
+    --color-dark-bg: #1c1c1c; /* Fondo más oscuro */
+    --color-medium-bg: #282828; /* Fondo intermedio un poco más claro */
+    --color-light-text: #e0e0e0;
+    --color-lighter-text: #f0f0f0;
+    --color-border: rgba(255, 255, 255, 0.15); /* Bordes más visibles pero sutiles */
+    --color-shadow-dark: rgba(0, 0, 0, 0.6); /* Sombra más pronunciada y oscura */
+    --color-shadow-light: rgba(0, 0, 0, 0.3); /* Sombra suave */
+    --border-radius-lg: 18px; /* Ligeramente más redondeado */
+    --border-radius-md: 12px; /* Ligeramente más redondeado */
+    --border-radius-round: 50%;
+    --transition-speed: 0.4s; /* Un poco más lento para efectos más fluidos */
+    --transition-fast: 0.2s;
+}
+
+/* --- Estilos Generales y Reseteo Básico --- */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, var(--color-dark-bg) 0%, #0a0a0a 100%); /* Fondo degradado sutil */
+    margin: 0;
+    padding: 0;
+    color: var(--color-light-text);
+    line-height: 1.6;
+    display: flex; /* Para centrar el contenido principal */
+    justify-content: center; /* Para centrar el contenido principal */
+    align-items: flex-start; /* Alinea al inicio verticalmente */
+    min-height: 100vh; /* Asegura que ocupe al menos toda la altura de la vista */
+    padding: 30px; /* Padding general para evitar que el contenido toque los bordes */
+    box-sizing: border-box; /* Incluye padding y border en el tamaño total */
+    overflow-x: hidden; /* Evita desbordamiento horizontal */
+}
+
+/* Animación de fondo sutil para un toque más dinámico */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top left, rgba(74, 144, 226, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at bottom right, rgba(11, 188, 219, 0.05) 0%, transparent 40%);
+    z-index: -1;
+    animation: backgroundPulse 15s infinite alternate ease-in-out;
+}
+
+@keyframes backgroundPulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.95; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* --- Contenedor Principal de la Página de Perfil --- */
+.profile-page-container {
+    width: 100%;
+    max-width: 650px; /* Un poco más ancho */
+    padding: 20px;
+    box-sizing: border-box;
+    perspective: 1000px; /* Para efectos 3D */
+}
+
+/* --- Tarjeta de Configuración (Config Card) --- */
+.config-card {
+    background-color: var(--color-medium-bg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 20px 50px var(--color-shadow-dark), 0 0 15px rgba(74, 144, 226, 0.3); /* Sombra más intensa y glow */
+    padding: 50px; /* Más espacio interno */
+    text-align: center;
+    position: relative; /* Necesario para posicionar el overlay de carga */
+    overflow: hidden;
+    border: 1px solid var(--color-border); /* Borde sutil */
+    transform-style: preserve-3d; /* Para transformaciones 3D */
+    transition: transform var(--transition-speed) ease-in-out, box-shadow var(--transition-speed) ease-in-out;
+}
+
+.config-card:hover {
+    transform: translateY(-5px) rotateX(1deg); /* Ligero levantamiento y rotación 3D */
+    box-shadow: 0 25px 60px var(--color-shadow-dark), 0 0 25px rgba(74, 144, 226, 0.5); /* Sombra más grande y glow */
+}
+
+/* Efecto de luz de neón al pasar el ratón */
+.config-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(transparent 0deg, transparent 180deg, var(--color-primary) 180deg, var(--color-secondary) 360deg);
+    opacity: 0.1;
+    filter: blur(80px);
+    transform: rotate(0deg);
+    animation: neonGlowRotate 15s linear infinite;
+    z-index: -1;
+}
+
+@keyframes neonGlowRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.config-card__title {
+    font-size: 2.8em; /* Más grande */
+    color: var(--color-primary);
+    margin-bottom: 40px; /* Más espacio */
+    font-weight: 700;
+    letter-spacing: 1px; /* Letras un poco más espaciadas */
+    text-shadow: 0 0 15px rgba(74, 144, 226, 0.7), 0 0 30px rgba(74, 144, 226, 0.5); /* Efecto de neón en el texto */
+    transition: text-shadow var(--transition-speed) ease;
+}
+
+.config-card:hover .config-card__title {
+    text-shadow: 0 0 20px rgba(74, 144, 226, 0.9), 0 0 40px rgba(74, 144, 226, 0.7);
+}
+
+/* --- Contenedor de la Imagen de Perfil --- */
+.profile-image-container {
+    width: 180px; /* Más grande */
+    height: 180px;
+    border-radius: var(--border-radius-round);
+    overflow: hidden;
+    margin: 0 auto 40px auto;
+    border: 5px solid var(--color-primary);
+    box-shadow: 0 0 0 8px rgba(74, 144, 226, 0.4), 0 0 20px var(--color-primary); /* Glow más fuerte */
+    position: relative; /* Para el overlay de carga de imagen si se implementara */
+    display: flex; /* Para centrar la imagen */
+    justify-content: center;
+    align-items: center;
+    transition: transform var(--transition-speed) ease-in-out, box-shadow var(--transition-speed) ease-in-out;
+    cursor: pointer; /* Implicamos que es clickeable */
+}
+
+.profile-image-container:hover {
+    transform: scale(1.08) rotate(2deg); /* Zoom y ligera rotación al pasar el ratón */
+    box-shadow: 0 0 0 10px rgba(74, 144, 226, 0.6), 0 0 30px var(--color-primary); /* Glow más grande */
+}
+
+/* Efecto de partículas sutil al pasar el ratón (requiere JS para la implementación completa) */
+.profile-image-container::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
+    border-radius: var(--border-radius-round);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+    transition: all 0.5s ease-out;
+}
+
+.profile-image-container:hover::after {
+    width: 150%;
+    height: 150%;
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(1);
+    animation: pulseGlow 1.5s infinite alternate;
+}
+
+@keyframes pulseGlow {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+    100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.5; }
+}
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asegura que la imagen cubra el área sin distorsionarse */
+    display: block; /* Elimina espacio extra debajo de la imagen */
+    filter: saturate(1.1) brightness(0.9); /* Ligeros ajustes para el tema oscuro */
+    transition: filter var(--transition-speed) ease;
+}
+
+.profile-image-container:hover .profile-image {
+    filter: saturate(1.3) brightness(1); /* Imagen más vibrante al pasar el ratón */
+}
+
+/* --- Formulario y Grupos de Formulario --- */
+form {
+    text-align: left;
+    margin-top: 30px;
+}
+
+.form-group {
+    margin-bottom: 30px; /* Más espacio */
+    position: relative; /* Para animaciones de label */
+}
+
+.form-group__label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--color-lighter-text);
+    font-size: 1em; /* Más legible */
+    transition: color var(--transition-fast) ease, transform var(--transition-fast) ease;
+}
+
+.form-group__input {
+    width: 100%;
+    padding: 16px 20px; /* Más padding */
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    font-size: 1.1em; /* Más grande */
+    color: var(--color-lighter-text);
+    background-color: var(--color-dark-bg); /* Fondo oscuro en inputs */
+    transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    box-sizing: border-box; /* Incluye padding y border en el ancho total */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4); /* Sombra interna para profundidad */
+}
+
+.form-group__input::placeholder {
+    color: rgba(255, 255, 255, 0.3); /* Placeholder más tenue */
+}
+
+.form-group__input:focus {
+    border-color: var(--color-secondary); /* Borde cian al enfocar */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6), 0 0 15px rgba(11, 188, 219, 0.5); /* Glow al enfocar */
+    outline: none;
+    background-color: #121212; /* Un poco más oscuro al enfocar */
+}
+
+.form-group__input:disabled {
+    background-color: #1a1a1a;
+    cursor: not-allowed;
+    color: var(--color-light-text);
+    border-style: dashed;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.form-text {
+    font-size: 0.9em;
+    color: var(--color-light-text);
+    margin-top: 8px;
+    display: block;
+    opacity: 0.8;
+}
+
+/* Animación de "float" para labels al enfocar */
+.form-group__input:focus + .form-group__label,
+.form-group__input:not(:placeholder-shown) + .form-group__label {
+    transform: translateY(-25px) scale(0.9);
+    color: var(--color-secondary);
+}
+
+/* Pseudo-clase para el placeholder (oculto en este efecto) */
+.form-group__input:not(:placeholder-shown) {
+    padding-top: 25px; /* Para hacer espacio para la label "flotante" */
+    padding-bottom: 7px;
+}
+
+/* --- Contenedor de Botones --- */
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Más espacio entre botones */
+    margin-top: 40px;
+    flex-wrap: wrap; /* Permite que los botones se envuelvan en pantallas pequeñas */
+}
+
+/* --- Estilos de Botones Personalizados --- */
+.btn-custom {
+    padding: 16px 32px; /* Más grandes */
+    border: none;
+    border-radius: var(--border-radius-lg); /* Más redondeados */
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 8px 20px var(--color-shadow-light); /* Sombra más definida */
+    position: relative; /* Para efectos adicionales */
+    overflow: hidden; /* Para el efecto de brillo interno */
+}
+
+.btn-custom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: skewX(-20deg);
+    transition: left 0.4s ease-out;
+}
+
+.btn-custom:hover::before {
+    left: 100%; /* Efecto de brillo que se desliza */
+}
+
+.btn-custom:hover {
+    transform: translateY(-3px); /* Levantamiento más pronunciado */
+    box-shadow: 0 12px 25px var(--color-shadow-dark);
+}
+
+.btn-custom:active {
+    transform: translateY(0);
+    box-shadow: 0 5px 15px var(--color-shadow-light);
+}
+
+.btn-custom:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    background-color: var(--color-medium-bg);
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.btn-primary-custom {
+    background-color: var(--color-primary);
+    color: var(--color-lighter-text);
+    border: 1px solid var(--color-primary);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Sombra de texto ligera */
+}
+
+.btn-primary-custom:hover {
+    background-color: #3a80d2; /* Un tono más oscuro del azul */
+    box-shadow: 0 12px 25px rgba(74, 144, 226, 0.6), 0 0 20px rgba(74, 144, 226, 0.8); /* Glow primario */
+}
+
+.btn-secondary-custom {
+    background-color: var(--color-dark-bg);
+    color: var(--color-light-text);
+    border: 1px solid var(--color-secondary);
+}
+
+.btn-secondary-custom:hover {
+    background-color: #08a3bc; /* Un tono más oscuro del cian */
+    box-shadow: 0 12px 25px rgba(11, 188, 219, 0.6), 0 0 20px rgba(11, 188, 219, 0.8); /* Glow secundario */
+}
+
+/* --- Alertas (Mensajes de Feedback) --- */
+.alert {
+    padding: 18px 25px; /* Más padding */
+    border-radius: var(--border-radius-md);
+    margin-top: 40px;
+    font-weight: 500;
+    text-align: center;
+    opacity: 0; /* Por defecto oculto con opacidad para transición */
+    transform: translateY(20px) scale(0.95); /* Más desplazamiento y escala */
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Transición más larga */
+    box-shadow: 0 5px 15px var(--color-shadow-light);
+    border: 1px solid;
+    position: relative;
+    overflow: hidden;
+}
+
+.alert.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Efecto de luz de fondo para las alertas */
+.alert::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    z-index: -1;
+    filter: blur(20px);
+    opacity: 0.6;
+    animation: alertGlow 2s infinite alternate;
+}
+
+@keyframes alertGlow {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.03); opacity: 0.8; }
+}
+
+.alert--success {
+    background-color: rgba(74, 226, 74, 0.15); /* Verde con transparencia */
+    color: #8aff8a; /* Verde brillante */
+    border-color: #4CAF50;
+}
+.alert--success::before { background-color: #4CAF50; }
+
+.alert--danger {
+    background-color: rgba(226, 74, 74, 0.15); /* Rojo con transparencia */
+    color: #ff8a8a; /* Rojo brillante */
+    border-color: #c62828;
+}
+.alert--danger::before { background-color: #c62828; }
+
+.alert--info {
+    background-color: rgba(74, 144, 226, 0.15); /* Azul con transparencia */
+    color: #8ac0ff; /* Azul brillante */
+    border-color: var(--color-primary);
+}
+.alert--info::before { background-color: var(--color-primary); }
+
+/* --- Overlay de Carga (Loading Overlay) --- */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(28, 28, 28, 0.95); /* Fondo casi opaco del tema */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--border-radius-lg);
+    opacity: 0;
+    visibility: hidden; /* Oculto por defecto */
+    transition: opacity 0.5s ease, visibility 0.5s ease; /* Transición suave */
+    z-index: 100; /* Asegura que esté por encima de todo */
+}
+
+.loading-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.spinner {
+    border: 6px solid rgba(255, 255, 255, 0.1); /* Light grey */
+    border-top: 6px solid var(--color-secondary); /* Cian brillante para el spinner */
+    border-radius: var(--border-radius-round);
+    width: 60px; /* Más grande */
+    height: 60px;
+    animation: spin 1s linear infinite, glowSpin 2s infinite alternate; /* Animación de giro y glow */
+    margin-bottom: 20px;
+    box-shadow: 0 0 15px rgba(11, 188, 219, 0.7); /* Glow al spinner */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes glowSpin {
+    0% { box-shadow: 0 0 15px rgba(11, 188, 219, 0.7); }
+    50% { box-shadow: 0 0 25px rgba(11, 188, 219, 1), 0 0 35px rgba(11, 188, 219, 0.5); }
+    100% { box-shadow: 0 0 15px rgba(11, 188, 219, 0.7); }
+}
+
+.loading-overlay__text {
+    color: var(--color-lighter-text);
+    font-weight: 600;
+    font-size: 1.3em;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* --- Media Queries para Responsividad --- */
+@media (max-width: 768px) {
+    .config-card {
+        padding: 40px 25px; /* Reduce el padding en pantallas más pequeñas */
+    }
+
+    .config-card__title {
+        font-size: 2.2em;
+        margin-bottom: 30px;
+    }
+
+    .profile-image-container {
+        width: 150px;
+        height: 150px;
+        margin-bottom: 30px;
+    }
+
+    .form-group__input {
+        padding: 14px 18px;
+        font-size: 1em;
+    }
+
+    .btn-custom {
+        padding: 14px 28px;
+        font-size: 1em;
+    }
+
+    .buttons-container {
+        flex-direction: column; /* Apila los botones en pantallas pequeñas */
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 15px;
+    }
+    .profile-page-container {
+        padding: 0; /* Sin padding en el contenedor en móviles */
+    }
+
+    .config-card {
+        border-radius: 0; /* Sin bordes redondeados en pantallas muy pequeñas para un diseño de "ancho completo" */
+        box-shadow: none; /* Sin sombra en pantallas muy pequeñas */
+        padding: 30px 20px;
+        border: none; /* Sin borde en móviles */
+    }
+
+    .config-card::before {
+        display: none; /* Oculta el efecto de luz de neón grande en móviles para rendimiento */
+    }
+
+    .profile-image-container {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 25px;
+        border: 4px solid var(--color-primary); /* Borde más pequeño */
+        box-shadow: 0 0 0 6px rgba(74, 144, 226, 0.2), 0 0 10px var(--color-primary);
+    }
+
+    .profile-image-container:hover {
+        transform: scale(1.05); /* Menos exagerado en móvil */
+        box-shadow: 0 0 0 8px rgba(74, 144, 226, 0.4), 0 0 20px var(--color-primary);
+    }
+
+    .config-card__title {
+        font-size: 1.8em;
+        margin-bottom: 25px;
+    }
+
+    .btn-custom {
+        padding: 12px 20px;
+        font-size: 0.9em;
+        width: 100%; /* Botones de ancho completo */
+    }
+}

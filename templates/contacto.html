@@ -1,0 +1,501 @@
+{% extends "base.html" %}
+
+{% block title %}{{ translate('Centro de Ayuda y Comunidad') }}{% endblock %}
+
+{% block content %}
+{# Carga de Font Awesome para los iconos #}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+    /* --- Paleta de Colores y Variables de Diseño --- */
+    :root {
+        --light-background-transparent: rgba(255, 255, 255, 0.75);
+        --lighter-background-transparent: rgba(255, 255, 255, 0.85);
+        --dark-text: #0F52BA; /* Azul Zafiro */
+        --light-dark-text: #173F7A;
+        --accent-color: #58A6FF; /* Azul Cielo Suave (Reemplazo del amarillo) */
+        --border-color: rgba(15, 82, 186, 0.2);
+        --shadow-color: rgba(15, 82, 186, 0.15);
+        --success-bg: rgba(212, 237, 218, 0.9);
+        --success-text: #155724;
+        --error-bg: rgba(248, 215, 218, 0.9);
+        --error-text: #721c24;
+        --disabled-bg: rgba(150, 150, 150, 0.5);
+        --info-bg: rgba(225, 239, 255, 0.9); /* Fondo para alertas informativas (azul claro) */
+        --info-text: #0F52BA;
+        --info-border: rgba(15, 82, 186, 0.3);
+
+        /* Colores de Redes Sociales */
+        --facebook-color: #1877F2;
+        --instagram-color: #E4405F;
+        --tiktok-color: #000000;
+    }
+
+    /* --- Animaciones --- */
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes icon-bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+
+    /* --- Estilos de Base y Fondo --- */
+    body {
+        font-family: 'Segoe UI', 'Roboto', sans-serif;
+        line-height: 1.6;
+        color: var(--dark-text);
+        background-image: url('https://lh7-us.googleusercontent.com/docsz/AD_4nXemY-lyKgNIvhEVCqcXZovkdeJBP-U1kZ4CVaEMHa7Oq8l32ErNgy8NLYvX5NvIJOw7adJSwKwDu6rv53Q61bNdO2hDKVeTzJkxxGTzi1DmZMW9ApzwlSqCuBLfzRt_K2EtTjDbxbCHECxhJokxfYXFIE-1?key=LGK4WhDu06YO5BSrlQOPng');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        min-height: 100vh;
+        position: relative;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0; left: 0;
+        height: 100%; width: 100%;
+        backdrop-filter: blur(8px) saturate(120%);
+        -webkit-backdrop-filter: blur(8px) saturate(120%);
+        background-color: rgba(0, 30, 80, 0.3);
+        z-index: -1;
+    }
+
+    /* --- Contenedor Principal y Estructura --- */
+    .content-wrapper {
+        max-width: 1100px;
+        margin: 0px auto; /* Margen superior e inferior reducido */
+        padding: 0 20px;
+        position: relative;
+    }
+
+    /* --- Tarjeta de Introducción --- */
+    .intro-card {
+        text-align: center;
+        padding: 2.5rem 2rem;
+        margin-bottom: 3rem;
+        background: var(--light-background-transparent);
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 8px 32px 0 var(--shadow-color);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        animation: fadeInDown 0.8s ease-out forwards;
+    }
+    .intro-card h1 {
+        font-size: 3em;
+        font-weight: 800;
+        color: var(--dark-text);
+        margin: 0 0 10px 0;
+    }
+    .intro-card p {
+        font-size: 1.15em;
+        color: var(--light-dark-text);
+        max-width: 750px;
+        margin: 0 auto;
+    }
+    .intro-card i {
+        color: var(--accent-color);
+        text-shadow: 0 0 10px rgba(88, 166, 255, 0.5); /* Sombra ajustada al nuevo color de acento */
+    }
+    
+    /* --- Estilo General de Sección (Card) --- */
+    .animated-section {
+        background: var(--light-background-transparent);
+        border-radius: 16px;
+        padding: 2rem 2.5rem;
+        margin-bottom: 2.5rem;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 8px 32px 0 var(--shadow-color);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        opacity: 0; /* Inicia invisible para animación */
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+    /* Animación Escalonada */
+    .animated-section:nth-of-type(1) { animation-delay: 0.2s; }
+    .animated-section:nth-of-type(2) { animation-delay: 0.4s; }
+    .animated-section:nth-of-type(3) { animation-delay: 0.6s; }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-size: 1.5em;
+        color: var(--dark-text);
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .section-header i {
+        font-size: 1.5em;
+        color: var(--light-dark-text);
+    }
+
+    /* --- Estilos de Formularios --- */
+    .form-control {
+        width: 100%;
+        padding: 14px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 1em;
+        box-sizing: border-box;
+        background-color: var(--lighter-background-transparent);
+        color: var(--dark-text);
+        transition: box-shadow 0.3s, border-color 0.3s;
+        margin-bottom: 1rem;
+    }
+    .form-control::placeholder { color: var(--light-dark-text); opacity: 0.7; }
+    .form-control:focus {
+        outline: none;
+        border-color: var(--dark-text);
+        box-shadow: 0 0 0 3px rgba(15, 82, 186, 0.3);
+    }
+    .btn-primary {
+        width: 100%;
+        padding: 14px 20px;
+        background-color: var(--dark-text);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.1em;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    .btn-primary:hover:not(:disabled) {
+        background-color: var(--light-dark-text);
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .btn-primary:disabled {
+        background-color: var(--disabled-bg);
+        color: rgba(255,255,255,0.7);
+        cursor: not-allowed;
+    }
+
+    /* --- Foro Section --- */
+    .post-item { background-color: var(--lighter-background-transparent); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; transition: transform 0.3s, box-shadow 0.3s; }
+    .post-item:hover { transform: translateY(-5px); box-shadow: 0 8px 16px var(--shadow-color); }
+    .post-header { display: flex; align-items: center; gap: 15px; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+    .user-photo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--dark-text); }
+    .user-name { font-weight: bold; color: var(--dark-text); }
+    .post-date { font-size: 0.8em; color: var(--light-dark-text); }
+    .post-body h4 { font-size: 1.3em; color: var(--light-dark-text); margin: 0 0 0.5rem 0; }
+    .post-body p { color: var(--light-dark-text); white-space: pre-wrap; }
+
+    /* --- Contacto Section --- */
+    .contact-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 2.5rem; }
+    .contact-info-item { display: flex; align-items: center; gap: 15px; margin-bottom: 1.5rem; padding: 10px; border-radius: 8px; transition: background-color 0.3s; }
+    .contact-info-item:hover { background-color: rgba(15, 82, 186, 0.1); }
+    .contact-info-item .icon-container { font-size: 1.4em; color: var(--dark-text); width: 40px; text-align: center; transition: transform 0.3s ease; }
+    .contact-info-item:hover .icon-container { animation: icon-bounce 0.5s ease; }
+    .contact-info-item .info-text strong { display: block; color: var(--dark-text); font-size: 1.1em; }
+    .contact-info-item .info-text a { color: var(--light-dark-text); text-decoration: none; font-weight: 500; }
+    .contact-info-item .info-text a:hover { text-decoration: underline; color: var(--accent-color); }
+    
+    .social-links-header { text-align: center; color: var(--light-dark-text); font-weight: bold; margin-top: 2rem; }
+    .social-media-links { list-style: none; padding: 0; display: flex; justify-content: center; gap: 20px; margin-top: 1rem; }
+    .social-media-links a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: var(--lighter-background-transparent);
+        border: 1px solid var(--border-color);
+        color: var(--dark-text);
+        font-size: 1.5em;
+        text-decoration: none;
+        transition: all 0.3s ease-in-out;
+    }
+    .social-media-links a:hover {
+        color: white;
+        transform: translateY(-5px) scale(1.1);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    .social-media-links .facebook:hover { background-color: var(--facebook-color); }
+    .social-media-links .instagram:hover { background-color: var(--instagram-color); }
+    .social-media-links .tiktok:hover { background-color: var(--tiktok-color); }
+
+    /* --- FAQ Section --- */
+    .faq-items details { background: var(--lighter-background-transparent); border-radius: 8px; margin-bottom: 1rem; padding: 1rem; border: 1px solid transparent; transition: border-color 0.3s, transform 0.3s; }
+    .faq-items details:hover { transform: scale(1.02); border-color: var(--border-color); }
+    .faq-items summary { font-weight: bold; cursor: pointer; font-size: 1.1em; display: flex; align-items: center; justify-content: space-between; }
+    .faq-items summary::after { content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900; transition: transform 0.3s ease; }
+    .faq-items details[open] summary::after { transform: rotate(180deg); }
+    .faq-items p { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border-color); }
+
+    /* --- Alertas y Mensajes --- */
+    .alert-message { text-align: center; padding: 15px; border-radius: 8px; margin-bottom: 1rem; }
+    #foro-login-prompt { 
+        background-color: var(--info-bg); 
+        color: var(--info-text); 
+        border: 1px solid var(--info-border);
+    }
+    .foro-mensaje { padding: 12px; margin-top: 10px; border-radius: 8px; display: none; text-align: center; font-weight: bold; }
+    .foro-mensaje.exito { background-color: var(--success-bg); color: var(--success-text); }
+    .foro-mensaje.error { background-color: var(--error-bg); color: var(--error-text); }
+
+    /* --- Responsividad --- */
+    @media (max-width: 992px) {
+        .contact-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+        .content-wrapper { margin: 1rem auto; padding: 0 10px; }
+        .animated-section { padding: 1.5rem; }
+        .intro-card h1 { font-size: 2.2em; }
+        .section-header { font-size: 1.2em; }
+    }
+</style>
+
+<main class="content-wrapper">
+    
+    <div class="intro-card">
+        <h1><i class="fas fa-hands-helping"></i> {{ translate('Centro de Ayuda y Comunidad') }}</h1>
+        <p>{{ translate('Tu aventura accesible en Huancayo empieza aquí. Encuentra respuestas, comparte con otros viajeros y contáctanos si necesitas ayuda.') }}</p>
+    </div>
+
+    <!-- ========= SECCIÓN 1: FORO COMUNITARIO ========= -->
+    <section id="forum" class="animated-section">
+        <h2 class="section-header">
+            <i class="fas fa-users"></i>
+            <span>{{ translate('Foro Comunitario') }}</span>
+        </h2>
+        <div id="foro-login-prompt" class="alert-message" style="display: none;">
+            {{ translate('Debes') }} <a href="{{ url_for('login') }}">{{ translate('iniciar sesión') }}</a> {{ translate('para participar en el foro.') }}
+        </div>
+        <form id="formNuevoPost">
+            <input type="text" id="postTitulo" class="form-control" placeholder="{{ translate('Título de tu publicación...') }}" required minlength="5">
+            <textarea id="postContenido" class="form-control" rows="4" placeholder="{{ translate('Escribe aquí tu mensaje, pregunta o experiencia...') }}" required minlength="10"></textarea>
+            <button type="submit" id="btnEnviarPost" class="btn-primary">
+                <i class="fas fa-paper-plane"></i> {{ translate('Publicar en el Foro') }}
+            </button>
+        </form>
+        <div id="foro-mensaje" class="foro-mensaje"></div>
+        <hr style="border: none; border-top: 1px solid var(--border-color); margin: 2rem 0;">
+        <div id="listaPublicaciones">
+            <!-- Las publicaciones de Firebase se cargarán aquí -->
+        </div>
+    </section>
+
+    <!-- ========= SECCIÓN 2: CONTACTO DIRECTO ========= -->
+    <section id="contact" class="animated-section">
+        <h2 class="section-header">
+            <i class="fas fa-envelope-open-text"></i>
+            <span>{{ translate('¿Aún tienes dudas? Contáctanos') }}</span>
+        </h2>
+        <div class="contact-grid">
+            <div class="contact-form-container">
+                <form id="whatsappForm">
+                    <input type="text" id="name" class="form-control" placeholder="{{ translate('Tu nombre completo') }}" required>
+                    <input type="email" id="email" class="form-control" placeholder="{{ translate('Tu correo electrónico') }}" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                    <input type="text" id="subject" class="form-control" placeholder="{{ translate('Asunto del mensaje') }}" required>
+                    <textarea id="message" class="form-control" rows="5" placeholder="{{ translate('Tu mensaje...') }}" required></textarea>
+                    <button type="submit" class="btn-primary">
+                        <i class="fab fa-whatsapp"></i> {{ translate('Enviar Mensaje por WhatsApp') }}
+                    </button>
+                </form>
+            </div>
+            <div class="contact-info-container">
+                <div class="contact-info-item">
+                    <div class="icon-container"><i class="fas fa-at"></i></div>
+                    <div class="info-text"><strong>{{ translate('Escríbenos') }}</strong> <a href="mailto:75059727@continental.edu.pe">75059727@continental.edu.pe</a></div>
+                </div>
+                <div class="contact-info-item">
+                    <div class="icon-container"><i class="fas fa-phone-volume"></i></div>
+                    <div class="info-text"><strong>{{ translate('Llámanos') }}</strong> <a href="tel:+51910927801">+51 910 927 801</a></div>
+                </div>
+                <div class="contact-info-item">
+                    <div class="icon-container"><i class="fas fa-business-time"></i></div>
+                    <div class="info-text"><strong>{{ translate('Horario') }}</strong> {{ translate('Lunes a Viernes, 9:00 - 18:00') }}</div>
+                </div>
+                
+                <hr style="border: none; border-top: 1px solid var(--border-color); margin: 2rem 0;">
+
+                <h3 class="social-links-header">{{ translate('Síguenos') }}</h3>
+                <ul class="social-media-links">
+                    <li><a href="https://www.facebook.com/marlon.bonifacio.rojas.2025" target="_blank" title="Facebook" class="facebook"><i class="fab fa-facebook-f"></i></a></li>
+                    <li><a href="https://www.instagram.com/rojasmarlonbonifacio/" target="_blank" title="Instagram" class="instagram"><i class="fab fa-instagram"></i></a></li>
+                    <li><a href="https://www.tiktok.com/@marlonbonifaciorojas" target="_blank" title="TikTok" class="tiktok"><i class="fab fa-tiktok"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========= SECCIÓN 3: PREGUNTAS FRECUENTES (FAQ) ========= -->
+    <section id="faq" class="animated-section">
+        <h2 class="section-header">
+            <i class="fas fa-question-circle"></i>
+            <span>{{ translate('Preguntas Frecuentes') }}</span>
+        </h2>
+        <div class="faq-items">
+            <details>
+                <summary>{{ translate('¿Los destinos están adaptados para sillas de ruedas?') }}</summary>
+                <p>{{ translate('Sí, nos enfocamos en destacar destinos con rampas, caminos accesibles y servicios adaptados. Consulta los detalles en') }} <a href="/destinos-accesibles">{{ translate('Destinos Accesibles') }}</a>.</p>
+            </details>
+            <details>
+                <summary>{{ translate('¿Necesito reservar los tours accesibles con anticipación?') }}</summary>
+                <p>{{ translate('Sí, recomendamos reservar con al menos 48 horas de anticipación para garantizar transporte y guías especializados. Mira las opciones en') }} <a href="/nuestros-tours">{{ translate('Nuestros Tours') }}</a>.</p>
+            </details>
+            <details>
+                <summary>{{ translate('¿Ofrecen guías para discapacidad visual o auditiva?') }}</summary>
+                <p>{{ translate('Sí, colaboramos con guías capacitados. Por favor, solicita este servicio con anticipación al contactarnos.') }}</p>
+            </details>
+        </div>
+    </section>
+
+</main>
+
+
+<script>
+    // Tu script de WhatsApp (sin cambios)
+    document.getElementById('whatsappForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value;
+        const phoneNumber = '51910927801';
+        const whatsappMessage = `*Consulta desde el Sitio Web:*\n\n*Nombre:* ${name}\n*Correo:* ${email}\n*Asunto:* ${subject}\n\n*Mensaje:*\n${message}`.trim();
+        const encodedMessage = encodeURIComponent(whatsappMessage);
+        const whatsappURL = `https://api.whatsapp.com/send/?phone=${phoneNumber}&text=${encodedMessage}&type=phone_number&app_absent=0`;
+        window.open(whatsappURL, '_blank');
+    });
+</script>
+
+<script type="module">
+    // Tu script de Firebase (sin cambios en la lógica)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyARMkC0EBYElA8wVOpefSgMD4oADAIqD4o",
+        authDomain: "turismo-4e958.firebaseapp.com",
+        projectId: "turismo-4e958",
+        storageBucket: "turismo-4e958.appspot.com",
+        messagingSenderId: "442508451378",
+        appId: "1:442508451378:web:65bed298dffe5b22e6262b",
+        measurementId: "G-XSDKJ73NKW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    let currentUser = null;
+
+    onAuthStateChanged(auth, (user) => {
+        const formElements = document.getElementById('formNuevoPost').elements;
+        const loginPrompt = document.getElementById('foro-login-prompt');
+        
+        if (user) {
+            currentUser = user;
+            loginPrompt.style.display = 'none';
+            Array.from(formElements).forEach(el => el.disabled = false);
+        } else {
+            currentUser = null;
+            loginPrompt.style.display = 'block';
+            Array.from(formElements).forEach(el => el.disabled = true);
+        }
+    });
+
+    const formNuevoPost = document.getElementById("formNuevoPost");
+    const btnEnviarPost = document.getElementById("btnEnviarPost");
+    const mensajeDiv = document.getElementById("foro-mensaje");
+
+    formNuevoPost.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!currentUser) {
+            mostrarMensaje("{{ translate('Debes iniciar sesión para publicar.') }}", "error");
+            return;
+        }
+        const titulo = document.getElementById("postTitulo").value.trim();
+        const contenido = document.getElementById("postContenido").value.trim();
+        if (titulo.length < 5 || contenido.length < 10) {
+            mostrarMensaje("{{ translate('El título debe tener al menos 5 caracteres y el contenido al menos 10.') }}", "error");
+            return;
+        }
+        btnEnviarPost.disabled = true;
+        mostrarMensaje("", "");
+        const postData = {
+            titulo,
+            contenido,
+            fecha: new Date(),
+            userId: currentUser.uid,
+            userName: currentUser.displayName || currentUser.email,
+            userPhotoURL: currentUser.photoURL || "{{ url_for('static', filename='imagenes/default-user.jpg') }}"
+        };
+        try {
+            await addDoc(collection(db, "Foro"), postData);
+            mostrarMensaje("{{ translate('Publicación enviada correctamente.') }}", "exito");
+            formNuevoPost.reset();
+        } catch (error) {
+            mostrarMensaje("{{ translate('Hubo un error al enviar la publicación.') }}", "error");
+            console.error("Error al guardar en el foro:", error);
+        } finally {
+            btnEnviarPost.disabled = false;
+        }
+    });
+
+    function mostrarMensaje(texto, tipo) {
+        mensajeDiv.textContent = texto;
+        mensajeDiv.className = "foro-mensaje";
+        if (tipo) mensajeDiv.classList.add(tipo);
+        mensajeDiv.style.display = texto ? "block" : "none";
+    }
+
+    function mostrarPublicaciones(posts) {
+        const listaDiv = document.getElementById("listaPublicaciones");
+        listaDiv.innerHTML = "";
+        if (posts.length === 0) {
+            listaDiv.innerHTML = `<p style="text-align: center; color: var(--light-dark-text);">{{ translate('Aún no hay publicaciones. ¡Sé el primero en crear una!') }}</p>`;
+            return;
+        }
+        posts.forEach(p => {
+            const postDiv = document.createElement("div");
+            postDiv.className = "post-item";
+            const defaultPhoto = "{{ url_for('static', filename='imagenes/default-user.jpg') }}";
+            const userName = p.userName || "{{ translate('Usuario Anónimo') }}";
+            const fechaPost = p.fecha.seconds ? new Date(p.fecha.seconds * 1000).toLocaleString() : new Date().toLocaleString();
+            postDiv.innerHTML = `
+                <div class="post-header">
+                    <img src="${p.userPhotoURL || defaultPhoto}" alt="Foto de ${userName}" class="user-photo">
+                    <div>
+                        <div class="user-name">${userName}</div>
+                        <div class="post-date">${fechaPost}</div>
+                    </div>
+                </div>
+                <div class="post-body">
+                    <h4>${p.titulo}</h4>
+                    <p>${p.contenido}</p>
+                </div>
+            `;
+            listaDiv.appendChild(postDiv);
+        });
+    }
+
+    function inicializarEscuchaForo() {
+        const q = query(collection(db, "Foro"), orderBy("fecha", "desc"));
+        onSnapshot(q, (snapshot) => {
+            const datos = snapshot.docs.map(doc => doc.data());
+            mostrarPublicaciones(datos);
+        });
+    }
+    inicializarEscuchaForo();
+</script>
+
+{% endblock %}

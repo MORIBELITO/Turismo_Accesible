@@ -1,0 +1,67 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: url('https://scontent-lim1-1.xx.fbcdn.net/v/t1.6435-9/158796412_2459978877482346_6650320610651766138_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFaRNxogFMW7jlDllTsNNjTV_pdaBmjseFX-l1oGaOx4cEdrG5JQvqB_j1Q1GRlCvf1sJ-NJv1C1TqLBHl47yTj&_nc_ohc=HktSqptoac4Q7kNvwE4zldj&_nc_oc=AdmMGbqvaQDR7yn_WJXTee3Mm1-YXt-MjhzvRaf1qYZl1r1D3-YUyBlwyKP44GV3dGXxThSPP9_3Vri1OFjbo6WS&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=E6ym5qF-NoF2lhUdcvTPhA&oh=00_AfPtJv7CkjnfyOD9twY2d7yZyDJ2RBiqm1vPpDEknzOCIg&oe=68685B78') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+    padding-top: 56px; /* Altura de la navbar Bootstrap */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Mantenemos centrado para que solo lo movamos un poco */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Fondo borroso global */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.35);
+    z-index: 0;
+}
+
+/* Mensaje centrado sin caja */
+.welcome-message {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    animation: fadeInDown 1s ease-out forwards;
+    /* AGREGADO: Sube el texto unos 50 píxeles. Ajusta este valor si necesitas más o menos. */
+    margin: 110px;
+}
+
+.welcome-message h1 {
+    font-size: 3.4em;
+    color: white;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
+    margin-bottom: 15px;
+    margin: 10px;
+}
+
+.welcome-message h1 span {
+    color: #FFD700;
+}
+
+.welcome-message p {
+    font-size: 1.5em;
+    color: white;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+    margin: 10px;
+}
+
+/* Animación */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

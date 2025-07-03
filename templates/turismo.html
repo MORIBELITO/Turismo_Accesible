@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ translate('Descubre Huancayo: Tu Guía Interactiva') }}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+<style>
+    /* --- Paleta de Colores y Variables de Diseño (Inspirado en Centro de Ayuda) --- */
+    :root {
+        --light-background-transparent: rgba(255, 255, 255, 0.75);
+        --lighter-background-transparent: rgba(255, 255, 255, 0.85);
+        --dark-text: #0F52BA; /* Azul Zafiro */
+        --light-dark-text: #173F7A;
+        --accent-color: #58A6FF; /* Azul Cielo Suave */
+        --border-color: rgba(15, 82, 186, 0.2);
+        --shadow-color: rgba(15, 82, 186, 0.15);
+    }
+
+    /* --- Estilos de Base y Fondo --- */
+    body {
+        font-family: 'Segoe UI', 'Roboto', sans-serif;
+        line-height: 1.6;
+        color: var(--dark-text);
+        background-image: url('https://media.staticontent.com/media/pictures/c2285cc6-421a-47d1-824c-c5d5bf28b8c6');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        min-height: 100vh;
+        position: relative;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0; left: 0;
+        height: 100%; width: 100%;
+        backdrop-filter: blur(8px) saturate(120%);
+        -webkit-backdrop-filter: blur(8px) saturate(120%);
+        background-color: rgba(0, 30, 80, 0.3);
+        z-index: -1;
+    }
+
+    /* --- Contenedor Principal y Estructura --- */
+    .content-wrapper {
+        max-width: 1200px;
+        margin: 0px auto;
+        padding: 0 20px;
+        position: relative;
+    }
+
+    /* --- Estilo de Tarjeta de Contenido General --- */
+    .content-card {
+        background: var(--light-background-transparent);
+        border-radius: 16px;
+        padding: 2rem 2.5rem;
+        margin-bottom: 2.5rem;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 8px 32px 0 var(--shadow-color);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    /* --- Cabecera de la Página --- */
+    .page-header {
+        text-align: center;
+        padding: 2.5rem 2rem;
+    }
+    .page-header h1 {
+        font-size: 3em;
+        font-weight: 800;
+        color: var(--dark-text);
+        margin: 0 0 10px 0;
+    }
+    .page-header p {
+        font-size: 1.15em;
+        color: var(--light-dark-text);
+        max-width: 750px;
+        margin: 0 auto;
+    }
+    .page-header h1 i {
+        color: var(--accent-color);
+        margin-right: 10px;
+    }
+    
+    /* --- Sección del Mapa --- */
+    #map {
+        height: 500px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+    }
+    
+    /* --- Sección de Lista de Lugares --- */
+    #places-list h2 {
+        text-align: center;
+        font-size: 2em;
+        font-weight: 700;
+        color: var(--dark-text);
+        margin-bottom: 2rem;
+    }
+    .places-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    /* --- Estilo de Tarjeta de Lugar Individual --- */
+    .place-card {
+        background: var(--lighter-background-transparent);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    .place-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px var(--shadow-color);
+    }
+    .place-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    .place-card-body {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .place-card-title {
+        font-size: 1.4em;
+        font-weight: bold;
+        color: var(--dark-text);
+        margin-bottom: 0.5rem;
+    }
+    .place-card-text {
+        color: var(--light-dark-text);
+        flex-grow: 1;
+        margin-bottom: 1rem;
+    }
+    .place-card-button {
+        width: 100%;
+        padding: 10px 15px;
+        background-color: var(--dark-text);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        text-align: center;
+        margin-top: auto;
+    }
+    .place-card-button:hover {
+        background-color: var(--light-dark-text);
+        transform: translateY(-2px);
+    }
+    .not-available-text {
+        font-size: 0.9em;
+        color: var(--light-dark-text);
+        opacity: 0.8;
+        margin-top: auto;
+        text-align: center;
+        padding: 10px;
+    }
+
+    /* --- Estilo Popups del Mapa --- */
+    .leaflet-popup-content-wrapper {
+        background: var(--lighter-background-transparent) !important;
+        color: var(--dark-text) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+    .leaflet-popup-content {
+        text-align: center;
+    }
+    .leaflet-popup-content h5 {
+        font-weight: bold;
+        color: var(--dark-text);
+        margin-bottom: 10px;
+    }
+    .leaflet-popup-content img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+    .leaflet-popup-content p {
+        font-size: 0.9em;
+        color: var(--light-dark-text);
+    }
+    .leaflet-popup-tip {
+        background: var(--lighter-background-transparent) !important;
+    }
+
+    /* --- [MODIFICADO] Contenedor de Vista 360 (Iframe) con Transición --- */
+    .vr-immersive-container {
+        display: flex; /* Cambiado para permitir centrado con flex */
+        justify-content: center;
+        align-items: center; /* Se mantiene para el centrado inicial */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 20, 60, 0.8);
+        z-index: 1050;
+        padding: 20px;
+        box-sizing: border-box;
+
+        /* Propiedades para la animación de entrada/salida */
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.4s ease-in-out;
+    }
+
+    /* Clase para mostrar el contenedor */
+    .vr-immersive-container.is-visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* --- [MODIFICADO] Caja Blanca para el Contenido 360 con Transición --- */
+    .vr-content-box {
+        position: relative;
+        background-color: white;
+        padding: 15px;
+        border-radius: 16px;
+        box-shadow: 0 10px 50px rgba(0,0,0,0.4);
+        /* Reducción del tamaño */
+        width: 80vw; /* De 90vw a 80vw */
+        height: 75vh; /* De 85vh a 75vh */
+        max-width: 1200px; /* Se mantiene el máximo */
+
+        /* Propiedades para la animación y el ajuste de posición */
+        transform: scale(0.95) translateY(2%); /* Escala y mueve ligeramente hacia abajo */
+        transition: transform 0.4s ease-in-out;
+    }
+    
+    /* El contenido se escala a tamaño normal cuando el contenedor es visible */
+    .vr-immersive-container.is-visible .vr-content-box {
+        transform: scale(1) translateY(2%); /* Se escala a 1 y se mantiene la posición ligeramente baja */
+    }
+
+
+    #mapIframe {
+        width: 100%;
+        height: 100%;
+        border-radius: 8px; /* Bordes redondeados para el iframe mismo */
+        border: 1px solid var(--border-color);
+    }
+
+    #closeIframe {
+        position: absolute;
+        bottom: -20px; /* Posición inferior, fuera de la caja blanca */
+        left: -20px;  /* Posición izquierda, fuera de la caja blanca */
+        background-color: white;
+        color: var(--dark-text);
+        border: 2px solid var(--dark-text);
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        font-size: 1.5em;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 1052;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: transform 0.3s, background-color 0.3s, color 0.3s;
+        line-height: 1;
+    }
+    #closeIframe:hover {
+        transform: scale(1.1) rotate(90deg);
+        background-color: var(--dark-text);
+        color: white;
+    }
+
+</style>
+
+<div class="content-wrapper">
+    <header class="page-header content-card">
+        <h1><i class="fas fa-map-marked-alt"></i>{{ translate('Explora Huancayo y sus Encantos') }}</h1>
+        <p class="lead">{{ translate('Navega por los puntos de interés y sumérgete en la realidad virtual.') }}</p>
+    </header>
+
+    <section id="map-section" class="content-card">
+        <div id="map"></div>
+    </section>
+
+    <!-- Estructura del modal 360 actualizada -->
+    <div id="vr-section" class="vr-immersive-container">
+        <div class="vr-content-box">
+            <iframe id="mapIframe" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <button id="closeIframe" onclick="cerrarIframe()" aria-label="{{ translate('Cerrar vista 360°') }}">×</button>
+        </div>
+    </div>
+
+    <section id="places-list" class="content-card">
+        <h2>{{ translate('Lugares Destacados de Huancayo') }}</h2>
+        <div class="places-grid" id="lugares-grid">
+            <!-- Las tarjetas de los lugares se insertarán aquí con JS -->
+        </div>
+    </section>
+</div>
+
+<script>
+    const map = L.map('map').setView([-12.0655, -75.2048], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 18,
+        minZoom: 8
+    }).addTo(map);
+
+    const lugares = [
+        {
+            nombre: "{{ translate('Cerrito de la Libertad') }}",
+            coords: [-12.0572, -75.2063],
+            imagen: "https://consultasenlinea.mincetur.gob.pe/fichaInventario//foto.aspx?cod=569569",
+            vr: "https://www.google.com/maps/embed?pb=!4v1748999733433!6m8!1m7!1sCAoSFkNJSE0wb2dLRUlDQWdJRDRxTmlkV1E.!2m2!1d-12.06281212471614!2d-75.19648758382348!3f140.08297452240208!4f-7.013527779798721!5f0.7820865974627469",
+            descripcion: "{{ translate('Mirador con vistas panorámicas de Huancayo, áreas verdes y juegos. Ideal para la familia.') }}"
+        },
+        {
+            nombre: "{{ translate('Parque de la Identidad Wanka') }}",
+            coords: [-12.0612, -75.2069],
+            imagen: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0b/93/e6/0f/20160610-140918-largejpg.jpg?w=1200&h=-1&s=1",
+            vr: "https://www.google.com/maps/embed?pb=!4v1749002195911!6m8!1m7!1sCAoSFkNJSE0wb2dLRUlDQWdJQ3BwSUhWYWc.!2m2!1d-12.04938704303023!2d-75.19789992622297!3f3.417722179464814!4f-5.073788326880788!5f0.7820865974627469",
+            descripcion: "{{ translate('Parque escultórico que celebra la cultura Wanka con arte y arquitectura tradicional.') }}"
+        },
+        {
+            nombre: "{{ translate('Convento de Ocopa') }}",
+            coords: [-11.9222, -75.2700],
+            imagen: "https://portal.andina.pe/EDPfotografia3/Thumbnail/2025/04/11/001160517W.jpg",
+            vr: "https://www.google.com/maps/embed?pb=!4v1749002225854!6m8!1m7!1sCAoSFkNJSE0wb2dLRUlDQWdJQ2Zqb0tiV2c.!2m2!1d-11.87390689358575!2d-75.29431421041777!3f122.176674!4f0!5f0.7820865974627469",
+            descripcion: "{{ translate('Histórico convento franciscano con valiosa biblioteca misional y museo.') }}"
+        },
+        {
+            nombre: "{{ translate('Laguna de Paca') }}",
+            coords: [-11.7583, -75.4850],
+            imagen: "https://portal.andina.pe/EDPfotografia/Thumbnail/2015/08/08/000307867W.jpg",
+            vr: "https://www.google.com/maps/embed?pb=!4v1749002252414!6m8!1m7!1sCAoSF0NJSE0wb2dLRUlDQWdJQ0U1WWpHX2dF!2m2!1d-11.728055625446!2d-75.50805558716846!3f333.7227!4f0!5f0.7820865974627469",
+            descripcion: "{{ translate('Serena laguna andina ideal para paseos en bote y observación de aves, rodeada de mitos.') }}"
+        },
+        {
+            nombre: "{{ translate('Nevado Huaytapallana') }}",
+            coords: [-11.9200, -74.9600],
+            imagen: "https://portal.andina.pe/EDPfotografia2/Thumbnail/2011/01/20/000146347W.jpg",
+            vr: "https://www.google.com/maps/embed?pb=!4v1749002308486!6m8!1m7!1sCAoSFkNJSE0wb2dLRUlDQWdJRHB2TEN3QkE.!2m2!1d-11.95375130863512!2d-75.04226157870207!3f292.51062!4f0!5f0.7820865974627469",
+            descripcion: "{{ translate('Majestuoso nevado andino y fuente de ríos, ideal para andinismo y ecoturismo (requiere guía).') }}"
+        },
+        {
+            nombre: "{{ translate('Plaza Constitución') }}",
+            coords: [-12.0680, -75.2050],
+            imagen: "https://scontent-lim1-1.xx.fbcdn.net/v/t1.6435-9/158796412_2459978877482346_6650320610651766138_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFaRNxogFMW7jlDllTsNNjTV_pdaBmjseFX-l1oGaOx4cEdrG5JQvqB_j1Q1GRlCvf1sJ-NJv1C1TqLBHl47yTj&_nc_ohc=HktSqptoac4Q7kNvwE4zldj&_nc_oc=AdmMGbqvaQDR7yn_WJXTee3Mm1-YXt-MjhzvRaf1qYZl1r1D3-YUyBlwyKP44GV3dGXxThSPP9_3Vri1OFjbo6WS&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=E6ym5qF-NoF2lhUdcvTPhA&oh=00_AfPtJv7CkjnfyOD9twY2d7yZyDJ2RBiqm1vPpDEknzOCIg&oe=68685B78",
+            vr: "https://www.google.com/maps/embed?pb=!4v1749002402414!6m8!1m7!1sCAoSF0NJSE0wb2dLRUlDQWdJQ09fOHIydFFF!2m2!1d-12.06812116633849!2d-75.21008092726005!3f320.95912358936295!4f-2.6811214453861822!5f0.7820865974627469",
+            descripcion: "{{ translate('Corazón de Huancayo, rodeada por la Catedral. Punto de encuentro vibrante.') }}"
+        }
+    ];
+
+    // --- Funciones para mostrar y cerrar el Iframe ---
+
+    function mostrarIframe(url) {
+        const vrSection = document.getElementById('vr-section');
+        const iframe = document.getElementById('mapIframe');
+        
+        // Asigna la URL al iframe antes de mostrarlo
+        iframe.src = url;
+        
+        // Añade la clase 'is-visible' para activar la transición CSS
+        vrSection.classList.add('is-visible');
+        
+        // Bloquea el scroll del body para evitar que el fondo se mueva
+        document.body.style.overflow = 'hidden';
+
+        // [Mantenido] Forzar que la vista se centre en la pantalla.
+        // Aunque el elemento es 'fixed' y ya está centrado por CSS, 
+        // esta línea asegura que el viewport se enfoque en él,
+        // respondiendo directamente a la solicitud del usuario.
+        vrSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function cerrarIframe() {
+        const vrSection = document.getElementById('vr-section');
+        const iframe = document.getElementById('mapIframe');
+        
+        // Quita la clase para iniciar la animación de salida
+        vrSection.classList.remove('is-visible');
+        
+        // Restaura el scroll del body
+        document.body.style.overflow = '';
+
+        // Espera a que termine la animación de cierre (400ms) antes de limpiar la URL del iframe.
+        // Esto evita un "parpadeo" blanco del iframe mientras se desvanece.
+        setTimeout(() => {
+            // Comprueba si el modal no se volvió a abrir rápidamente
+            if (!vrSection.classList.contains('is-visible')) {
+                iframe.src = '';
+            }
+        }, 400); 
+    }
+
+    const lugaresGrid = document.getElementById('lugares-grid');
+
+    lugares.forEach(lugar => {
+        const isVrAvailable = lugar.vr && lugar.vr.startsWith('http');
+
+        const popupContent = `
+            <div class="popup-content">
+                <h5>${lugar.nombre}</h5>
+                <img src="${lugar.imagen}" alt="${lugar.nombre}" onerror="this.src='https://placehold.co/300x150/0F52BA/white?text=Imagen+no+disponible'; this.onerror=null;">
+                <p>${lugar.descripcion}</p>
+                ${isVrAvailable ? `<button class="place-card-button" onclick="mostrarIframe('${lugar.vr}')">{{ translate('Ver en 360°') }}</button>` : `<p class="not-available-text">{{ translate('Vista 360° no disponible.') }}</p>`}
+            </div>`;
+        L.marker(lugar.coords).addTo(map).bindPopup(popupContent, {
+            maxWidth: 250
+        });
+
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'place-card';
+        cardDiv.innerHTML = `
+            <img src="${lugar.imagen}" alt="${lugar.nombre}" onerror="this.src='https://placehold.co/400x200/0F52BA/white?text=Imagen+no+disponible'; this.onerror=null;">
+            <div class="place-card-body">
+                <h5 class="place-card-title">${lugar.nombre}</h5>
+                <p class="place-card-text">${lugar.descripcion}</p>
+                ${isVrAvailable ? `<button class="place-card-button" onclick="mostrarIframe('${lugar.vr}')">{{ translate('Ver en 360°') }}</button>` : `<p class="not-available-text">{{ translate('Vista 360° no disponible.') }}</p>`}
+            </div>`;
+        lugaresGrid.appendChild(cardDiv);
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,504 @@
+{% extends "base.html" %}
+
+{% block title %}Huancayo: Aventura Accesible{% endblock %}
+
+{% block content %}
+
+<!-- Enlace al archivo de estilos principal (si existe) -->
+
+<!-- Enlace a Font Awesome para los iconos -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<style>
+    /* --- Paleta de Colores Invertida con MÁS Transparencia --- */
+    :root {
+        /* Ahora los fondos claros son los transparentes */
+        --light-background-transparent: rgba(255, 255, 255, 0.8); /* Blanco con 80% de opacidad */
+        --lighter-background-transparent: rgba(255, 255, 255, 0.85); /* Blanco con 85% de opacidad */
+
+        /* Los textos son ahora los colores oscuros */
+        --dark-text: #0F52BA; /* Azul Zafiro */
+        --light-dark-text: #173F7A; /* Tono más oscuro de Azul Zafiro */
+        --accent-color: #FFD700; /* Color de acento para íconos al hover (Dorado) */
+
+        --hover-background: rgba(0, 0, 0, 0.12); /* Transparencia para hover oscuro */
+        --border-color: rgba(0, 0, 0, 0.3); /* Borde oscuro y transparente */
+        --main-bg-color: #f4f6f9; /* Fondo claro para el body detrás del blur */
+    }
+
+    /* Animación global de entrada para el contenido principal */
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Animación para el texto del párrafo al aparecer */
+    @keyframes textFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Estilos Generales y Reseteo Básico */
+    body {
+        font-family: 'Segoe UI', 'Roboto', sans-serif; /* Nueva fuente más moderna */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        color: var(--dark-text); /* Color de texto predeterminado para el body */
+        overflow-x: hidden; /* Evita el scroll horizontal */
+
+        /* Fondo de imagen directamente en el body */
+        background-image: url('https://amytours.com/wp-content/uploads/2017/03/huancayo-paquete.jpg'); /* URL de ejemplo */
+        background-size: cover; /* Ajusta la imagen para cubrir todo el contenedor */
+        background-position: center; /* Centra la imagen de fondo */
+        background-attachment: fixed; /* Para que el fondo no se desplace con el scroll */
+        min-height: 100vh; /* Asegura que el body ocupe al menos todo el alto del viewport */
+        position: relative; /* Necesario para que body::before se posicione correctamente */
+        z-index: 1; /* Asegura que el contenido del body esté sobre el pseudo-elemento del fondo */
+
+        /* Estilos para la barra de desplazamiento (Scrollbar) - Firefox */
+        scrollbar-width: thin;
+        scrollbar-color: var(--dark-text) var(--light-background-transparent);
+    }
+
+    /* Pseudo-elemento para el desenfoque y velo oscuro sobre la imagen de fondo */
+    body::before {
+        content: '';
+        position: fixed; /* Usar fixed para que cubra todo el viewport */
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        backdrop-filter: blur(5px); /* Desenfoque delicado (5px) */
+        -webkit-backdrop-filter: blur(5px); /* Para compatibilidad con navegadores WebKit */
+        background-color: rgba(0, 0, 0, 0.35); /* Capa oscura semi-transparente */
+        z-index: -1; /* Asegura que esté detrás del contenido principal del body */
+    }
+
+    /* Estilos para la barra de desplazamiento (WebKit - Chrome, Safari, Edge) */
+    body::-webkit-scrollbar {
+        width: 12px; /* Ancho de la barra de desplazamiento */
+    }
+
+    body::-webkit-scrollbar-track {
+        background: var(--light-background-transparent); /* Fondo transparente claro para la pista */
+        border-radius: 10px;
+    }
+
+    body::-webkit-scrollbar-thumb {
+        background-color: var(--dark-text); /* Color azul zafiro para el "pulgar" */
+        border-radius: 10px;
+        border: 3px solid var(--light-background-transparent); /* Borde para el efecto visual */
+    }
+
+    /* Se eliminan los estilos de la barra de navegación ya que se removió el elemento */
+    /* .navbar { ... } */
+    /* .navbar .logo { ... } */
+    /* .navbar .nav-links { ... } */
+    /* .navbar .nav-links a { ... } */
+
+    main {
+        max-width: 1200px;
+        margin: 80px auto 20px auto; /* Ajustado el margin-top a 80px, sin navbar */
+        padding: 0 20px;
+        position: relative; /* Asegura que el contenido esté por encima del fondo desenfocado */
+        z-index: 1; /* Elevado para estar sobre el fondo */
+        animation: fadeInScale 1s ease-out forwards; /* Aplicar animación de entrada */
+        opacity: 0; /* Iniciar con opacidad 0 */
+        transform: translateY(20px); /* Iniciar un poco más abajo */
+    }
+
+    /* Sección de Introducción */
+    .intro-section {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background-color: var(--light-background-transparent); /* Aplica el blanco transparente */
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Sombra pronunciada para contraste */
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px); /* Desenfoque adicional para el efecto "glass" */
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    /* Estilos del título principal - SIMPLE y SIN ANIMACIÓN */
+    .intro-section .title {
+        color: var(--dark-text); /* Color azul zafiro sólido */
+        font-size: 3em;
+        margin-bottom: 15px;
+        position: relative;
+        display: inline-block;
+        font-weight: 800; /* Más negrita */
+        /* Estilos para asegurar que no haya ninguna animación o efecto de texto */
+        text-shadow: none !important;
+        background: none !important;
+        -webkit-background-clip: unset !important;
+        -webkit-text-fill-color: unset !important;
+        animation: none !important;
+    }
+
+    .intro-section .title::after {
+        content: '';
+        position: absolute;
+        width: 70px;
+        height: 4px;
+        background-color: var(--dark-text); /* Color azul zafiro sólido para la línea */
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: -10px;
+        border-radius: 2px;
+    }
+
+    .intro-section .intro-text {
+        font-size: 1.1em;
+        color: var(--dark-text);
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 10px;
+    }
+
+    /* Sección de Destinos */
+    .destinos-section {
+        display: grid;
+        /* Cambiado para mostrar siempre 2 columnas en pantallas grandes */
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+
+    .destino-card {
+        background-color: var(--lighter-background-transparent);
+        border-radius: 12px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        animation: fadeInScale 0.8s ease-out forwards;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    /* Retraso en la animación de las tarjetas para un efecto escalonado */
+    .destino-card:nth-child(1) { animation-delay: 0.1s; }
+    .destino-card:nth-child(2) { animation-delay: 0.2s; }
+    .destino-card:nth-child(3) { animation-delay: 0.3s; }
+    .destino-card:nth-child(4) { animation-delay: 0.4s; }
+    .destino-card:nth-child(5) { animation-delay: 0.5s; }
+    .destino-card:nth-child(6) { animation-delay: 0.6s; }
+    .destino-card:nth-child(7) { animation-delay: 0.7s; }
+    .destino-card:nth-child(8) { animation-delay: 0.8s; }
+
+    .destino-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .destino-card .image-container {
+        flex: 0 0 220px;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .destino-card .image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.4s ease;
+    }
+
+    .destino-card:hover .image-container img {
+        transform: scale(1.08);
+    }
+
+    .destino-card .card-content {
+        flex: 1;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .destino-card .card-content h3 {
+        color: var(--dark-text);
+        font-size: 1.8em;
+        margin-top: 0;
+        margin-bottom: 15px;
+        border-bottom: 2px solid var(--border-color);
+        padding-bottom: 10px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .destino-card .card-content h3 i {
+        color: var(--light-dark-text);
+        font-size: 0.7em;
+        transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .destino-card:hover .card-content h3 i {
+        transform: scale(1.2) rotate(10deg);
+        color: var(--accent-color);
+    }
+
+    .destino-card .card-content p {
+        font-size: 1em;
+        margin-bottom: 10px;
+        color: var(--light-dark-text);
+        animation: textFadeIn 0.6s ease-out forwards;
+        opacity: 0;
+    }
+
+    /* Retraso en la animación del texto */
+    .destino-card .card-content p:nth-of-type(1) { animation-delay: 0.9s; }
+    .destino-card .card-content p:nth-of-type(2) { animation-delay: 1.0s; }
+
+    .destino-card .card-content p strong {
+        color: var(--dark-text);
+        font-weight: 700;
+    }
+
+    /* Nuevos estilos para iconos dentro del texto */
+    .card-content p .icon-inline {
+        margin-right: 8px;
+        color: var(--light-dark-text);
+        font-size: 0.9em;
+        transition: transform 0.2s ease, color 0.2s ease;
+        width: 20px; /* Ancho fijo para alineación */
+        text-align: center;
+    }
+
+    .card-content p:hover .icon-inline {
+        transform: scale(1.1);
+        color: var(--accent-color);
+    }
+
+    /* Ajustes Responsivos */
+    @media (max-width: 1024px) {
+        .intro-section .title {
+            font-size: 2.5em;
+        }
+        .destino-card .image-container {
+            flex: 0 0 200px;
+        }
+        .destino-card .card-content {
+            padding: 20px;
+        }
+        .destino-card .card-content h3 {
+            font-size: 1.6em;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .intro-section {
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .intro-section .title {
+            font-size: 2em;
+        }
+        .intro-section .intro-text {
+            font-size: 0.95em;
+        }
+        .destinos-section {
+            /* Una columna en pantallas más pequeñas para mejor legibilidad */
+            grid-template-columns: 1fr;
+        }
+        .destino-card .image-container {
+            flex: 0 0 180px;
+        }
+        .destino-card .card-content h3 {
+            font-size: 1.5em;
+        }
+        .destino-card .card-content p {
+            font-size: 0.9em;
+        }
+    }
+
+    @media (max-width: 480px) {
+        main {
+            padding: 0 10px;
+            margin-top: 60px;
+        }
+        .intro-section {
+            padding: 20px 15px;
+        }
+        .intro-section .title {
+            font-size: 1.8em;
+            word-break: break-word;
+        }
+        .intro-section .title::after {
+            width: 50px;
+        }
+        .intro-section .intro-text {
+            font-size: 0.85em;
+        }
+        .destino-card .image-container {
+            flex: 0 0 160px;
+        }
+        .destino-card .card-content {
+            padding: 15px;
+        }
+        .destino-card .card-content h3 {
+            font-size: 1.3em;
+        }
+        .destino-card .card-content p {
+            font-size: 0.8em;
+        }
+    }
+</style>
+
+<main>
+    <section class="intro-section">
+        <h2 class="title">{{ translate('Huancayo: Aventura Accesible') }}</h2>
+        <p class="intro-text">
+            {{ translate('Embárcate en un viaje inolvidable por Huancayo y descubre sus joyas turísticas, diseñadas para ofrecer una experiencia inclusiva y plena para todos. Aquí, cada rincón te invita a vivir la cultura, la naturaleza y la historia andina con total comodidad y seguridad.') }}
+        </p>
+    </section>
+
+    <section class="destinos-section">
+        <div class="destino-card">
+            <div class="image-container">
+                <img src="{{ url_for('static', filename='imagenes/cerrito.jpg') }}" alt="{{ translate('Cerrito de la Libertad') }}">
+            </div>
+            <div class="card-content">
+                <h3><i class="fas fa-mountain"></i> {{ translate('Cerrito de la Libertad') }}</h3>
+                <p><strong><i class="fas fa-binoculars icon-inline"></i> {{ translate('Vistas Panorámicas:') }}</strong>
+                    {{ translate('Disfruta de impresionantes vistas 360° de Huancayo y el Valle del Mantaro. Ideal para fotografía y relajantes paseos familiares con zoológico incluido.') }}
+                </p>
+                <p><strong><i class="fas fa-wheelchair icon-inline"></i> {{ translate('Accesibilidad Total:') }}</strong>
+                    {{ translate('Senderos pavimentados y rampas garantizan un fácil acceso para todos, incluyendo sillas de ruedas, permitiendo disfrutar plenamente la belleza del lugar.') }}
+                </p>
+            </div>
+        </div>
+
+        <div class="destino-card">
+            <div class="image-container">
+                <img src="{{ url_for('static', filename='imagenes/parque.avif') }}" alt="{{ translate('Parque de la Identidad Wanka') }}">
+            </div>
+            <div class="card-content">
+                <h3><i class="fas fa-hand-holding-heart"></i> {{ translate('Parque de la Identidad Wanka') }}</h3>
+                <p><strong><i class="fas fa-theater-masks icon-inline"></i> {{ translate('Arte y Cultura Wanka:') }}</strong>
+                    {{ translate('Sumérgete en la esencia de la cultura Wanka a través de sus majestuosas esculturas y jardines temáticos. Un homenaje vibrante a la identidad regional.') }}
+                </p>
+                <p><strong><i class="fas fa-route icon-inline"></i> {{ translate('Paseo Inclusivo:') }}</strong>
+                    {{ translate('Caminos amplios y rampas cuidadosamente adaptadas facilitan un recorrido sin obstáculos, permitiendo una inmersión completa en el arte y la historia local.') }}
+                </p>
+            </div>
+        </div>
+
+        <div class="destino-card">
+            <div class="image-container">
+                <img src="{{ url_for('static', filename='imagenes/ocopa.jpg') }}" alt="{{ translate('Convento de Ocopa') }}">
+            </div>
+            <div class="card-content">
+                <h3><i class="fas fa-church"></i> {{ translate('Convento de Ocopa') }}</h3>
+                <p><strong><i class="fas fa-scroll icon-inline"></i> {{ translate('Legado Colonial:') }}</strong>
+                    {{ translate('Explora este convento franciscano del s. XVIII. Admira su impresionante arquitectura, un rico museo de arte religioso y una biblioteca con tomos ancestrales.') }}
+                </p>
+                <p><strong><i class="fas fa-door-open icon-inline"></i> {{ translate('Acceso Histórico:') }}</strong>
+                    {{ translate('Adaptado para visitantes con movilidad reducida, ofrece rampas y pasillos amplios que permiten un acceso fluido a su invaluable patrimonio histórico y cultural.') }}
+                </p>
+            </div>
+        </div>
+
+        <div class="destino-card">
+            <div class="image-container">
+                <img src="{{ url_for('static', filename='imagenes/ingenio.jpg') }}" alt="{{ translate('Ingenio - Criadero de Truchas') }}">
+            </div>
+            <div class="card-content">
+                <h3><i class="fas fa-fish"></i> {{ translate('Ingenio - Criadero de Truchas') }}</h3>
+                <p><strong><i class="fas fa-utensils icon-inline"></i> {{ translate('Sabor y Acuicultura:') }}</strong>
+                    {{ translate('Descubre el ciclo de vida de la trucha y deleita tu paladar con platos frescos en los restaurantes locales. Una experiencia gastronómica y educativa única.') }}
+                </p>
+                <p><strong><i class="fas fa-walking icon-inline"></i> {{ translate('Recorrido Cómodo:') }}</strong>
+                    {{ translate('Áreas de visita y restaurantes con accesos mejorados. Conecta con la naturaleza y disfruta de la gastronomía sin preocupaciones ni barreras.') }}
+                </p>
+            </div>
+        </div>
+
+        <div class="destino-card">
+            <div class="image-container">
+                <img src="{{ url_for('static', filename='imagenes/torre.jpeg') }}" alt="{{ translate('Torre Torre') }}">
+            </div>
+            <div class="card-content">
+                <h3><i class="fas fa-layer-group"></i> {{ translate('Torre Torre') }}</h3>
+                <p><strong><i class="fas fa-images icon-inline"></i> {{ translate('Caprichos de la Naturaleza:') }}</strong>
+                    {{ translate('Asombrosas formaciones de arcilla esculpidas por el viento, creando un paisaje surrealista perfecto para la fotografía y caminatas cortas. ¡Una joya geológica!') }}
+                </p>
+                <p><strong><i class="fas fa-hiking icon-inline"></i> {{ translate('Senderos Adaptados:') }}</strong>
+                    {{ translate('Aunque el terreno es natural, se están implementando mejoras en los senderos para una visita cómoda, permitiendo admirar estas maravillas con mayor facilidad.') }}
+                </p>
+            </div>
+        </div>
+
+        <div class="destino-card">
+            <div class="image-container">
+                <img src="https://consultasenlinea.mincetur.gob.pe/fichaInventario/foto.aspx?cod=530976" alt="{{ translate('Laguna de Paca') }}">
+            </div>
+            <div class="card-content">
+                <h3><i class="fas fa-water"></i> {{ translate('Laguna de Paca') }}</h3>
+                <p><strong><i class="fas fa-cloud-sun icon-inline"></i> {{ translate('Serenidad Mística:') }}</strong>
+                    {{ translate('Una laguna tranquila rodeada de mitos andinos. Pasea en bote, observa la fauna local y sumérgete en un paisaje de postal con islas flotantes. ¡Pura paz!') }}
+                </p>
+                <p><strong><i class="fas fa-ship icon-inline"></i> {{ translate('Navegación Accesible:') }}</strong>
+                    {{ translate('Orillas y zonas de embarque adaptadas permiten que todos disfruten de un relajante paseo en bote y contemplen la belleza lacustre sin impedimentos.') }}
+                </p>
+            </div>
+        </div>
+
+        <div class="destino-card">
+            <div class="image-container">
+                <img src="https://comercial.cronosmedia.glr.pe/original/2024/04/17/66206c5b668554375811f2df.jpg" alt="{{ translate('Nevado de Huaytapallana') }}">
+            </div>
+            <div class="card-content">
+                <h3><i class="fas fa-snowflake"></i> {{ translate('Nevado de Huaytapallana') }}</h3>
+                <p><strong><i class="fas fa-mountain-city icon-inline"></i> {{ translate('Majestuosidad Glaciar:') }}</strong>
+                    {{ translate('Contempla la imponente belleza de este nevado, un coloso sagrado de hielo y roca. Siente la energía andina y la pureza de sus glaciares. ¡Vistas sobrecogedoras!') }}
+                </p>
+                <p><strong><i class="fas fa-binoculars icon-inline"></i> {{ translate('Miradores Panorámicos:') }}</strong>
+                    {{ translate('Existen miradores cercanos con accesos mejorados para disfrutar de la vista majestuosa a distancia, con total seguridad. Se recomienda compañía de guías especializados.') }}
+                </p>
+            </div>
+        </div>
+
+        <div class="destino-card">
+            <div class="image-container">
+                <img src="https://usercontent.one/wp/www.explorandoperu.com/wp-content/uploads/2021/11/Orcotuna.jpg?media=1731642292" alt="{{ translate('Valle del Mantaro') }}">
+            </div>
+            <div class="card-content">
+                <h3><i class="fas fa-seedling"></i> {{ translate('Valle del Mantaro') }}</h3>
+                <p><strong><i class="fas fa-tractor icon-inline"></i> {{ translate('Corazón Agrícola y Cultural:') }}</strong>
+                    {{ translate('Explora el fértil valle, cuna de vibrantes tradiciones. Admira campos de cultivo, pueblos pintorescos y el río. ¡Sumérgete en la auténtica vida andina!') }}
+                </p>
+                <p><strong><i class="fas fa-road icon-inline"></i> {{ translate('Rutas Escénicas Accesibles:') }}</strong>
+                    {{ translate('Las principales vías y miradores ofrecen accesos sencillos, permitiendo disfrutar de la vasta belleza del paisaje y la cultura local sin limitaciones.') }}
+                </p>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% endblock %}

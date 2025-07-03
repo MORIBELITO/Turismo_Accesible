@@ -1,0 +1,740 @@
+/* 🎨 Variables CSS para colores y estilos base (Ajustes de saturación/brillo) */
+:root {
+    --color-primary: #4a90e2; /* Azul más vibrante */
+    --color-secondary: #0bbcdb; /* Cian más brillante */
+    --color-accent: #ffdb58; /* Amarillo dorado más rico */
+    --color-dark-bg: #1c1c1c; /* Fondo más oscuro */
+    --color-medium-bg: #282828; /* Fondo intermedio un poco más claro */
+    --color-light-text: #e0e0e0;
+    --color-lighter-text: #f0f0f0;
+    --color-border: rgba(255, 255, 255, 0.15); /* Bordes más visibles pero sutiles */
+    --color-shadow-dark: rgba(0, 0, 0, 0.5); /* Sombra más pronunciada */
+    --color-shadow-light: rgba(0, 0, 0, 0.25); /* Sombra suave */
+    --border-radius-lg: 18px; /* Ligeramente más redondeado */
+    --border-radius-md: 12px; /* Ligeramente más redondeado */
+
+    /* Variables para las estrellas (Ajustes para un brillo más dramático) */
+    --star-color: #ffd700;
+    --star-glow-color: #ffed8d; /* Brillo más suave y amplio */
+    --star-hover-glow-color: #fffac8; /* Brillo al pasar el mouse aún más claro */
+
+    /* Nuevas variables de espaciado y tipografía para consistencia */
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 20px;
+    --spacing-lg: 30px;
+    --font-size-sm: 14px;
+    --font-size-md: 16px;
+    --font-size-lg: 20px;
+
+    /* Aumentamos el tamaño de fuente para los títulos h3 específicos */
+    --font-size-h3-reviews: 18px; /* Nuevo tamaño para títulos de reseñas y ranking */
+    --font-size-h3-ranking: 18px; /* Nuevo tamaño para títulos de reseñas y ranking */
+}
+
+/* 🖋️ Fuente general y fondo visual */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', 'Roboto', sans-serif; /* Fuentes más modernas y legibles */
+    background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqtLc8o4AQpYlwR7zO0SIi9KDhRgVKTnRQIg&s') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+    overflow: hidden; /* Mantiene el cuerpo sin scroll */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Alinea el contenido desde arriba, como lo tenías */
+    padding: var(--spacing-lg); /* Usa variable de espaciado */
+    box-sizing: border-box;
+    color: var(--color-light-text);
+    position: relative;
+}
+
+/* 🌫️ Capa de desenfoque y opacidad para el fondo */
+body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(12px); /* Un poco más de desenfoque */
+    -webkit-backdrop-filter: blur(12px);
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo más oscuro para contraste */
+    z-index: 0;
+}
+
+/* 📦 Contenedor principal del layout */
+.contenedor {
+    display: flex;
+    gap: var(--spacing-lg); /* Espacio consistente entre mapa y formulario */
+    background: rgba(26, 26, 26, 0.9); /* Ligeramente más opaco para mayor solidez */
+    backdrop-filter: blur(15px); /* Más desenfoque para efecto "glassmorphism" */
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg); /* Usa variable de espaciado */
+    box-shadow: 0 30px 60px var(--color-shadow-dark); /* Sombra más grande y profunda */
+    height: 85vh; /* Ligeramente más alto */
+    margin-top: 0px;
+    max-width: 1280px; /* Un poco más ancho */
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 1;
+    animation: fadeIn 1s ease-in-out forwards; /* 'forwards' para mantener el estado final */
+    border: 1px solid var(--color-border);
+}
+
+/* ✨ Animaciones de entrada (mantengo las que ya tienes) */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 🗺️ Mapa visual */
+#mapa {
+    flex: 1.5; /* Mantiene proporción */
+    border-radius: var(--border-radius-md);
+    height: 100%;
+    min-width: 380px; /* Un poco más ancho para pantallas grandes */
+    box-shadow: 0 15px 30px var(--color-shadow-dark); /* Sombra más pronunciada */
+    animation: slideInLeft 1s ease-in-out forwards;
+    border: 1px solid var(--color-border);
+}
+
+/* 🧾 Contenedor del formulario y contenido adicional */
+.formulario {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-medium-bg);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-md);
+    box-shadow: 0 15px 30px var(--color-shadow-dark); /* Sombra más pronunciada */
+    animation: slideInRight 1s ease-in-out forwards;
+    border: 1px solid var(--color-border);
+    overflow: auto; /* Permite scroll solo si el contenido excede el tamaño */
+    position: relative; /* Para el posicionamiento del scrollbar personalizado */
+}
+
+/* Títulos y subtítulos (H2 y H3) */
+.formulario h2,
+.formulario h3 {
+    text-align: center;
+    color: var(--color-lighter-text);
+    background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    margin-bottom: var(--spacing-md); /* Espaciado uniforme */
+    animation: fadeIn 2s ease-in-out forwards;
+    letter-spacing: 0.5px;
+}
+
+.formulario h2 {
+    font-size: var(--font-size-lg); /* Usa variable */
+    padding-bottom: var(--spacing-sm); /* Un poco de padding abajo para el efecto */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* Línea sutil debajo del título principal */
+}
+
+.formulario h3 {
+    font-size: var(--font-size-h3-reviews); /* AHORA USA LA NUEVA VARIABLE PARA H3 */
+    margin-top: var(--spacing-lg); /* Más margen superior para secciones */
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-border); /* Mantiene tu borde, pero con la variable */
+    text-transform: uppercase; /* Darle un toque más distintivo */
+}
+
+/* 🧩 Inputs y Controles de Formulario */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm); /* Espacio uniforme entre campos */
+    flex-grow: 1;
+    padding: var(--spacing-sm) 0; /* Padding sutil para el formulario */
+}
+
+label {
+    font-weight: 600;
+    font-size: var(--font-size-sm); /* Usa variable */
+    color: var(--color-lighter-text);
+    margin-bottom: 2px; /* Menos margen inferior para acercarlo al input */
+    text-transform: uppercase; /* Hace las etiquetas más nítidas */
+    letter-spacing: 0.5px;
+}
+
+input,
+select,
+textarea {
+    padding: var(--spacing-sm) var(--spacing-md); /* Padding consistente */
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    background: var(--color-dark-bg);
+    color: var(--color-lighter-text);
+    font-size: var(--font-size-md); /* Usa variable */
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    background: var(--color-medium-bg);
+    border-color: var(--color-primary);
+    transform: translateY(-2px) scale(1.005); /* Pequeño levantamiento y escala */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5), 0 5px 15px rgba(0, 0, 0, 0.3); /* Sombra más compleja al focus */
+}
+
+textarea {
+    min-height: 120px; /* Un poco más alto por defecto */
+    resize: vertical;
+}
+
+/* 🔘 Botones */
+button {
+    padding: var(--spacing-sm) var(--spacing-md); /* Padding consistente */
+    background: linear-gradient(to right, var(--color-secondary), var(--color-primary));
+    border: none;
+    border-radius: var(--border-radius-md);
+    color: white;
+    font-size: var(--font-size-md); /* Usa variable */
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: var(--spacing-md); /* Más margen superior */
+    letter-spacing: 1px; /* Letras más separadas */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Curva de transición más suave */
+    position: relative;
+    overflow: hidden; /* Para efectos de brillo */
+    text-transform: uppercase; /* Mayúsculas para los botones */
+}
+
+button:hover {
+    transform: translateY(-5px); /* Levantamiento más pronunciado */
+    box-shadow: 0 15px 35px var(--color-shadow-dark); /* Sombra más grande y oscura */
+    background: linear-gradient(to right, #05a7c2, #307de9); /* Ligeramente más oscuro en hover */
+}
+
+button:active {
+    transform: scale(0.96); /* Escala más pequeña al hacer click */
+    box-shadow: 0 5px 12px var(--color-shadow-light);
+}
+
+/* Efecto de brillo en el botón al pasar el mouse */
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.15); /* Efecto de brillo */
+    transform: skewX(-20deg);
+    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+button:hover::before {
+    left: 100%;
+}
+
+/* 💬 Mensajes de estado (Éxito/Error) */
+.mensaje {
+    padding: var(--spacing-sm); /* Usa variable */
+    border-radius: var(--border-radius-md);
+    text-align: center;
+    font-size: var(--font-size-sm); /* Usa variable */
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(10px); /* Animación de entrada sutil */
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    margin-top: var(--spacing-sm); /* Espacio consistente */
+}
+
+.mensaje.exito {
+    background-color: rgba(34, 197, 94, 0.2); /* Fondo más suave */
+    color: #22c55e;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mensaje.error {
+    background-color: rgba(239, 68, 68, 0.2); /* Fondo más suave */
+    color: #ef4444;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 🌐 Leaflet Popups Estilizados (PEQUEÑO, CENTRADO Y CON ANIMACIÓN EN LA X) */
+.leaflet-popup-content-wrapper {
+    background: var(--color-dark-bg) !important; /* Fondo oscuro y opaco para contraste */
+    color: var(--color-lighter-text); /* Color de texto claro */
+    font-family: 'Segoe UI', sans-serif;
+    border-radius: var(--border-radius-md); /* Bordes redondeados */
+    box-shadow: 0 15px 40px var(--color-shadow-dark); /* Sombra más definida */
+    backdrop-filter: blur(20px); /* Efecto glassmorphism */
+    -webkit-backdrop-filter: blur(20px); /* Soporte para WebKit */
+    padding: var(--spacing-sm); /* Espaciado interno más pequeño */
+    width: 250px !important; /* ANCHO MÁS PEQUEÑO: Ajusta si es necesario */
+    max-width: unset !important; /* Ignora otros max-width */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transición suave al interactuar */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Borde sutil */
+    overflow: hidden; /* Asegura que el contenido no se salga */
+}
+
+.leaflet-popup-content-wrapper:hover {
+    transform: translateY(-3px) scale(1.01); /* Se levanta y agranda ligeramente al pasar el mouse */
+    box-shadow: 0 20px 50px var(--color-shadow-dark); /* Sombra un poco más grande en hover */
+    border-color: var(--color-primary); /* Borde que se ilumina con el color primario */
+}
+
+.leaflet-popup-tip {
+    background: var(--color-dark-bg); /* Color de la "cola" del pop-up */
+    border: none;
+}
+
+.leaflet-popup-content {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column; /* Organiza los elementos en columna */
+    align-items: center; /* CENTRA HORIZONTALMENTE TODOS LOS ELEMENTOS */
+    gap: var(--spacing-xs); /* Espacio consistente y más pequeño entre los bloques principales de contenido */
+}
+
+/* Estilo para imágenes dentro del popup */
+.popup-contenido img {
+    border-radius: var(--border-radius-md);
+    margin-bottom: 0; /* Espaciado controlado por el 'gap' del padre */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Sombra para la imagen */
+    width: 100%; /* La imagen ocupa el ancho completo del pop-up */
+    height: 150px; /* ALTURA FIJA MÁS PEQUEÑA para todas las imágenes */
+    object-fit: cover; /* Recorta la imagen para cubrir el área sin deformarse */
+    object-position: center; /* Centra la imagen dentro de su contenedor */
+    display: block; /* Elimina espacio extra debajo de la imagen */
+}
+
+/* Contenedor para el título y la descripción */
+.popup-contenido .text-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* CENTRA TEXTOS HORIZONTALMENTE */
+    text-align: center; /* Asegura que el texto mismo se centre */
+    gap: 4px; /* Espacio ajustado entre título y descripción */
+}
+
+.popup-contenido h3 {
+    font-size: var(--font-size-md); /* Tamaño de fuente más pequeño para el título */
+    /* Aplicar el degradado de texto para consistencia y estética */
+    background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-weight: 700; /* Negrita */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.popup-contenido p {
+    font-size: var(--font-size-sm); /* Tamaño de fuente más pequeño para la descripción */
+    color: var(--color-light-text);
+    margin-bottom: 0;
+    line-height: 1.5; /* Interlineado */
+    opacity: 0.9;
+}
+
+/* Contenedor para los datos adicionales (Año, Lugares accesibles) */
+.popup-contenido .data-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* CENTRA LOS DATOS HORIZONTALMENTE */
+    gap: 4px; /* Espacio entre los ítems de datos */
+    margin-top: var(--spacing-xs); /* Margen superior para separar de la descripción */
+    padding-top: var(--spacing-xs);
+    border-top: 1px dashed rgba(255, 255, 255, 0.15); /* Línea divisoria */
+    width: 100%; /* Asegura que la línea se extienda por el ancho del pop-up */
+}
+
+.popup-contenido .data-item {
+    font-size: var(--font-size-sm); /* Tamaño de fuente consistente para los datos */
+    color: var(--color-lighter-text);
+    font-weight: 500;
+    display: flex; /* Para alinear el texto y el valor */
+    justify-content: center; /* CENTRA AMBOS ELEMENTOS del data-item */
+    gap: 5px; /* Espacio entre la etiqueta y el valor */
+}
+
+.popup-contenido strong {
+    color: var(--color-accent); /* Color de acento vibrante para los valores */
+    font-weight: bold;
+}
+
+/* ESTILOS Y ANIMACIONES PARA EL BOTÓN DE CERRAR (LA 'X') */
+.leaflet-popup-close-button {
+    font-size: var(--font-size-lg) !important; /* Tamaño más grande para la 'X' */
+    color: var(--color-light-text) !important; /* Color de la 'X' */
+    font-weight: bold !important;
+    text-shadow: none !important; /* Elimina cualquier sombra de texto predeterminada */
+    top: 5px !important; /* Posición más cerca de la esquina superior */
+    right: 8px !important; /* Posición más cerca de la esquina derecha */
+    padding: 5px !important; /* Padding para que sea más fácil hacer click */
+    background: transparent !important; /* Fondo transparente */
+    border: none !important; /* Sin borde */
+    border-radius: 50%; /* Circular para la 'X' */
+    width: 30px; /* Ancho del botón */
+    height: 30px; /* Alto del botón */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease-in-out; /* Transición suave para hover y active */
+    opacity: 0.7; /* Ligeramente transparente por defecto */
+}
+
+.leaflet-popup-close-button:hover {
+    color: var(--color-primary) !important; /* Color primario en hover */
+    background: rgba(255, 255, 255, 0.1) !important; /* Fondo sutilmente visible en hover */
+    transform: rotate(90deg) scale(1.1); /* Rota y agranda en hover */
+    opacity: 1; /* Opacidad completa */
+}
+
+.leaflet-popup-close-button:active {
+    transform: rotate(180deg) scale(0.9); /* Rota más y se encoge al hacer click */
+    background: rgba(255, 255, 255, 0.2) !important; /* Fondo más oscuro al click */
+    box-shadow: 0 0 5px var(--color-primary); /* Pequeña sombra de color primario */
+}
+
+/* 📝 Sección de Reseñas Anteriores */
+.reseñas-anteriores {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs); /* REDUCIDO: Espacio más pequeño entre reseñas para mayor compacidad */
+    padding: var(--spacing-sm) 0;
+    margin-bottom: var(--spacing-sm);
+}
+
+.reseña-item {
+    background-color: var(--color-dark-bg);
+    padding: var(--spacing-sm) var(--spacing-md); /* REDUCIDO: Padding vertical para hacerlo más pequeño */
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 5px 10px var(--color-shadow-light); /* Sombra más sutil */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    font-size: var(--font-size-sm);
+    line-height: 1.5; /* AJUSTADO: Menor interlineado para compacidad */
+}
+
+.reseña-item:hover {
+    transform: translateY(-2px); /* Pequeño levantamiento al pasar el mouse */
+    box-shadow: 0 8px 15px var(--color-shadow-dark); /* Sombra más pronunciada */
+}
+
+.reseña-item strong {
+    color: var(--color-lighter-text);
+}
+
+.reseña-item small {
+    display: block; /* La fecha en su propia línea */
+    margin-top: var(--spacing-xs);
+    color: var(--color-light-text);
+    font-size: calc(var(--font-size-sm) * 0.9);
+    opacity: 0.8;
+}
+
+/* Botón de alternar reseñas - NUEVO ENFOQUE */
+.formulario .btn-toggle-reseñas {
+    background: var(--color-medium-bg);
+    color: var(--color-light-text);
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+
+    /* SOLUCIÓN ROBUSTA PARA EL CENTRADO Y DISPLAY */
+    display: flex !important; /* Forzar display flex */
+    justify-content: center !important; /* Forzar centrado horizontal */
+    align-items: center !important; /* Forzar centrado vertical (por si hay íconos, etc.) */
+    align-self: center !important; /* Forzar centrado del botón dentro de su padre flex-column */
+
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    font-size: var(--font-size-md);
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    min-width: 180px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    position: relative; /* Para el efecto de "glow" */
+    overflow: hidden; /* Para que el glow no se desborde */
+}
+
+/* Efecto de "glow" en el botón */
+.formulario .btn-toggle-reseñas::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, var(--color-primary) 0%, transparent 70%);
+    opacity: 0;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease-out, height 0.4s ease-out, opacity 0.4s ease-out;
+    z-index: 0;
+}
+
+.formulario .btn-toggle-reseñas:hover::after {
+    width: 200%;
+    height: 200%;
+    opacity: 0.3;
+}
+
+.formulario .btn-toggle-reseñas span {
+    /* Wrap el texto del botón en un span si puedes para poner el glow debajo */
+    position: relative;
+    z-index: 1;
+}
+
+.formulario .btn-toggle-reseñas:hover {
+    background: var(--color-dark-bg);
+    color: var(--color-primary);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+}
+
+.formulario .btn-toggle-reseñas:active {
+    transform: scale(0.98);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+/* 🌟 Estrellas para el formulario de reseña (interactivas) */
+.estrellas {
+    display: flex;
+    gap: var(--spacing-xs); /* Espacio entre estrellas */
+    font-size: 28px; /* Estrellas más grandes para el input de reseña */
+    justify-content: center;
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+}
+
+.estrellas i {
+    color: var(--star-color);
+    text-shadow: 0 0 10px var(--star-glow-color),
+        0 0 20px var(--star-glow-color),
+        0 0 30px var(--star-glow-color);
+    transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), text-shadow 0.3s ease, filter 0.2s ease;
+    cursor: pointer;
+}
+
+.estrellas i:hover,
+.estrellas i.active {
+    transform: scale(1.4); /* Escala más grande al interactuar */
+    filter: brightness(1.7); /* Mayor brillo */
+    text-shadow: 0 0 15px var(--star-hover-glow-color),
+        0 0 30px var(--star-hover-glow-color),
+        0 0 45px var(--star-hover-glow-color),
+        0 0 60px rgba(255, 235, 59, 0.8); /* Halo más amplio y luminoso */
+}
+
+
+/* 🏆 Sección de Ranking de Lugares */
+.ranking-section {
+    /* Aunque no tienes un div con esta clase, la mantengo si la planeas añadir */
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-md);
+    border-top: 1px dashed var(--color-border);
+}
+
+#rankingLugares {
+    list-style: none; /* Quita los puntos de la lista */
+    padding: 0;
+    margin-top: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm); /* Espacio entre cada item del ranking */
+}
+
+.ranking-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--color-dark-bg);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 5px 12px var(--color-shadow-light);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.ranking-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px var(--color-shadow-dark);
+    background-color: var(--color-medium-bg);
+}
+
+.ranking-item:first-child {
+    /* Estilo especial para el primer lugar (oro) */
+    border-color: var(--star-color);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), 0 5px 15px var(--color-shadow-dark);
+    background: linear-gradient(to right, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+}
+
+.ranking-item:first-child .nombre-lugar {
+    color: var(--star-color);
+    font-size: calc(var(--font-size-md) * 1.1); /* Ligeramente más grande */
+    font-weight: 700;
+}
+
+.ranking-item .nombre-lugar {
+    flex-grow: 1;
+    font-weight: 600;
+    color: var(--color-lighter-text);
+    font-size: var(--font-size-md);
+}
+
+.ranking-item .ranking-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs); /* Espacio entre estrellas y número */
+}
+
+/* Estrellas para los items del ranking */
+.ranking-stars-wrapper {
+    /* Contenedor de las estrellas en el ranking */
+    display: flex; /* Para alinear horizontalmente las estrellas */
+    font-size: 18px; /* Tamaño de las estrellas en el ranking */
+    line-height: 1;
+    vertical-align: middle;
+    gap: 3px; /* Espacio más ajustado entre estrellas individuales del ranking */
+}
+
+.ranking-star {
+    /* Estrellas llenas del ranking */
+    color: var(--star-color);
+    text-shadow: 0 0 5px var(--star-glow-color), 0 0 10px var(--star-glow-color); /* Brillo sutil */
+    /* animation: star-glow-subtle 1.8s infinite alternate ease-in-out; */
+    /* Descomenta si quieres animación constante */
+}
+
+.ranking-star-empty {
+    /* Estrellas vacías del ranking */
+    color: #777;
+    text-shadow: none;
+}
+
+.puntuacion-num {
+    font-size: var(--font-size-md);
+    font-weight: bold;
+    color: var(--color-accent); /* Color de acento para la puntuación numérica */
+    margin-left: var(--spacing-xs);
+}
+
+/* 📱 Responsive (ajustes adicionales para armonía) */
+@media (max-width: 992px) {
+    .contenedor {
+        flex-direction: column;
+        height: auto;
+        min-height: 90vh;
+        padding: var(--spacing-md);
+        gap: var(--spacing-md);
+        margin-top: var(--spacing-md);
+    }
+
+    #mapa {
+        height: 400px;
+        min-width: unset;
+    }
+}
+
+@media (max-width: 576px) {
+    body {
+        padding: var(--spacing-sm);
+    }
+
+    .contenedor {
+        padding: var(--spacing-sm);
+        margin-top: var(--spacing-sm);
+    }
+
+    #mapa {
+        height: 280px; /* Ajuste para móviles */
+    }
+
+    .formulario h2 {
+        font-size: calc(var(--font-size-lg) * 0.8);
+    }
+
+    .formulario h3 {
+        font-size: var(--font-size-sm); /* Ajuste para móviles */
+    }
+
+    input,
+    select,
+    textarea,
+    button,
+    .mensaje {
+        font-size: var(--font-size-sm);
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    .estrellas {
+        font-size: 24px;
+        gap: 4px;
+    }
+
+    .ranking-stars-wrapper {
+        font-size: 16px;
+    }
+
+    .ranking-item .nombre-lugar,
+    .puntuacion-num {
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* Scroll personalizado (Se mantiene la armonía con los colores) */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-accent) transparent;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-accent);
+    border-radius: var(--border-radius-md);
+    border: 2px solid var(--color-dark-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #ffea00;
+}
