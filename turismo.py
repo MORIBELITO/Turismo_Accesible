@@ -2,10 +2,17 @@ import json
 import os
 from flask import Flask, render_template, request, redirect, url_for, session, g, jsonify
 import firebase_admin
-from firebase_admin import credentials, auth, storage # Importa storage
+from firebase_admin import credentials, auth, storage # Importa storage y auth
+from firebase_admin.exceptions import FirebaseError # Importa para manejar errores específicos de Firebase
 from werkzeug.utils import secure_filename # Para asegurar nombres de archivo seguros
+import uuid # Para generar nombres de archivo únicos
+from flask_cors import CORS # Importa CORS para permitir peticiones desde tu frontend
 
 app = Flask(__name__)
+# Habilita CORS para todas las rutas. ¡Importante para desarrollo!
+# En producción, considera configurar CORS de forma más restrictiva.
+CORS(app) 
+
 # ¡IMPORTANTE! Cambia esto por una clave secreta fuerte y guárdala de forma segura.
 # Puedes generar una con: import os; os.urandom(24).hex()
 app.secret_key = os.environ.get('SECRET_KEY', 'AIzaSyARMkC0EBYElA8wVOpefSgMD4oADAIqD4o')
@@ -72,6 +79,17 @@ except Exception as e:
     # En un entorno de producción, esto debería evitar que la aplicación se inicie
     # o al menos registrar un error severo.
 
+# --- Configuración de límites de subida para Flask ---
+# Limitar el tamaño máximo de los archivos a 5 MB (5 * 1024 * 1024 bytes)
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024 # 5 Megabytes
+
+# Extensiones de archivo permitidas para imágenes
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+def allowed_file(filename):
+    """Verifica si la extensión del archivo está permitida."""
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def load_translations(lang):
     """
@@ -237,53 +255,83 @@ def upload_profile_image():
 
     if 'profile_image' not in request.files:
         print("ERROR: 'profile_image' no encontrado en request.files.")
-        return jsonify({"error": "No se encontró el archivo de imagen"}), 400
+        return jsonify({"error": "No se encontró el archivo de imagen."}), 400
 
     file = request.files['profile_image']
     if file.filename == '':
         print("ERROR: Nombre de archivo vacío.")
-        return jsonify({"error": "No se seleccionó ningún archivo"}), 400
+        return jsonify({"error": "No se seleccionó ningún archivo."}), 400
 
     user_id = request.form.get('userId') # Obtenemos el userId enviado desde el frontend
     if not user_id:
         print("ERROR: ID de usuario no proporcionado en el formulario.")
-        return jsonify({"error": "ID de usuario no proporcionado"}), 400
+        return jsonify({"error": "ID de usuario no proporcionado."}), 400
 
-    if file:
+    # Validación de tipo de archivo
+    if not allowed_file(file.filename):
+        print(f"ERROR: Tipo de archivo no permitido: {file.filename}")
+        return jsonify({"error": "Tipo de archivo no permitido. Solo se aceptan imágenes (png, jpg, jpeg, gif, webp)."}), 400
+
+    try:
+        bucket = storage.bucket()
+
+        # Obtén la ruta de la imagen antigua enviada desde el frontend
+        old_photo_storage_path = request.form.get('oldPhotoStoragePath')
+        print(f"DEBUG: oldPhotoStoragePath recibido: {old_photo_storage_path}")
+
+        # --- Eliminación de la imagen antigua (si existe y no es la predeterminada) ---
+        # Asegúrate de que 'default' sea el valor que usas para indicar una imagen predeterminada
+        # que NO debe ser eliminada de Firebase Storage.
+        # También se verifica que no sea la imagen por defecto de tu aplicación.
+        if old_photo_storage_path and old_photo_storage_path != 'default' and '/static/imagenes/default-user.jpg' not in old_photo_storage_path:
+            try:
+                old_blob = bucket.blob(old_photo_storage_path)
+                if old_blob.exists():
+                    old_blob.delete()
+                    print(f"DEBUG: Imagen antigua eliminada: {old_photo_storage_path}")
+                else:
+                    print(f"DEBUG: La imagen antigua no existe en Storage (o ya fue eliminada): {old_photo_storage_path}")
+            except FirebaseError as fe:
+                print(f"ERROR de Firebase al intentar eliminar la imagen antigua: {fe}")
+                # No detenemos el proceso de subida si falla la eliminación de la antigua
+            except Exception as e:
+                print(f"ERROR inesperado al intentar eliminar la imagen antigua: {e}")
+                # No detenemos el proceso de subida si falla la eliminación de la antigua
+
+        # --- Subida de la nueva imagen ---
         filename = secure_filename(file.filename)
-        # Define la ruta en Firebase Storage: profile_images/{userId}/{nombre_archivo}
-        blob_name = f"profile_images/{user_id}/{filename}"
+        file_extension = filename.rsplit('.', 1)[1].lower()
+        # Genera un nombre de archivo único para evitar colisiones
+        # y lo guarda en una carpeta específica del usuario (e.g., profile_images/userId/unique_id.ext)
+        unique_filename = f"profile_images/{user_id}/{uuid.uuid4()}.{file_extension}"
+        blob = bucket.blob(unique_filename)
         
+        print(f"DEBUG: Intentando subir archivo '{filename}' a '{unique_filename}' para el usuario '{user_id}'")
+        blob.upload_from_file(file)
+        print(f"DEBUG: Archivo '{filename}' subido exitosamente a Storage.")
+
+        # Hacer el archivo público es crucial para que el frontend pueda acceder a él.
+        # Asegúrate de que tus reglas de Firebase Storage permitan la lectura pública para esta ruta.
+        blob.make_public()
+        public_url = blob.public_url
+        print(f"DEBUG: Archivo '{filename}' marcado como público. URL: {public_url}")
+
+        # --- Actualizar el photoURL del usuario en Firebase Authentication ---
+        # Esto es CRUCIAL para que el frontend vea la nueva imagen asociada al usuario
         try:
-            bucket = storage.bucket()
-            blob = bucket.blob(blob_name)
-            
-            print(f"DEBUG: Intentando subir archivo '{filename}' a '{blob_name}' para el usuario '{user_id}'")
-            blob.upload_from_file(file)
-            print(f"DEBUG: Archivo '{filename}' subido exitosamente a Storage.")
-
-            # Hacer el archivo público es crucial para que el frontend pueda acceder a él.
-            # Asegúrate de que tus reglas de Firebase Storage permitan la lectura pública para esta ruta.
-            blob.make_public()
-            public_url = blob.public_url
-            print(f"DEBUG: Archivo '{filename}' marcado como público. URL: {public_url}")
-
-            # Opcional: Lógica para eliminar la imagen anterior del usuario
-            # Si quieres implementar esto, el frontend debería enviar la `storagePath` anterior.
-            # old_photo_path = request.form.get('oldPhotoPath')
-            # if old_photo_path and old_photo_path != blob_name:
-            #     try:
-            #         old_blob = bucket.blob(old_photo_path)
-            #         old_blob.delete()
-            #         print(f"DEBUG: Imagen anterior eliminada: {old_photo_path}")
-            #     except Exception as delete_error:
-            #         print(f"ADVERTENCIA: Error al eliminar imagen anterior {old_photo_path}: {delete_error}")
-
-            return jsonify({"success": True, "photoURL": public_url, "storagePath": blob_name}), 200
+            # No es necesario get_user antes de update_user si solo actualizas photo_url
+            auth.update_user(user_id, photo_url=public_url)
+            print(f"DEBUG: photoURL del usuario {user_id} actualizado en Firebase Auth.")
         except Exception as e:
-            print(f"ERROR: Fallo al subir la imagen a Firebase Storage: {e}")
-            return jsonify({"error": f"Error al subir la imagen: {str(e)}"}), 500
+            print(f"ERROR: Fallo al actualizar photoURL en Firebase Auth para {user_id}: {e}")
+            # Considera cómo manejar este error. La imagen se subió, pero el perfil no se actualizó.
+
+        return jsonify({"success": True, "photoURL": public_url, "storagePath": unique_filename}), 200
+    except Exception as e:
+        print(f"ERROR: Fallo al subir la imagen a Firebase Storage o procesar: {e}")
+        return jsonify({"error": f"Error al subir la imagen: {str(e)}"}), 500
     
+    # Esta línea no debería alcanzarse si el manejo de errores es completo
     print("ERROR: Condición de archivo inesperada (esto no debería ocurrir si 'file' es True).")
     return jsonify({"error": "Error desconocido al procesar la imagen"}), 500
 
@@ -294,4 +342,4 @@ def get_status():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000) # Puedes cambiar el puerto si lo necesitas
+    app.run(debug=True, port=8080) # Puedes cambiar el puerto si lo necesitas
