@@ -1,5 +1,8 @@
 import json
-import os # Para manejar rutas de archivos
+import os
+from flask import Flask, render_template, request, redirect, url_for, session, g
+import firebase_admin # Asegúrate de tener esta línea si usas firebase_admin
+from firebase_admin import credentials, auth # Asegúrate de tener esta línea
 
 from flask import Flask, render_template, request, redirect, url_for, session, g
 
