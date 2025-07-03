@@ -414,21 +414,145 @@
         flex-basis: 500px; /* Ancho similar al historial */
     }
 
+    /* Media queries para el diseño responsivo de las tarjetas de perfil */
     @media (max-width: 1200px) {
+        .profile-page-container {
+            flex-direction: column; /* Apila los elementos en columnas */
+            align-items: center; /* Centra los elementos apilados */
+            padding: 1rem; /* Reduce el padding general */
+        }
+        .profile-card {
+            flex-basis: auto; /* Permite que la tarjeta de perfil tome el ancho necesario */
+            width: 90%; /* Ocupa el 90% del ancho disponible */
+            max-width: 400px; /* Limita el ancho máximo para pantallas más grandes */
+            position: static; /* Elimina el sticky para móviles */
+            margin-bottom: 2rem; /* Espacio entre la tarjeta de perfil y las otras */
+        }
         .history-card, .recommendation-card {
-            flex-basis: 100%; 
+            flex-basis: auto; /* Permite que las tarjetas de historial y recomendación tomen el ancho necesario */
+            width: 90%; /* Ocupa el 90% del ancho disponible */
+            max-width: 600px; /* Limita el ancho máximo */
+        }
+        /* Contenedor de las tarjetas de historial y recomendación */
+        .profile-page-container > div:last-child {
+            width: 100%; /* Asegura que el contenedor ocupe todo el ancho */
+            align-items: center; /* Centra las tarjetas dentro de este contenedor */
         }
     }
 
-    @media (max-width: 992px) {
+    @media (max-width: 768px) {
         .profile-page-container {
-            flex-direction: column;
+            padding: 1rem;
+            gap: 1.5rem;
         }
-        .profile-card {
-            position: static;
-            width: 100%;
+        .profile-card, .history-card, .recommendation-card {
+            width: 95%; /* Un poco más de ancho en pantallas pequeñas */
+            padding: 1.5rem; /* Reduce el padding interno */
+        }
+        .profile-card__title, .history-card__title, .recommendation-card__title {
+            font-size: 1.5rem; /* Reduce el tamaño del título */
+        }
+        .form-group__label {
+            font-size: 0.85rem; /* Reduce el tamaño de la etiqueta */
+        }
+        .form-group__input {
+            padding: 10px 12px; /* Reduce el padding del input */
+            font-size: 0.9rem; /* Reduce el tamaño de la fuente del input */
+        }
+        .btn-custom {
+            padding: 10px 15px; /* Reduce el padding de los botones */
+            font-size: 0.9rem; /* Reduce el tamaño de la fuente de los botones */
+        }
+        .history-item {
+            padding: 1rem; /* Reduce el padding del ítem de historial */
+            margin-bottom: 1.5rem; /* Reduce el margen inferior del ítem de historial */
+        }
+        .history-item__place-name {
+            font-size: 1rem; /* Reduce el tamaño de la fuente del nombre del lugar */
+        }
+        .history-item__date {
+            font-size: 0.75rem; /* Reduce el tamaño de la fuente de la fecha */
+        }
+        .history-item__comment {
+            font-size: 0.85rem; /* Reduce el tamaño de la fuente del comentario */
+        }
+        .recommendation-card__place-name {
+            font-size: 1.2rem; /* Reduce el tamaño del nombre del lugar recomendado */
+        }
+        .recommendation-card__description {
+            font-size: 0.9rem; /* Reduce el tamaño de la descripción recomendada */
         }
     }
+
+    @media (max-width: 480px) {
+        .profile-page-container {
+            padding: 0.5rem;
+            gap: 1rem;
+        }
+        .profile-card, .history-card, .recommendation-card {
+            width: 98%; /* Ocupa casi todo el ancho en pantallas muy pequeñas */
+            padding: 1rem; /* Padding mínimo */
+        }
+        .profile-card__title, .history-card__title, .recommendation-card__title {
+            font-size: 1.3rem; /* Títulos aún más pequeños */
+            margin-bottom: 1rem;
+        }
+        .profile-image-container {
+            width: 120px; /* Imagen de perfil más pequeña */
+            height: 120px;
+            margin-bottom: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group__label {
+            font-size: 0.8rem;
+        }
+        .form-group__input {
+            padding: 8px 10px;
+            font-size: 0.85rem;
+        }
+        .buttons-container {
+            flex-direction: column; /* Apila los botones */
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        .btn-custom {
+            padding: 10px;
+            font-size: 0.85rem;
+        }
+        .history-item {
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        .history-item__header {
+            flex-direction: column; /* Apila el nombre del lugar y la fecha */
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+        .history-item__place-name {
+            font-size: 0.95rem;
+        }
+        .history-item__date {
+            font-size: 0.7rem;
+        }
+        .history-item__comment {
+            font-size: 0.8rem;
+            margin: 0.75rem 0;
+            padding-left: 0.75rem;
+        }
+        .history-item__accessibility {
+            font-size: 0.8rem;
+            padding: 6px 10px;
+        }
+        .recommendation-card__place-name {
+            font-size: 1rem;
+        }
+        .recommendation-card__description {
+            font-size: 0.85rem;
+        }
+    }
+
 
     .profile-card__title, .history-card__title, .recommendation-card__title {
         font-size: 1.8rem;
