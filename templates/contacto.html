@@ -187,14 +187,129 @@
     }
 
     /* --- Foro Section --- */
-    .post-item { background-color: var(--lighter-background-transparent); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; transition: transform 0.3s, box-shadow 0.3s; }
-    .post-item:hover { transform: translateY(-5px); box-shadow: 0 8px 16px var(--shadow-color); }
-    .post-header { display: flex; align-items: center; gap: 15px; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
-    .user-photo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--dark-text); }
-    .user-name { font-weight: bold; color: var(--dark-text); }
-    .post-date { font-size: 0.8em; color: var(--light-dark-text); }
-    .post-body h4 { font-size: 1.3em; color: var(--light-dark-text); margin: 0 0 0.5rem 0; }
-    .post-body p { color: var(--light-dark-text); white-space: pre-wrap; }
+    .post-item { 
+        background-color: var(--lighter-background-transparent); 
+        border: 1px solid var(--border-color); 
+        border-radius: 12px; 
+        padding: 1.5rem; 
+        margin-bottom: 1rem; 
+        transition: transform 0.3s, box-shadow 0.3s; 
+    }
+    .post-item:hover { 
+        transform: translateY(-5px); 
+        box-shadow: 0 8px 16px var(--shadow-color); 
+    }
+    .post-header { 
+        display: flex; 
+        align-items: center; 
+        gap: 15px; 
+        margin-bottom: 1rem; 
+        padding-bottom: 1rem; 
+        border-bottom: 1px solid var(--border-color); 
+    }
+    .user-photo { 
+        width: 45px; 
+        height: 45px; 
+        border-radius: 50%; 
+        object-fit: cover; 
+        border: 2px solid var(--dark-text); 
+    }
+    .user-name { 
+        font-weight: bold; 
+        color: var(--dark-text); 
+    }
+    .post-date { 
+        font-size: 0.8em; 
+        color: var(--light-dark-text); 
+    }
+    .post-body h4 { 
+        font-size: 1.3em; 
+        color: var(--light-dark-text); 
+        margin: 0 0 0.5rem 0; 
+    }
+    .post-body p { 
+        color: var(--light-dark-text); 
+        white-space: pre-wrap; 
+    }
+
+    /* Estilos para las respuestas */
+    .replies-section {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px dashed var(--border-color);
+    }
+    .reply-item {
+        background-color: rgba(255, 255, 255, 0.6); /* Un poco más transparente que el post padre */
+        border: 1px solid rgba(15, 82, 186, 0.1);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-top: 0.8rem;
+        margin-left: 20px; /* Indent replies */
+        box-shadow: 0 2px 8px rgba(15, 82, 186, 0.08);
+    }
+    .reply-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 0.5rem;
+    }
+    .reply-header .user-photo {
+        width: 30px; /* Smaller photo for replies */
+        height: 30px;
+        border-width: 1px;
+    }
+    .reply-header .user-name {
+        font-size: 0.9em;
+    }
+    .reply-header .reply-date {
+        font-size: 0.7em;
+        color: var(--light-dark-text);
+    }
+    .reply-body p {
+        font-size: 0.9em;
+        color: var(--light-dark-text);
+        margin-bottom: 0;
+    }
+
+    /* Botón de respuesta */
+    .btn-reply {
+        background-color: var(--accent-color);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 15px;
+        font-size: 0.9em;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-reply:hover {
+        background-color: #408EE0; /* Slightly darker blue */
+    }
+    .btn-reply:disabled {
+        background-color: var(--disabled-bg);
+        cursor: not-allowed;
+    }
+
+    /* Formulario de respuesta */
+    .reply-form {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px dashed rgba(15, 82, 186, 0.1);
+        display: none; /* Hidden by default */
+    }
+    .reply-form textarea {
+        margin-bottom: 0.5rem;
+    }
+    .reply-form .btn-primary {
+        padding: 10px 15px;
+        font-size: 0.95em;
+        width: auto; /* Adjust width for reply button */
+    }
+
 
     /* --- Contacto Section --- */
     .contact-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 2.5rem; }
@@ -259,6 +374,9 @@
         .animated-section { padding: 1.5rem; }
         .intro-card h1 { font-size: 2.2em; }
         .section-header { font-size: 1.2em; }
+        .reply-item {
+            margin-left: 10px; /* Reduce indent on smaller screens */
+        }
     }
 </style>
 
@@ -381,7 +499,7 @@
     // Tu script de Firebase (sin cambios en la lógica)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyARMkC0EBYElA8wVOpefSgMD4oADAIqD4o",
@@ -398,6 +516,7 @@
     const auth = getAuth(app);
     let currentUser = null;
 
+    // Listen for authentication state changes
     onAuthStateChanged(auth, (user) => {
         const formElements = document.getElementById('formNuevoPost').elements;
         const loginPrompt = document.getElementById('foro-login-prompt');
@@ -406,10 +525,14 @@
             currentUser = user;
             loginPrompt.style.display = 'none';
             Array.from(formElements).forEach(el => el.disabled = false);
+            // Enable reply buttons for existing posts
+            document.querySelectorAll('.btn-reply').forEach(btn => btn.disabled = false);
         } else {
             currentUser = null;
             loginPrompt.style.display = 'block';
             Array.from(formElements).forEach(el => el.disabled = true);
+            // Disable reply buttons if not logged in
+            document.querySelectorAll('.btn-reply').forEach(btn => btn.disabled = true);
         }
     });
 
@@ -417,6 +540,7 @@
     const btnEnviarPost = document.getElementById("btnEnviarPost");
     const mensajeDiv = document.getElementById("foro-mensaje");
 
+    // Handle new post submission
     formNuevoPost.addEventListener("submit", async (e) => {
         e.preventDefault();
         if (!currentUser) {
@@ -430,7 +554,8 @@
             return;
         }
         btnEnviarPost.disabled = true;
-        mostrarMensaje("", "");
+        mostrarMensaje("", ""); // Clear previous messages
+
         const postData = {
             titulo,
             contenido,
@@ -451,6 +576,7 @@
         }
     });
 
+    // Function to display messages
     function mostrarMensaje(texto, tipo) {
         mensajeDiv.textContent = texto;
         mensajeDiv.className = "foro-mensaje";
@@ -458,9 +584,10 @@
         mensajeDiv.style.display = texto ? "block" : "none";
     }
 
+    // Function to display main forum posts
     function mostrarPublicaciones(posts) {
         const listaDiv = document.getElementById("listaPublicaciones");
-        listaDiv.innerHTML = "";
+        listaDiv.innerHTML = ""; // Clear existing posts
         if (posts.length === 0) {
             listaDiv.innerHTML = `<p style="text-align: center; color: var(--light-dark-text);">{{ translate('Aún no hay publicaciones. ¡Sé el primero en crear una!') }}</p>`;
             return;
@@ -468,9 +595,13 @@
         posts.forEach(p => {
             const postDiv = document.createElement("div");
             postDiv.className = "post-item";
+            // Store the document ID for replies
+            postDiv.dataset.postId = p.id; 
+
             const defaultPhoto = "{{ url_for('static', filename='imagenes/default-user.jpg') }}";
             const userName = p.userName || "{{ translate('Usuario Anónimo') }}";
             const fechaPost = p.fecha.seconds ? new Date(p.fecha.seconds * 1000).toLocaleString() : new Date().toLocaleString();
+            
             postDiv.innerHTML = `
                 <div class="post-header">
                     <img src="${p.userPhotoURL || defaultPhoto}" alt="Foto de ${userName}" class="user-photo">
@@ -482,16 +613,120 @@
                 <div class="post-body">
                     <h4>${p.titulo}</h4>
                     <p>${p.contenido}</p>
+                    <button type="button" class="btn-reply" data-post-id="${p.id}" ${currentUser ? '' : 'disabled'}>
+                        <i class="fas fa-reply"></i> {{ translate('Responder') }}
+                    </button>
+                    <div class="reply-form" id="reply-form-${p.id}">
+                        <textarea class="form-control reply-content" rows="2" placeholder="{{ translate('Escribe tu respuesta...') }}" required minlength="5"></textarea>
+                        <button type="submit" class="btn-primary btn-send-reply" data-post-id="${p.id}" ${currentUser ? '' : 'disabled'}>
+                            <i class="fas fa-paper-plane"></i> {{ translate('Enviar Respuesta') }}
+                        </button>
+                    </div>
+                </div>
+                <div class="replies-section" id="replies-for-${p.id}">
+                    <!-- Las respuestas se cargarán aquí -->
                 </div>
             `;
             listaDiv.appendChild(postDiv);
+
+            // Add event listener for the reply button
+            postDiv.querySelector(`.btn-reply[data-post-id="${p.id}"]`).addEventListener('click', function() {
+                const replyForm = document.getElementById(`reply-form-${p.id}`);
+                replyForm.style.display = replyForm.style.display === 'block' ? 'none' : 'block';
+            });
+
+            // Add event listener for sending a reply
+            postDiv.querySelector(`.btn-send-reply[data-post-id="${p.id}"]`).addEventListener('click', async function() {
+                const replyContentInput = postDiv.querySelector(`#reply-form-${p.id} .reply-content`);
+                const replyContent = replyContentInput.value.trim();
+                if (replyContent.length < 5) {
+                    mostrarMensaje("{{ translate('La respuesta debe tener al menos 5 caracteres.') }}", "error");
+                    return;
+                }
+                if (!currentUser) {
+                    mostrarMensaje("{{ translate('Debes iniciar sesión para responder.') }}", "error");
+                    return;
+                }
+
+                this.disabled = true; // Disable button while sending
+                mostrarMensaje("", ""); // Clear previous messages
+
+                const replyData = {
+                    contenido: replyContent,
+                    fecha: new Date(),
+                    userId: currentUser.uid,
+                    userName: currentUser.displayName || currentUser.email,
+                    userPhotoURL: currentUser.photoURL || "{{ url_for('static', filename='imagenes/default-user.jpg') }}"
+                };
+
+                try {
+                    // Add reply to the subcollection 'Respuestas' of the specific post
+                    await addDoc(collection(db, "Foro", p.id, "Respuestas"), replyData);
+                    mostrarMensaje("{{ translate('Respuesta enviada correctamente.') }}", "exito");
+                    replyContentInput.value = ''; // Clear the textarea
+                    document.getElementById(`reply-form-${p.id}`).style.display = 'none'; // Hide the form
+                } catch (error) {
+                    mostrarMensaje("{{ translate('Hubo un error al enviar la respuesta.') }}", "error");
+                    console.error("Error al guardar respuesta:", error);
+                } finally {
+                    this.disabled = false; // Re-enable button
+                }
+            });
+
+            // Initialize listener for replies for this specific post
+            inicializarEscuchaRespuestas(p.id);
         });
     }
 
+    // Function to display replies for a specific post
+    function mostrarRespuestas(replies, postId) {
+        const repliesSection = document.getElementById(`replies-for-${postId}`);
+        if (!repliesSection) return; // Guard clause if section doesn't exist
+        repliesSection.innerHTML = ""; // Clear existing replies
+
+        if (replies.length === 0) {
+            // No need to show "no replies" message, just keep it empty
+            return;
+        }
+
+        replies.forEach(r => {
+            const replyDiv = document.createElement("div");
+            replyDiv.className = "reply-item";
+            const defaultPhoto = "{{ url_for('static', filename='imagenes/default-user.jpg') }}";
+            const userName = r.userName || "{{ translate('Usuario Anónimo') }}";
+            const fechaReply = r.fecha.seconds ? new Date(r.fecha.seconds * 1000).toLocaleString() : new Date().toLocaleString();
+
+            replyDiv.innerHTML = `
+                <div class="reply-header">
+                    <img src="${r.userPhotoURL || defaultPhoto}" alt="Foto de ${userName}" class="user-photo">
+                    <div class="user-name">${userName}</div>
+                    <div class="reply-date">${fechaReply}</div>
+                </div>
+                <div class="reply-body">
+                    <p>${r.contenido}</p>
+                </div>
+            `;
+            repliesSection.appendChild(replyDiv);
+        });
+    }
+
+    // Initialize listener for replies for a specific post
+    function inicializarEscuchaRespuestas(postId) {
+        // Reference to the subcollection 'Respuestas' for a specific post
+        const q = query(collection(db, "Foro", postId, "Respuestas"), orderBy("fecha", "asc")); // Order replies by date ascending
+        onSnapshot(q, (snapshot) => {
+            const replies = snapshot.docs.map(doc => doc.data());
+            mostrarRespuestas(replies, postId);
+        });
+    }
+
+    // Initialize listener for main forum posts
     function inicializarEscuchaForo() {
+        // Query for main forum posts, ordered by date descending
         const q = query(collection(db, "Foro"), orderBy("fecha", "desc"));
         onSnapshot(q, (snapshot) => {
-            const datos = snapshot.docs.map(doc => doc.data());
+            // Map documents to data, including the document ID
+            const datos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             mostrarPublicaciones(datos);
         });
     }
