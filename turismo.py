@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, g
 app = Flask(__name__)
 # ¡IMPORTANTE! Cambia esto por una clave secreta fuerte y guárdala de forma segura.
 # Puedes generar una con: import os; os.urandom(24).hex()
-app.secret_key = 'tu_clave_secreta_super_secreta_aqui_cambiala_por_favor'
+app.secret_key = os.environ.get('SECRET_KEY', 'AIzaSyARMkC0EBYElA8wVOpefSgMD4oADAIqD4o')
 
 # Ruta a la carpeta de traducciones
 TRANSLATIONS_DIR = os.path.join(app.root_path, 'translations')
