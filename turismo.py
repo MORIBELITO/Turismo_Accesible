@@ -25,33 +25,36 @@ FIREBASE_SERVICE_ACCOUNT_INFO = {
   "type": "service_account",
   "project_id": "turismo-4e958",
   "private_key_id": "23e9c6e527d6584cecea454cc291d32bef57e91c",
-  "private_key": """-----BEGIN PRIVATE KEY-----
-MIIEugIBADANBgkqhkiG9w0BAQEFAASCBKQwggSgAgEAAoIBAQCONCk8dKgzcleO
-7ErRj9KjqKGCl+Pw6HAVrTGbaWC92W8cm9r1tT8+NpyiT/fhAIrzP35L+ii5Mf7B
-EIrMR4X+JfxXxWAz3uwxL5Q6KScJRp7nOm3e6IeKoJbRhLXz9sMw0U8PrCUfhTk6
-IpCaPjKdddZiz6frpVR8BjfDBNV/YZB5yz40r7zDpfg3VXswPs7wItgVXVaZyipn
-vil1+fDyTu3qurpS5S1x+ysBzm/uwWwHpc/tIPV7nsJD/g22I3Vp9CDhwQBaGmPG
-mehovGiaraG9h+uM7TE2nsny2ANlUtbMKBHmMY4ClXOLsLJOvtVjryRgV1OfGZGV
-PHYo4C/bAgMBAAECggEABNJjhVd9h0EOoaoFCh0vPJ1pas7fPY+HrzR64T+DRLPX
-MKvRIOAyq+XRuBLMUV9+AVbbJs20t1n+MIabg5G+oH+FrvQ3tfxVjQ5MZp4+m7kF
-v63ioS/k2nWep5FqNnuHjYA2FTH2c9ebR2Drxk8j0uTMADFKYFpFeG8hGHg4mmPA
-eMxb0EJVa6IPHvyV86FSaKtiPmAsX7tH0STCZVRRXrehvb6tevECKhH77HQYbxRn
-G6pRN+CUjMHLly//Vkh8jlbuLY56ZfypiZQ4NtMfCL8mGBO59ckg6I6HsEHSsjJn
-VSuqFN0mPnc5CA7X6zr1xKCA24VgSO3Fj9/kzw+OAQKBgQDA+QthFNm7GWMqGWsj
-WVGtkyK8PcwcTlOWYyx/znbeeyzZgR7HF0sZFGB/fblZEUvnsUlyeheqeLjxugqu
-NvZ/xsydD7rIL38CeOQyIEdsoNhwBN0IRe1sly/xXBrxiarh7n82YZZukQgFZ/cd
-qKebo3CtqabLyHxG1PYNEne0swKBgQC8pi7y0C1qjVd62PuXgepi+iGq5Z/2uMOI
-WLoCmqfHXRxK4mSW/Rtv3SBUCqI/dZSMUROcRmMzxBzDa70rKeWRHQSwxOSI9Sjz
-oYbPon3vWEAHUIWVlhsN86uktZd0uRJg8mii7q21c+Rs/l0Dg462uf3vLzaLGwll
-PJMUoCU8OQKBgGRtd+GXU1UO+k+/mMV1x4844rvqwV392XyLsm31SmGw4v9zNkxQ
-sBGmTC4thRd4a/NxjZLZPZXHbCDJPKO8EP8gu/4FYKSsK0JjHgeESweakemCbnHO
-yqhX6miHEbKgfeFFGMl5ciuqqOz/VVkHG+tg3NRUVWz6ssq+LCtTcB8HAoGAOPlz
-um+3F7QiVH7N1V8uO8BRhLyfCDObEkXBv+GXhHWRguhG+vbsX2eISPmBMOtA9vPR
-mWQEt/Clwzt5wVyA8ceyz/RXFSn9uT7yaSkpIa0kgVEHVzsjZp5OG4ugd2chrtfn
-VDYDjoa22VglHVeRNYyMrb0zmuWKe+HEhfkr5bkCf1DhxYvQ+ss7g/a4qiH5u7qC
-MJkbGWhxGZTmUaBUx/TJq5HRupgetD6NPf44keW51OGcRXk1PtqfyTa0DTB6vPoI
-VLo3P/Dwyr9IEsd7SfARB1A2x2ZPi+CsS7pvJLqBs4pPWPMSrtW7F2px9DtZzN3T
-A2DAP9BT8F4RxplCrzk=""",
+  # CORRECCIÓN CLAVE AQUÍ: Asegúrate de que la clave privada incluya los caracteres de nueva línea '\n'
+  # para que sea un formato PEM válido. Se ha añadido '\n' explícitamente.
+  "private_key": "-----BEGIN PRIVATE KEY-----\n"
+                 "MIIEugIBADANBgkqhkiG9w0BAQEFAASCBKQwggSgAgEAAoIBAQCONCk8dKgzcleO\n"
+                 "7ErRj9KjqKGCl+Pw6HAVrTGbaWC92W8cm9r1tT8+NpyiT/fhAIrzP35L+ii5Mf7B\n"
+                 "EIrMR4X+JfxXxWAz3uwxL5Q6KScJRp7nOm3e6IeKoJbRhLXz9sMw0U8PrCUfhTk6\n"
+                 "IpCaPjKdddZiz6frpVR8BjfDBNV/YZB5yz40r7zDpfg3VXswPs7wItgVXVaZyipn\n"
+                 "vil1+fDyTu3qurpS5S1x+ysBzm/uwWwHpc/tIPV7nsJD/g22I3Vp9CDhwQBaGmPG\n"
+                 "mehovGiaraG9h+uM7TE2nsny2ANlUtbMKBHmMY4ClXOLsLJOvtVjryRgV1OfGZGV\n"
+                 "PHYo4C/bAgMBAAECggEABNJjhVd9h0EOoaoFCh0vPJ1pas7fPY+HrzR64T+DRLPX\n"
+                 "MKvRIOAyq+XRuBLMUV9+AVbbJs20t1n+MIabg5G+oH+FrvQ3tfxVjQ5MZp4+m7kF\n"
+                 "v63ioS/k2nWep5FqNnuHjYA2FTH2c9ebR2Drxk8j0uTMADFKYFpFeG8hGHg4mmPA\n"
+                 "eMxb0EJVa6IPHvyV86FSaKtiPmAsX7tH0STCZVRRXrehvb6tevECKhH77HQYbxRn\n"
+                 "G6pRN+CUjMHLly//Vkh8jlbuLY56ZfypiZQ4NtMfCL8mGBO59ckg6I6HsEHSsjJn\n"
+                 "VSuqFN0mPnc5CA7X6zr1xKCA24VgSO3Fj9/kzw+OAQKBgQDA+QthFNm7GWMqGWsj\n"
+                 "WVGtkyK8PcwcTlOWYyx/znbeeyzZgR7HF0sZFGB/fblZEUvnsUlyeheqeLjxugqu\n"
+                 "NvZ/xsydD7rIL38CeOQyIEdsoNhwBN0IRe1sly/xXBrxiarh7n82YZZukQgFZ/cd\n"
+                 "qKebo3CtqabLyHxG1PYNEne0swKBgQC8pi7y0C1qjVd62PuXgepi+iGq5Z/2uMOI\n"
+                 "WLoCmqfHXRxK4mSW/Rtv3SBUCqI/dZSMUROcRmMzxBzDa70rKeWRHQSwxOSI9Sjz\n"
+                 "oYbPon3vWEAHUIWVlhsN86uktZd0uRJg8mii7q21c+Rs/l0Dg462uf3vLzaLGwll\n"
+                 "PJMUoCU8OQKBgGRtd+GXU1UO+k+/mMV1x4844rvqwV392XyLsm31SmGw4v9zNkxQ\n"
+                 "sBGmTC4thRd4a/NxjZLZPZXHbCDJPKO8EP8gu/4FYKSsK0JjHgeESweakemCbnHO\n"
+                 "yqhX6miHEbKgfeFFGMl5ciuqqOz/VVkHG+tg3NRUVWz6ssq+LCtTcB8HAoGAOPlz\n"
+                 "um+3F7QiVH7N1V8uO8BRhLyfCDObEkXBv+GXhHWRguhG+vbsX2eISPmBMOtA9vPR\n"
+                 "mWQEt/Clwzt5wVyA8ceyz/RXJSn9uT7yaSkpIa0kgVEHVzsjZp5OG4ugd2chrtfn\n"
+                 "VDYDjoa22VglHVeRNYyMrb0zmuWKe+HEhfkr5bkCf1DhxYvQ+ss7g/a4qiH5u7qC\n"
+                 "MJkbGWhxGZTmUaBUx/TJq5HRupgetD6NPf44keW51OGcRXk1PtqfyTa0DTB6vPoI\n"
+                 "VLo3P/Dwyr9IEsd7SfARB1A2x2ZPi+CsS7pvJLqBs4pPWPMSrtW7F2px9DtZzN3T\n"
+                 "A2DAP9BT8F4RxplCrzk=\n"
+                 "-----END PRIVATE KEY-----",
   "client_email": "firebase-adminsdk-fbsvc@turismo-4e958.iam.gserviceaccount.com",
   "client_id": "118117002295102319140",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -71,7 +74,8 @@ except Exception as e:
     print(f"ERROR CRÍTICO: Fallo al inicializar Firebase Admin SDK con credenciales incrustadas: {e}")
     # En un entorno de producción, esto debería evitar que la aplicación se inicie
     # o al menos registrar un error severo.
-
+    # Para producción, considera salir de la aplicación o deshabilitar funcionalidades que dependan de Firebase.
+    # raise e # Descomenta para detener la aplicación si Firebase no se inicializa
 
 def load_translations(lang):
     """
@@ -275,7 +279,7 @@ def upload_profile_image():
             #     try:
             #         old_blob = bucket.blob(old_photo_path)
             #         old_blob.delete()
-            #         print(f"DEBUG: Imagen anterior eliminada: {old_photo_path}")
+            #         print(f"ADVERTENCIA: Error al eliminar imagen anterior {old_photo_path}: {delete_error}")
             #     except Exception as delete_error:
             #         print(f"ADVERTENCIA: Error al eliminar imagen anterior {old_photo_path}: {delete_error}")
 
