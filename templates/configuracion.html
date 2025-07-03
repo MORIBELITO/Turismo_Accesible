@@ -1,1216 +1,653 @@
-{% extends "base.html" %}
-
-{% block title %}{{ translate('Mi Perfil') }}{% endblock %}
-
-{% block content %}
-{# Carga la fuente Montserrat, consistente con el CSS #}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<style>
-    /* --- Paleta de Colores Invertida con MÁS Transparencia --- */
-    :root {
-        /* Ahora los fondos claros son los transparentes */
-        --light-background-transparent: rgba(255, 255, 255, 0.8); /* Blanco con 80% de opacidad */
-        --lighter-background-transparent: rgba(255, 255, 255, 0.85); /* Blanco con 85% de opacidad */
-
-        /* Los textos son ahora los colores oscuros */
-        --dark-text: #0F52BA; /* Azul Zafiro */
-        --light-dark-text: #173F7A; /* Tono más oscuro de Azul Zafiro */
-        --accent-color: #FFD700; /* Color de acento para íconos al hover (Dorado) */
-
-        --hover-background: rgba(0, 0, 0, 0.12); /* Transparencia para hover oscuro */
-        --border-color: rgba(0, 0, 0, 0.3); /* Borde oscuro y transparente */
-        --main-bg-color: #f4f6f9; /* Fondo claro para el body detrás del blur */
-    }
-
-    /* Animación global de entrada para el contenido principal */
-    @keyframes fadeInScale {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Animación para el texto del párrafo al aparecer */
-    @keyframes textFadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Estilos Generales y Reseteo Básico */
-    body {
-        font-family: 'Segoe UI', 'Roboto', sans-serif; /* Nueva fuente más moderna */
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        line-height: 1.6;
-        margin: 0;
-        padding: 0;
-        color: var(--dark-text); /* Color de texto predeterminado para el body */
-        overflow-x: hidden; /* Evita el scroll horizontal */
-
-        /* Fondo de imagen directamente en el body */
-        background-image: url('https://media.staticontent.com/media/pictures/3d727351-2b5e-4062-8047-08bcf518c7b5'); /* URL de ejemplo */
-        background-size: cover; /* Ajusta la imagen para cubrir todo el contenedor */
-        background-position: center; /* Centra la imagen de fondo */
-        background-attachment: fixed; /* Para que el fondo no se desplace con el scroll */
-        min-height: 100vh; /* Asegura que el body ocupe al menos todo el alto del viewport */
-        position: relative; /* Necesario para que body::before se posicione correctamente */
-        z-index: 1; /* Asegura que el contenido del body esté sobre el pseudo-elemento del fondo */
-
-        /* Estilos para la barra de desplazamiento (Scrollbar) - Firefox */
-        scrollbar-width: thin;
-        scrollbar-color: var(--dark-text) var(--light-background-transparent);
-    }
-
-    /* Pseudo-elemento para el desenfoque y velo oscuro sobre la imagen de fondo */
-    body::before {
-        content: '';
-        position: fixed; /* Usar fixed para que cubra todo el viewport */
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        backdrop-filter: blur(5px); /* Desenfoque delicado (5px) */
-        -webkit-backdrop-filter: blur(5px); /* Para compatibilidad con navegadores WebKit */
-        background-color: rgba(0, 0, 0, 0.35); /* Capa oscura semi-transparente */
-        z-index: -1; /* Asegura que esté detrás del contenido principal del body */
-    }
-
-    /* Estilos para la barra de desplazamiento (WebKit - Chrome, Safari, Edge) */
-    body::-webkit-scrollbar {
-        width: 12px; /* Ancho de la barra de desplazamiento */
-    }
-
-    body::-webkit-scrollbar-track {
-        background: var(--light-background-transparent); /* Fondo transparente claro para la pista */
-        border-radius: 10px;
-    }
-
-    body::-webkit-scrollbar-thumb {
-        background-color: var(--dark-text); /* Color azul zafiro para el "pulgar" */
-        border-radius: 10px;
-        border: 3px solid var(--light-background-transparent); /* Borde para el efecto visual */
-    }
-
-    main {
-        max-width: 1200px;
-        margin: 80px auto 20px auto; /* Ajustado el margin-top a 80px, sin navbar */
-        padding: 0 20px;
-        position: relative; /* Asegura que el contenido esté por encima del fondo desenfocado */
-        z-index: 1; /* Elevado para estar sobre el fondo */
-        animation: fadeInScale 1s ease-out forwards; /* Aplicar animación de entrada */
-        opacity: 0; /* Iniciar con opacidad 0 */
-        transform: translateY(20px); /* Iniciar un poco más abajo */
-    }
-
-    /* Sección de Introducción */
-    .intro-section {
-        text-align: center;
-        margin-bottom: 40px;
-        padding: 30px;
-        background-color: var(--light-background-transparent); /* Aplica el blanco transparente */
-        border-radius: 12px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Sombra pronunciada para contraste */
-        position: relative;
-        overflow: hidden;
-        backdrop-filter: blur(10px); /* Desenfoque adicional para el efecto "glass" */
-        -webkit-backdrop-filter: blur(10px);
-    }
-
-    /* Estilos del título principal - SIMPLE y SIN ANIMACIÓN */
-    .intro-section .title {
-        color: var(--dark-text); /* Color azul zafiro sólido */
-        font-size: 3em;
-        margin-bottom: 15px;
-        position: relative;
-        display: inline-block;
-        font-weight: 800; /* Más negrita */
-        /* Estilos para asegurar que no haya ninguna animación o efecto de texto */
-        text-shadow: none !important;
-        background: none !important;
-        -webkit-background-clip: unset !important;
-        -webkit-text-fill-color: unset !important;
-        animation: none !important;
-    }
-
-    .intro-section .title::after {
-        content: '';
-        position: absolute;
-        width: 70px;
-        height: 4px;
-        background-color: var(--dark-text); /* Color azul zafiro sólido para la línea */
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: -10px;
-        border-radius: 2px;
-    }
-
-    .intro-section .intro-text {
-        font-size: 1.1em;
-        color: var(--dark-text);
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 0 10px;
-    }
-
-    /* Sección de Destinos */
-    .destinos-section {
-        display: grid;
-        /* Cambiado para mostrar siempre 2 columnas en pantallas grandes */
-        grid-template-columns: repeat(2, 1fr);
-        gap: 30px;
-    }
-
-    .destino-card {
-        background-color: var(--lighter-background-transparent);
-        border-radius: 12px;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
-        border: 1px solid var(--border-color);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        animation: fadeInScale 0.8s ease-out forwards;
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    /* Retraso en la animación de las tarjetas para un efecto escalonado */
-    .destino-card:nth-child(1) { animation-delay: 0.1s; }
-    .destino-card:nth-child(2) { animation-delay: 0.2s; }
-    .destino-card:nth-child(3) { animation-delay: 0.3s; }
-    .destino-card:nth-child(4) { animation-delay: 0.4s; }
-    .destino-card:nth-child(5) { animation-delay: 0.5s; }
-    .destino-card:nth-child(6) { animation-delay: 0.6s; }
-    .destino-card:nth-child(7) { animation-delay: 0.7s; }
-    .destino-card:nth-child(8) { animation-delay: 0.8s; }
-
-    .destino-card:hover {
-        transform: translateY(-10px) scale(1.02);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    }
-
-    .destino-card .image-container {
-        flex: 0 0 220px;
-        width: 100%;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .destino-card .image-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-        transition: transform 0.4s ease;
-    }
-
-    .destino-card:hover .image-container img {
-        transform: scale(1.08);
-    }
-
-    .destino-card .card-content {
-        flex: 1;
-        padding: 25px;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        background-color: rgba(0, 0, 0, 0.05);
-    }
-
-    .destino-card .card-content h3 {
-        color: var(--dark-text);
-        font-size: 1.8em;
-        margin-top: 0;
-        margin-bottom: 15px;
-        border-bottom: 2px solid var(--border-color);
-        padding-bottom: 10px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .destino-card .card-content h3 i {
-        color: var(--light-dark-text);
-        font-size: 0.7em;
-        transition: transform 0.3s ease, color 0.3s ease;
-    }
-
-    .destino-card:hover .card-content h3 i {
-        transform: scale(1.2) rotate(10deg);
-        color: var(--accent-color);
-    }
-
-    .destino-card .card-content p {
-        font-size: 1em;
-        margin-bottom: 10px;
-        color: var(--light-dark-text);
-        animation: textFadeIn 0.6s ease-out forwards;
-        opacity: 0;
-    }
-
-    /* Retraso en la animación del texto */
-    .destino-card .card-content p:nth-of-type(1) { animation-delay: 0.9s; }
-    .destino-card .card-content p:nth-of-type(2) { animation-delay: 1.0s; }
-
-    .destino-card .card-content p strong {
-        color: var(--dark-text);
-        font-weight: 700;
-    }
-
-    /* Nuevos estilos para iconos dentro del texto */
-    .card-content p .icon-inline {
-        margin-right: 8px;
-        color: var(--light-dark-text);
-        font-size: 0.9em;
-        transition: transform 0.2s ease, color 0.2s ease;
-        width: 20px; /* Ancho fijo para alineación */
-        text-align: center;
-    }
-
-    .card-content p:hover .icon-inline {
-        transform: scale(1.1);
-        color: var(--accent-color);
-    }
-
-    /* Ajustes Responsivos */
-    @media (max-width: 1024px) {
-        .intro-section .title {
-            font-size: 2.5em;
-        }
-        .destino-card .image-container {
-            flex: 0 0 200px;
-        }
-        .destino-card .card-content {
-            padding: 20px;
-        }
-        .destino-card .card-content h3 {
-            font-size: 1.6em;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .intro-section {
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-        .intro-section .title {
-            font-size: 2em;
-        }
-        .intro-section .intro-text {
-            font-size: 0.95em;
-        }
-        .destinos-section {
-            /* Una columna en pantallas más pequeñas para mejor legibilidad */
-            grid-template-columns: 1fr;
-        }
-        .destino-card .image-container {
-            flex: 0 0 180px;
-        }
-        .destino-card .card-content h3 {
-            font-size: 1.5em;
-        }
-        .destino-card .card-content p {
-            font-size: 0.9em;
-        }
-    }
-
-    @media (max-width: 480px) {
-        main {
-            padding: 0 10px;
-            margin-top: 60px;
-        }
-        .intro-section {
-            padding: 20px 15px;
-        }
-        .intro-section .title {
-            font-size: 1.8em;
-            word-break: break-word;
-        }
-        .intro-section .title::after {
-            width: 50px;
-        }
-        .intro-section .intro-text {
-            font-size: 0.85em;
-        }
-        .destino-card .image-container {
-            flex: 0 0 160px;
-        }
-        .destino-card .card-content {
-            padding: 15px;
-        }
-        .destino-card .card-content h3 {
-            font-size: 1.3em;
-        }
-        .destino-card .card-content p {
-            font-size: 0.8em;
-        }
-    }
-    /* =================================================================== */
-    /* ESTILOS DE TU CÓDIGO ORIGINAL QUE NECESITAN SER ADAPTADOS O MANTENIDOS */
-    /* =================================================================== */
-
-    /* Contenedor principal de la página de perfil */
-    .profile-page-container {
-        display: flex;
-        gap: 2rem;
-        padding: 2rem;
-        font-family: 'Segoe UI', 'Roboto', sans-serif; /* Consistente con la nueva fuente */
-        background-color: transparent; /* El fondo se manejará con body::before */
-        align-items: flex-start;
-        flex-wrap: wrap;
-        margin-top: 2rem; /* Ajuste para el margen superior */
-        animation: fadeInScale 1s ease-out forwards; /* Aplicar animación de entrada */
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    /* Estilos base para todas las tarjetas - ADAPTADAS */
-    .profile-card, .history-card, .recommendation-card {
-        background-color: var(--light-background-transparent); /* Fondo transparente claro */
-        border-radius: 16px;
-        padding: 2rem;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
-        transition: all 0.3s ease;
-        flex-grow: 1;
-        border: 1px solid var(--border-color); /* Borde transparente oscuro */
-        backdrop-filter: blur(8px); /* Efecto "glass" */
-        -webkit-backdrop-filter: blur(8px);
-    }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Responsivo</title>
     
-    .profile-card {
-        flex-basis: 350px;
-        position: sticky;
-        top: 2rem;
-    }
+    <!-- Fuentes y Iconos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    .history-card {
-        flex-basis: 500px;
-    }
-
-    .recommendation-card {
-        flex-basis: 500px; /* Ancho similar al historial */
-    }
-
-    @media (max-width: 1200px) {
-        .history-card, .recommendation-card {
-            flex-basis: 100%; 
+    <style>
+        /* --- Paleta de Colores y Variables Globales --- */
+        :root {
+            --light-background-transparent: rgba(255, 255, 255, 0.85);
+            --lighter-background-transparent: rgba(255, 255, 255, 0.9);
+            --dark-text: #0F52BA; /* Azul Zafiro */
+            --light-dark-text: #173F7A;
+            --accent-color: #FFD700; /* Dorado */
+            --border-color: rgba(0, 0, 0, 0.2);
+            --danger-color: #842029;
+            --success-color: #0f5132;
         }
-    }
 
-    @media (max-width: 992px) {
+        /* --- Animaciones --- */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- Estilos Base y de Fondo --- */
+        body {
+            font-family: 'Montserrat', 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--dark-text);
+            overflow-x: hidden;
+            background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            height: 100%; width: 100%;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+
+        /* --- Estilos de Barra de Desplazamiento --- */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.5); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background-color: var(--dark-text); border-radius: 10px; border: 2px solid rgba(255, 255, 255, 0.5); }
+
+        /* --- Contenedor Principal --- */
         .profile-page-container {
-            flex-direction: column;
-            padding: 1rem; /* Ajuste de padding para pantallas más pequeñas */
-            gap: 1.5rem; /* Reducir el espacio entre elementos */
+            display: flex;
+            flex-wrap: wrap; /* Clave para la responsividad */
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 2rem auto;
+            align-items: flex-start;
+            animation: fadeInScale 0.8s ease-out forwards;
         }
-        .profile-card {
-            position: static; /* Eliminar sticky en móviles */
-            width: 100%;
-            padding: 1.5rem; /* Ajuste de padding */
-        }
-        .history-card, .recommendation-card {
-            padding: 1.5rem; /* Ajuste de padding */
-        }
-    }
 
-    /* Media query para pantallas muy pequeñas (ej. iPhone 5/SE) */
-    @media (max-width: 375px) {
-        .profile-page-container {
-            padding: 0.5rem; /* Reducir aún más el padding */
-        }
+        /* --- Estilos Base para las Tarjetas --- */
         .profile-card, .history-card, .recommendation-card {
-            padding: 1rem; /* Reducir aún más el padding de las tarjetas */
+            background-color: var(--light-background-transparent);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .profile-card__title, .history-card__title, .recommendation-card__title {
-            font-size: 1.5rem; /* Ajustar tamaño de título */
+
+        .profile-card:hover, .history-card:hover, .recommendation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
         }
+
+        /* --- Diseño Flexbox para las tarjetas --- */
+        .profile-card {
+            flex: 1 1 350px; /* Crece, se encoge, base de 350px */
+            position: sticky;
+            top: 2rem;
+        }
+
+        .right-column {
+            flex: 2 1 500px; /* Ocupa más espacio */
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .history-card, .recommendation-card {
+            width: 100%;
+        }
+
+        /* --- Títulos de las Tarjetas --- */
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .card-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 4px;
+            background-color: var(--dark-text);
+            border-radius: 2px;
+            margin: 0.5rem auto 0;
+        }
+
+        /* --- Imagen de Perfil --- */
+        .profile-image-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1.5rem;
+            cursor: pointer;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--dark-text);
+            box-shadow: 0 4px 15px rgba(15, 82, 186, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .profile-image-container:hover .profile-image {
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 25px rgba(255, 215, 0, 0.6);
+            transform: scale(1.05);
+        }
+
+        .profile-image-container .overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .profile-image-container:hover .overlay {
+            opacity: 1;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .loading-overlay.show { display: flex; opacity: 1; }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border-left-color: var(--dark-text);
+            animation: spin 1s ease infinite;
+        }
+
+        /* --- Formulario --- */
+        .form-group { margin-bottom: 1.5rem; }
         .form-group__label {
-            font-size: 0.8rem; /* Ajustar tamaño de etiqueta */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--light-dark-text);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
         }
         .form-group__input {
-            padding: 10px 12px; /* Ajustar padding del input */
-            font-size: 0.9rem; /* Ajustar tamaño de fuente del input */
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background-color: rgba(255, 255, 255, 0.95);
+            color: var(--dark-text);
         }
-        .buttons-container {
-            flex-direction: column; /* Apilar botones en pantallas muy pequeñas */
-            gap: 0.8rem;
+        .form-group__input:focus {
+            outline: none;
+            border-color: var(--dark-text);
+            box-shadow: 0 0 0 3px rgba(15, 82, 186, 0.2);
         }
+        .form-text { font-size: 0.8rem; color: var(--light-dark-text); margin-top: 0.25rem; }
+        .hidden-file-input { display: none; }
+        
+        /* --- Botones --- */
+        .buttons-container { display: flex; gap: 1rem; margin-top: 2rem; }
         .btn-custom {
-            padding: 10px 15px; /* Ajustar padding del botón */
-            font-size: 0.9rem; /* Ajustar tamaño de fuente del botón */
+            flex-grow: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        .history-item__place-name {
-            font-size: 1rem; /* Ajustar tamaño de nombre de lugar en historial */
+        .btn-primary-custom { background-color: var(--dark-text); color: white; }
+        .btn-primary-custom:hover { background-color: var(--light-dark-text); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(15, 82, 186, 0.4); }
+        .btn-secondary-custom { background-color: rgba(236, 240, 241, 0.9); color: var(--dark-text); border: 1px solid var(--border-color); }
+        .btn-secondary-custom:hover { background-color: rgba(189, 195, 199, 0.9); }
+
+        /* --- Alertas --- */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            border: 1px solid transparent;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            display: none;
         }
-        .history-item__date {
-            font-size: 0.7rem; /* Ajustar tamaño de fecha en historial */
+        .alert.show { opacity: 1; transform: translateY(0); display: block; }
+        .alert--success { color: var(--success-color); background-color: rgba(209, 231, 221, 0.9); border-color: rgba(186, 219, 204, 0.9); }
+        .alert--danger { color: var(--danger-color); background-color: rgba(248, 215, 218, 0.9); border-color: rgba(245, 194, 199, 0.9); }
+        .alert--info { color: #055160; background-color: rgba(207, 244, 252, 0.9); border-color: rgba(182, 239, 251, 0.9); }
+
+        /* --- Historial --- */
+        .history-card__content {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 0.5rem;
         }
-        .history-item__comment {
-            font-size: 0.85rem; /* Ajustar tamaño de comentario */
+        .history-item {
+            background-color: var(--lighter-background-transparent);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 5px solid var(--dark-text);
         }
-        .recommendation-card__place-name {
-            font-size: 1.3rem; /* Ajustar tamaño de nombre de lugar recomendado */
+        .history-item__header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
+        .history-item__place-name { font-weight: 700; color: var(--dark-text); font-size: 1.2rem; }
+        .history-item__date { font-size: 0.8rem; color: var(--light-dark-text); font-weight: 500; }
+        .history-item__comment { font-style: italic; color: var(--light-dark-text); margin: 1rem 0; }
+        .history-item__footer { display: flex; justify-content: flex-end; }
+        .history-item__accessibility { font-size: 0.9rem; color: var(--light-dark-text); display: inline-flex; align-items: center; gap: 0.75rem; }
+        .stars-wrapper .star { font-size: 1.1rem; color: var(--accent-color); letter-spacing: 2px; }
+        .stars-wrapper .star.empty { color: rgba(204, 204, 204, 0.8); }
+
+        /* --- Recomendaciones --- */
+        .recommendation-card__image-container {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
         }
-        .recommendation-card__description {
-            font-size: 0.9rem; /* Ajustar tamaño de descripción recomendada */
+        .recommendation-card__image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
         }
-    }
+        .recommendation-card:hover .recommendation-card__image { transform: scale(1.05); }
+        .recommendation-card__place-name { font-size: 1.5rem; font-weight: 700; color: var(--dark-text); margin-bottom: 0.5rem; }
+        .recommendation-card__description { font-size: 1rem; line-height: 1.6; color: var(--light-dark-text); }
 
-
-    .profile-card__title, .history-card__title, .recommendation-card__title {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--dark-text); /* Color de texto oscuro */
-        margin-bottom: 1.5rem;
-        text-align: center;
-        position: relative;
-    }
-
-    .profile-card__title::after, .history-card__title::after, .recommendation-card__title::after {
-        content: '';
-        display: block;
-        width: 50px;
-        height: 4px;
-        background-color: var(--dark-text); /* Línea de color oscuro */
-        border-radius: 2px;
-        margin: 0.5rem auto 0;
-    }
-
-    /* Estilos de la imagen de perfil (adaptados) */
-    .profile-image-container { 
-        position: relative; 
-        width: 150px; 
-        height: 150px; 
-        margin: 0 auto 1.5rem; 
-        cursor: pointer; /* Indica que es clickeable */
-    }
-    .profile-image { 
-        width: 100%; 
-        height: 100%; 
-        border-radius: 50%; 
-        object-fit: cover; 
-        border: 4px solid var(--dark-text); /* Borde con color oscuro */
-        box-shadow: 0 4px 15px rgba(15, 82, 186, 0.4); /* Sombra azul zafiro */
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    .profile-image-container:hover .profile-image {
-        border-color: var(--accent-color); /* Cambia el color del borde al pasar el ratón */
-        box-shadow: 0 4px 20px rgba(255, 215, 0, 0.6); /* Sombra dorada al pasar el ratón */
-    }
-    .loading-overlay { 
-        position: absolute; 
-        top: 0; 
-        left: 0; 
-        right: 0; 
-        bottom: 0; 
-        background-color: rgba(255, 255, 255, 0.6); /* Blanco más transparente */
-        display: none; 
-        align-items: center; 
-        justify-content: center; 
-        flex-direction: column; 
-        border-radius: 50%; 
-        opacity: 0; 
-        transition: opacity 0.3s ease; 
-    }
-    .loading-overlay.show { 
-        display: flex; 
-        opacity: 1; 
-    }
-    .spinner { 
-        border: 4px solid rgba(0, 0, 0, 0.1); 
-        width: 36px; 
-        height: 36px; 
-        border-radius: 50%; 
-        border-left-color: var(--dark-text); /* Spinner azul zafiro */
-        animation: spin 1s ease infinite; 
-    }
-    @keyframes spin { 
-        0% { transform: rotate(0deg); } 
-        100% { transform: rotate(360deg); } 
-    }
-
-    /* Formulario y Botones (adaptados) */
-    .form-group { margin-bottom: 1.5rem; }
-    .form-group__label { 
-        display: block; 
-        font-weight: 600; 
-        color: var(--light-dark-text); /* Texto de etiqueta más oscuro */
-        margin-bottom: 0.5rem; 
-        font-size: 0.9rem; 
-        display: flex;
-        align-items: center;
-        gap: 8px; /* Espacio entre icono y texto */
-    }
-    .form-group__label i {
-        color: var(--dark-text); /* Icono de la etiqueta azul zafiro */
-    }
-
-    .form-group__input { 
-        width: 100%; 
-        padding: 12px 15px; 
-        border: 1px solid var(--border-color); 
-        border-radius: 8px; 
-        font-size: 1rem; 
-        transition: border-color 0.3s, box-shadow 0.3s;
-        background-color: rgba(255, 255, 255, 0.9); /* Fondo ligeramente transparente para input */
-        color: var(--dark-text);
-    }
-    .form-group__input:focus { 
-        outline: none; 
-        border-color: var(--dark-text); /* Borde de enfoque oscuro */
-        box-shadow: 0 0 0 3px rgba(15, 82, 186, 0.2); /* Sombra de enfoque azul zafiro */
-    }
-    .form-group__input[disabled] { 
-        background-color: rgba(248, 249, 250, 0.7); /* Fondo más claro para disabled */
-        cursor: not-allowed; 
-    }
-    .form-text { 
-        font-size: 0.8rem; 
-        color: var(--light-dark-text); /* Texto auxiliar más oscuro */
-        margin-top: 0.25rem; 
-    }
-    .buttons-container { 
-        display: flex; 
-        gap: 1rem; 
-        margin-top: 2rem; 
-    }
-    .btn-custom { 
-        flex-grow: 1; 
-        padding: 12px 20px; 
-        border: none; 
-        border-radius: 8px; 
-        font-size: 1rem; 
-        font-weight: 600; 
-        cursor: pointer; 
-        transition: all 0.3s ease; 
-        text-decoration: none; 
-        text-align: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px; /* Espacio entre icono y texto */
-    }
-    .btn-primary-custom { 
-        background-color: var(--dark-text); /* Botón principal azul zafiro */
-        color: white; 
-    }
-    .btn-primary-custom:hover { 
-        background-color: var(--light-dark-text); /* Tono más oscuro al hover */
-        transform: translateY(-2px); 
-        box-shadow: 0 4px 15px rgba(15, 82, 186, 0.4); 
-    }
-    .btn-secondary-custom { 
-        background-color: rgba(236, 240, 241, 0.9); /* Botón secundario más transparente */
-        color: var(--dark-text); 
-        border: 1px solid var(--border-color); /* Borde para el secundario */
-    }
-    .btn-secondary-custom:hover { 
-        background-color: rgba(189, 195, 199, 0.8); 
-    }
-
-    /* Historial de lugares visitados (adaptados) */
-    .history-card__content { 
-        max-height: 600px; 
-        overflow-y: auto; 
-        position: relative; 
-        padding: 1rem 1rem 1rem 2.5rem; 
-        -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%); 
-        mask-image: linear-gradient(to bottom, black 90%, transparent 100%); 
-    }
-    .history-card__content::before { 
-        content: ''; 
-        position: absolute; 
-        top: 1rem; 
-        left: 20px; 
-        bottom: 1rem; 
-        width: 3px; 
-        background-color: var(--border-color); /* Línea de tiempo con color de borde */
-        border-radius: 2px; 
-    }
-    .history-card__content::-webkit-scrollbar { width: 8px; }
-    .history-card__content::-webkit-scrollbar-track { 
-        background: rgba(241, 241, 241, 0.7); /* Track de scroll más transparente */
-        border-radius: 10px; 
-    }
-    .history-card__content::-webkit-scrollbar-thumb { 
-        background: var(--light-dark-text); /* Thumb de scroll azul oscuro */
-        border-radius: 10px; 
-    }
-    .history-item { 
-        position: relative; 
-        background-color: var(--lighter-background-transparent); /* Fondo de ítem más transparente */
-        border-radius: 12px; 
-        padding: 1.5rem; 
-        border: 1px solid var(--border-color); 
-        transition: transform 0.3s ease, box-shadow 0.3s ease; 
-        overflow: hidden; 
-        margin-bottom: 2rem; 
-    }
-    .history-item::before { 
-        content: ''; 
-        position: absolute; 
-        top: 25px; 
-        left: -32px; 
-        width: 15px; 
-        height: 15px; 
-        border-radius: 50%; 
-        background-color: var(--card-background-color); 
-        border: 4px solid var(--dark-text); /* Borde del círculo con color oscuro */
-        z-index: 1; 
-        transition: transform 0.3s ease; 
-    }
-    .history-item:hover::before { transform: scale(1.2); }
-    .history-item:hover { 
-        transform: translateY(-5px) translateX(5px); 
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15); 
-    }
-    .history-item__header { 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: flex-start; 
-        margin-bottom: 0.75rem; 
-        flex-wrap: wrap; 
-        gap: 0.5rem; 
-    }
-    .history-item__place-name { 
-        font-weight: 700; 
-        color: var(--dark-text); /* Nombre de lugar oscuro */
-        font-size: 1.2rem; 
-    }
-    .history-item__date { 
-        font-size: 0.8rem; 
-        color: var(--light-dark-text); /* Fecha más oscura */
-        font-weight: 500; 
-        flex-shrink: 0; 
-        padding: 4px 8px; 
-        background-color: rgba(240, 242, 245, 0.7); /* Fondo de fecha más transparente */
-        border-radius: 6px; 
-    }
-    .history-item__comment { 
-        font-style: italic; 
-        color: var(--light-dark-text); /* Comentario más oscuro */
-        margin: 1rem 0; 
-        padding-left: 1rem; 
-        border-left: 3px solid var(--border-color); /* Borde del comentario con color de borde */
-        line-height: 1.6; 
-        font-size: 0.95rem; 
-    }
-    .history-item__footer { 
-        display: flex; 
-        justify-content: flex-end; 
-        align-items: center; 
-        margin-top: 1rem; 
-    }
-    .history-item__accessibility { 
-        font-size: 0.9rem; 
-        color: var(--light-dark-text); /* Texto de accesibilidad más oscuro */
-        display: inline-flex; 
-        align-items: center; 
-        gap: 0.75rem; 
-        background-color: rgba(244, 246, 248, 0.7); /* Fondo de accesibilidad más transparente */
-        padding: 8px 12px; 
-        border-radius: 20px; 
-    }
-    .history-item__accessibility .fa-wheelchair-move { 
-        color: var(--dark-text); /* Icono de silla de ruedas azul zafiro */
-        font-size: 1.1rem; 
-    }
-    .stars-wrapper .star { 
-        font-size: 1.1rem; 
-        color: var(--accent-color); /* Estrellas doradas */
-        letter-spacing: 2px; 
-    }
-    .stars-wrapper .star.empty { 
-        color: rgba(204, 204, 204, 0.7); /* Estrellas vacías más transparentes */
-    }
-    .history-section__empty-message, .history-section__error-message { 
-        text-align: center; 
-        color: var(--light-dark-text); /* Mensajes de historial más oscuros */
-        padding: 3rem; 
-        background-color: rgba(249, 249, 249, 0.6); /* Fondo de mensaje más transparente */
-        border-radius: 8px; 
-        border: 2px dashed var(--border-color); /* Borde de mensaje con color de borde */
-        margin-left: -20px; 
-    }
-    
-    /* =================================================================== */
-    /* ESTILOS PARA LA SECCIÓN DE RECOMENDACIONES CON IMAGEN (adaptados) */
-    /* =================================================================== */
-    .recommendation-card__content {
-        text-align: left; 
-    }
-
-    .recommendation-card__image-container {
-        width: 100%;
-        aspect-ratio: 16 / 9; 
-        border-radius: 12px;
-        overflow: hidden; 
-        margin-bottom: 1.5rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        background-color: rgba(240, 242, 245, 0.7); /* Fondo de imagen más transparente */
-    }
-
-    .recommendation-card__image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; 
-        transition: transform 0.3s ease;
-    }
-    .recommendation-card__image-container:hover .recommendation-card__image {
-        transform: scale(1.05); 
-    }
-    
-    .recommendation-card__place-name {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--dark-text); /* Nombre del lugar oscuro */
-        margin-bottom: 0.5rem;
-    }
-
-    .recommendation-card__description {
-        font-size: 1rem;
-        line-height: 1.6;
-        color: var(--light-dark-text); /* Descripción más oscura */
-        margin-bottom: 0;
-    }
-    
-    /* Alertas (adaptadas) */
-    .alert { 
-        padding: 1rem 1.5rem; 
-        border-radius: 8px; 
-        margin-top: 1.5rem; 
-        border: 1px solid transparent; 
-        font-weight: 500; 
-        opacity: 0; 
-        transform: translateY(20px); 
-        transition: opacity 0.3s ease, transform 0.3s ease; 
-    }
-    .alert.show { opacity: 1; transform: translateY(0); }
-    .alert--success { 
-        color: #0f5132; 
-        background-color: rgba(209, 231, 221, 0.8); /* Fondo de éxito más transparente */
-        border-color: rgba(186, 219, 204, 0.8); 
-    }
-    .alert--danger { 
-        color: #842029; 
-        background-color: rgba(248, 215, 218, 0.8); /* Fondo de peligro más transparente */
-        border-color: rgba(245, 194, 199, 0.8); 
-    }
-    .alert--info { 
-        color: #055160; 
-        background-color: rgba(207, 244, 252, 0.8); /* Fondo de información más transparente */
-        border-color: rgba(182, 239, 251, 0.8); 
-    }
-
-    /* Estilos para el input de tipo file oculto */
-    .hidden-file-input {
-        display: none;
-    }
-</style>
-
-<div class="profile-page-container">
-
-    <div class="profile-card">
-        <h1 class="profile-card__title">{{ translate('Mi Perfil') }}</h1>
-        <div class="profile-image-container" id="imageContainer">
-            <img id="profileImage" src="/static/imagenes/default-user.jpg" alt="{{ translate('Foto de perfil del usuario') }}" class="profile-image">
-            <input type="file" id="imageUploadInput" accept="image/*" class="hidden-file-input">
-            <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
-        </div>
-        <form id="profileForm">
-            <div class="form-group">
-                <label for="displayNameInput" class="form-group__label"><i class="fas fa-user"></i> {{ translate('Nombre de Usuario') }}</label>
-                <input type="text" id="displayNameInput" class="form-group__input" placeholder="{{ translate('Ingresa tu nombre de pantalla') }}">
-                <small class="form-text" id="displayNameError" style="color: #842029; display: none;">{{ translate('El nombre de usuario no puede estar vacío y debe tener al menos 3 caracteres.') }}</small>
-            </div>
-            <div class="form-group">
-                <label for="emailInput" class="form-group__label"><i class="fas fa-envelope"></i> {{ translate('Correo Electrónico') }}</label>
-                <input type="email" id="emailInput" class="form-group__input" disabled>
-                <small class="form-text">{{ translate('Este correo es de solo lectura.') }}</small>
-            </div>
-            <div class="buttons-container">
-                <button class="btn-custom btn-primary-custom" id="saveChangesBtn" type="submit"><i class="fas fa-save"></i> {{ translate('Guardar') }}</button>
-                <button class="btn-custom btn-secondary-custom" id="volverBtn" type="button"><i class="fas fa-arrow-left"></i> {{ translate('Volver') }}</button>
-            </div>
-        </form>
-           <div id="alertMessage" class="alert" role="alert" aria-live="polite" style="display: none;"></div>
-    </div>
-    
-    <div style="flex-basis: 500px; flex-grow: 1; display: flex; flex-direction: column; gap: 2rem;">
-
-        <div class="history-card">
-            <h2 class="history-card__title">{{ translate('Lugares Visitados') }}</h2>
-            <div id="reviewHistory" class="history-card__content">
-                <p>{{ translate('Cargando historial...') }}</p>
-            </div>
-        </div>
-
-        <div class="recommendation-card">
-            <h2 class="recommendation-card__title">{{ translate('Lugar Recomendado') }}</h2>
-            <div class="recommendation-card__content" id="recommendationContent">
-                <div class="recommendation-card__image-container">
-                    <img id="recommendedPlaceImage" src="" alt="{{ translate('Imagen del lugar recomendado') }}" class="recommendation-card__image">
-                </div>
-                <div>
-                    <h3 id="recommendedPlaceName" class="recommendation-card__place-name">{{ translate('Cargando...') }}</h3>
-                    <p id="recommendedPlaceDescription" class="recommendation-card__description"></p>
-                </div>
-            </div>
-        </div>
-        
-    </div>
-</div>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
-    // Ya no necesitamos getStorage, ref, uploadBytes, getDownloadURL, deleteObject directamente en el frontend para la subida
-    // import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-storage.js";
-    import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
-
-    const principalUrl = "{{ url_for('principal') }}";
-
-    // Configuración de Firebase
-    const firebaseConfig = {
-        apiKey: "AIzaSyARMkC0EBYElA8wVOpefSgMD4oADAIqD4o",
-        authDomain: "turismo-4e958.firebaseapp.com",
-        projectId: "turismo-4e958",
-        storageBucket: "turismo-4e958.appspot.com",
-        messagingSenderId: "442508451378",
-        appId: "1:442508451378:web:65bed298dffe5b22e6262b",
-        measurementId: "G-XSDKJ73NKW"
-    };
-
-    // Inicialización de servicios de Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    // Ya no necesitamos 'storage' aquí, ya que la subida se hará vía backend
-    // const storage = getStorage(app);
-    const db = getFirestore(app);
-
-    // Obtención de elementos del DOM
-    const profileImage = document.getElementById('profileImage');
-    const imageUploadInput = document.getElementById('imageUploadInput');
-    const displayNameInput = document.getElementById('displayNameInput');
-    const emailInput = document.getElementById('emailInput');
-    const saveChangesBtn = document.getElementById('saveChangesBtn');
-    const volverBtn = document.getElementById('volverBtn');
-    const alertMessage = document.getElementById('alertMessage');
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    const profileForm = document.getElementById('profileForm');
-    const displayNameError = document.getElementById('displayNameError');
-    const imageContainer = document.getElementById('imageContainer');
-
-    let currentUser = null;
-    let initialDisplayName = "";
-    let initialPhotoURL = "";
-    let initialPhotoStoragePath = ""; // Para guardar la ruta de Storage si la imagen es personalizada
-
-    /**
-     * [MODIFICADO] Datos de los lugares destacados con URL de imagen.
-     * ¡IMPORTANTE! Reemplaza las URLs de placehold.co con las URLs de tus imágenes reales.
-     */
-    const lugaresDestacados = [
-        {
-            nombre: "Cerrito de la Libertad",
-            descripcion: "Mirador con vistas panorámicas de Huancayo, áreas verdes y juegos. Ideal para la familia.",
-            imagenUrl: "https://consultasenlinea.mincetur.gob.pe/fichaInventario//foto.aspx?cod=569569"
-        },
-        {
-            nombre: "Parque de la Identidad Wanka",
-            descripcion: "Parque escultórico que celebra la cultura Wanka con arte y arquitectura tradicional.",
-            imagenUrl: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0b/93/e6/0f/20160610-140918-largejpg.jpg?w=1200&h=-1&s=1"
-        },
-        {
-            nombre: "Convento de Ocopa",
-            descripcion: "Histórico convento franciscano con valiosa biblioteca misional y museo.",
-            imagenUrl: "https://portal.andina.pe/EDPfotografia3/Thumbnail/2025/04/11/001160517W.jpg"
-        },
-        {
-            nombre: "Laguna de Paca",
-            descripcion: "Serena laguna andina ideal para paseos en bote y observación de aves, rodeada de mitos.",
-            imagenUrl: "https://portal.andina.pe/EDPfotografia/Thumbnail/2015/08/08/000307867W.jpg"
-        },
-        {
-            nombre: "Nevado Huaytapallana (Acceso)",
-            descripcion: "Majestuoso nevado andino y fuente de ríos, ideal para andinismo y ecoturismo (requiere guía).",
-            imagenUrl: "https://portal.andina.pe/EDPfotografia2/Thumbnail/2011/01/20/000146347W.jpg"
-        },
-        {
-            nombre: "Museo Salesiano Vicente Rasetto",
-            descripcion: "Variada colección de arqueología, arte y historia natural.",
-            imagenUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Museo_Salesiano_Vivente_Rasetto.jpg/960px-Museo_Salesiano_Vivente_Rasetto.jpg"
-        },
-        {
-            nombre: "Plaza Constitución",
-            descripcion: "Corazón de Huancayo, rodeada por la Catedral. Punto de encuentro vibrante.",
-            imagenUrl: "https://scontent-lim1-1.xx.fbcdn.net/v/t1.6435-9/158796412_2459978877482346_6650320610651766138_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFaRNxogFMW7jlDllTsNNjTV_pdaBmjseFX-l1oGaOx4cEdrG5JQvqB_j1Q1GRlCvf1sJ-NJv1C1TqLBHl47yTj&_nc_ohc=HktSqptoac4Q7kNvwE4zldj&_nc_oc=AdmMGbqvaQDR7yn_WJXTee3Mm1-YXt-MjhzvRaf1qYZl1r1D3-YUyBlwyKP44GV3dGXxThSPP9_3Vri1OFjbo6WS&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=E6ym5uF-NoF2lhUdcvTPhA&oh=00_AfPtJv7CkjnfyOD9twY2d7yZyDJ2RBiqm1vPpDEknzOCIg&oe=68685B78"
-        },
-        {
-            nombre: "Hualhuas (Centro Artesanal)",
-            descripcion: "Pueblo famoso por sus textiles de alpaca y oveja. Observa el proceso artesanal.",
-            imagenUrl: "https://portal.andina.pe/EDPfotografia2/Thumbnail/2010/02/17/000118960W.jpg"
-        },
-        {
-            nombre: "Mercado Artesanal de Huancayo",
-            descripcion: "Un vibrante mercado donde encontrarás artesanías locales, textiles, platería y productos típicos de la región.",
-            imagenUrl: "https://scontent-lim1-1.xx.fbcdn.net/v/t1.6435-9/127499475_1879489968856302_5378141066542393658_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeFTIeR_UAFMXQMfiZTw6YhPV1X3_nv6AYtXVff-e_oBiwttJ7RmzniruozoPBagirBACdN7yDaQh7NXPydqwdsB&_nc_ohc=0RSt45FuaaEQ7kNvwEZmoX3&_nc_oc=AdmL5hkuMr15hfOJPXEi7YhnmaKI-awZAiisg5R0kvpJTGGWRtR6Qn7EYRZ0DFFLFRxni0jj6iXGIGFhay1c6BbR&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=6GxDttK2L2njxLfhr0xcWA&oh=00_AfMz9fubC5-_xkE-ZXFGpNvhWefU7TlBEo6zs0v21WZNew&oe=68688CEE"
-        }
-    ];
-
-    /**
-     * Muestra una recomendación aleatoria con su imagen.
-     */
-    function displayRandomRecommendation() {
-        const nameEl = document.getElementById('recommendedPlaceName');
-        const descEl = document.getElementById('recommendedPlaceDescription');
-        const imgEl = document.getElementById('recommendedPlaceImage'); // Elemento de la imagen
-        
-        // Seleccionar un lugar al azar
-        const randomIndex = Math.floor(Math.random() * lugaresDestacados.length);
-        const lugar = lugaresDestacados[randomIndex];
-
-        // Actualizar el DOM con la información del lugar
-        nameEl.textContent = lugar.nombre;
-        descEl.textContent = lugar.descripcion;
-        imgEl.src = lugar.imagenUrl; // Asignar la URL de la imagen
-        imgEl.alt = `${'{{ translate("Imagen de") }}'} ${lugar.nombre}`; // Texto alternativo accesible
-    }
-
-    function accesibilidadANumero(nivel) {
-        const baja = "{{ translate('Baja') }}"; const media = "{{ translate('Media') }}"; const alta = "{{ translate('Alta') }}";
-        if (nivel === baja) return 1; if (nivel === media) return 3; if (nivel === alta) return 5; return 0;
-    }
-    function renderStars(cantidad) {
-        cantidad = Number(cantidad); if (isNaN(cantidad)) cantidad = 0; let estrellasHtml = ''; const totalStars = 5;
-        for (let i = 1; i <= totalStars; i++) { estrellasHtml += `<span class="star ${i <= cantidad ? 'filled' : 'empty'}">${i <= cantidad ? '★' : '☆'}</span>`; }
-        return `<span class="stars-wrapper">${estrellasHtml}</span>`;
-    }
-    function loadUserReviews(uid) {
-        const reviewsHistoryDiv = document.getElementById('reviewHistory'); const reviewsRef = collection(db, "Reseñas"); const q = query(reviewsRef, where("userId", "==", uid));
-        onSnapshot(q, (snapshot) => {
-            if (snapshot.empty) { reviewsHistoryDiv.innerHTML = `<p class="history-section__empty-message">{{ translate('Aún no has visitado y reseñado ningún lugar.') }}</p>`; return; }
-            reviewsHistoryDiv.innerHTML = ''; const reviews = snapshot.docs.map(doc => doc.data());
-            reviews.sort((a, b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0));
-            reviews.forEach(review => {
-                const reviewElement = document.createElement('div'); reviewElement.className = 'history-item';
-                const reviewDate = review.fecha?.seconds ? new Date(review.fecha.seconds * 1000).toLocaleDateString() : '{{ translate("Fecha no disponible") }}';
-                const accessibilityIcon = '<i class="fa-solid fa-wheelchair-move"></i>';
-                reviewElement.innerHTML = `<div class="history-item__header"><strong class="history-item__place-name">${review.lugar}</strong><span class="history-item__date">${reviewDate}</span></div><p class="history-item__comment">“${review.comentario}”</p><div class="history-item__footer"><span class="history-item__accessibility">${accessibilityIcon} &nbsp; {{ translate('Accesibilidad') }}: ${renderStars(accesibilidadANumero(review.accesibilidad))}</span></div>`;
-                reviewsHistoryDiv.appendChild(reviewElement);
-            });
-        }, (error) => { console.error("Error al cargar el historial: ", error); reviewsHistoryDiv.innerHTML = `<p class="history-section__error-message">{{ translate('No se pudo cargar tu historial.') }}</p>`; });
-    }
-    function showAlert(message, type) {
-        alertMessage.textContent = message; alertMessage.className = `alert alert--${type}`; alertMessage.style.display = 'block'; setTimeout(() => alertMessage.classList.add('show'), 10);
-        setTimeout(() => { alertMessage.classList.remove('show'); setTimeout(() => { alertMessage.style.display = 'none'; }, 300); }, 4000);
-    }
-    function showLoading(show) {
-        loadingOverlay.classList.toggle('show', show); 
-        saveChangesBtn.disabled = show; 
-        volverBtn.disabled = show; 
-        displayNameInput.disabled = show;
-        imageUploadInput.disabled = show; // Deshabilitar también el input de archivo
-    }
-
-    // Listener de autenticación
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            currentUser = user;
-            emailInput.value = user.email;
-            
-            // Cargar nombre de usuario
-            const storedName = localStorage.getItem(`customDisplayName_${user.uid}`);
-            initialDisplayName = storedName || user.displayName || user.email.split('@')[0];
-            displayNameInput.value = initialDisplayName;
-
-            // Cargar imagen de perfil
-            // Si hay una ruta personalizada guardada, intenta cargarla
-            initialPhotoStoragePath = localStorage.getItem(`customPhotoPath_${user.uid}`) || '';
-            let photoUrl = user.photoURL || '/static/imagenes/default-user.jpg'; // Por defecto, la URL de Firebase Auth o la local
-
-            // Si hay una ruta de Storage personalizada, intentamos obtener su URL
-            if (initialPhotoStoragePath && initialPhotoStoragePath !== 'default') {
-                // Para obtener la URL de una imagen subida a Firebase Storage a través del backend,
-                // no podemos usar getDownloadURL directamente en el frontend sin la configuración CORS.
-                // Asumimos que el backend nos devolverá una URL pública que podemos usar.
-                // Por ahora, si la ruta existe, la usaremos directamente si es una URL,
-                // o la de Firebase Auth si es un path de Storage (que debería ser manejado por el backend para obtener la URL).
-                // Para simplificar, si el photoURL de Firebase Auth ya existe, lo usamos.
-                // Si no, y tenemos un path de Storage, asumimos que el backend debería haberlo hecho accesible.
-                // Para evitar un error de CORS al intentar obtener la URL desde el frontend,
-                // vamos a confiar en que user.photoURL ya está actualizado si la imagen fue subida correctamente.
-                photoUrl = user.photoURL || '/static/imagenes/default-user.jpg';
-                console.log('User Photo URL from Firebase Auth:', photoUrl);
-            } else if (user.photoURL) {
-                photoUrl = user.photoURL;
-                console.log('User Photo URL from Firebase Auth:', photoUrl);
-            } else {
-                console.log('Using default profile image.');
+        /* --- Media Queries para Responsividad --- */
+        @media (max-width: 992px) {
+            .profile-page-container {
+                flex-direction: column;
+                padding: 1rem;
             }
+            .profile-card {
+                position: static; /* Deja de ser pegajoso */
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-title { font-size: 1.5rem; }
+            .profile-card, .history-card, .recommendation-card { padding: 1.5rem; }
+            .buttons-container { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-page-container">
+
+        <!-- Columna Izquierda: Perfil del Usuario -->
+        <div class="profile-card">
+            <h1 class="card-title">Mi Perfil</h1>
             
-            profileImage.src = photoUrl;
-            initialPhotoURL = photoUrl; // Guardar la URL inicial de la foto
-            loadUserReviews(user.uid);
-            displayRandomRecommendation(); // Llamada a la función de recomendación
-        } else {
-            console.log('User not authenticated, redirecting to login.');
-            window.location.href = "{{ url_for('login') }}";
-        }
-    });
+            <div class="profile-image-container" id="imageContainer">
+                <img id="profileImage" src="https://placehold.co/150x150/0F52BA/FFFFFF?text=Perfil" alt="Foto de perfil del usuario" class="profile-image">
+                <div class="overlay"><i class="fas fa-camera fa-2x"></i></div>
+                <input type="file" id="imageUploadInput" accept="image/*" class="hidden-file-input">
+                <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+            </div>
 
-    // Validación del nombre de usuario
-    function validateDisplayName(name) {
-        if (name.length < 3) {
-            displayNameError.style.display = 'block';
-            return false;
-        }
-        displayNameError.style.display = 'none';
-        return true;
-    }
+            <form id="profileForm" novalidate>
+                <div class="form-group">
+                    <label for="displayNameInput" class="form-group__label"><i class="fas fa-user"></i> Nombre de Usuario</label>
+                    <input type="text" id="displayNameInput" class="form-group__input" placeholder="Ingresa tu nombre">
+                    <small class="form-text" id="displayNameError" style="color: var(--danger-color); display: none;">El nombre debe tener al menos 3 caracteres.</small>
+                </div>
+                <div class="form-group">
+                    <label for="emailInput" class="form-group__label"><i class="fas fa-envelope"></i> Correo Electrónico</label>
+                    <input type="email" id="emailInput" class="form-group__input" disabled>
+                    <small class="form-text">Este correo es de solo lectura.</small>
+                </div>
+                <div class="buttons-container">
+                    <button class="btn-custom btn-primary-custom" id="saveChangesBtn" type="submit"><i class="fas fa-save"></i> Guardar Cambios</button>
+                    <button class="btn-custom btn-secondary-custom" id="volverBtn" type="button"><i class="fas fa-arrow-left"></i> Volver</button>
+                </div>
+            </form>
+            <div id="alertMessage" class="alert" role="alert"></div>
+        </div>
 
-    // Listener para el formulario de perfil
-    profileForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        if (!currentUser) {
-            console.warn('Attempt to save without authenticated user.');
-            return;
-        }
+        <!-- Columna Derecha: Historial y Recomendaciones -->
+        <div class="right-column">
+            <div class="history-card">
+                <h2 class="card-title">Lugares Visitados</h2>
+                <div id="reviewHistory" class="history-card__content">
+                    <p>Cargando historial...</p>
+                </div>
+            </div>
 
-        const currentDisplayName = displayNameInput.value.trim();
-        const file = imageUploadInput.files[0];
+            <div class="recommendation-card">
+                <h2 class="card-title">Lugar Recomendado</h2>
+                <div class="recommendation-card__content" id="recommendationContent">
+                    <div class="recommendation-card__image-container">
+                        <img id="recommendedPlaceImage" src="https://placehold.co/600x340/cccccc/FFFFFF?text=Cargando..." alt="Imagen del lugar recomendado" class="recommendation-card__image">
+                    </div>
+                    <div>
+                        <h3 id="recommendedPlaceName" class="recommendation-card__place-name">Cargando...</h3>
+                        <p id="recommendedPlaceDescription" class="recommendation-card__description"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        // Validar nombre de usuario
-        if (!validateDisplayName(currentDisplayName)) {
-            showAlert('{{ translate("❌ El nombre de usuario no es válido.") }}', 'danger');
-            console.log('Display name validation failed.');
-            return;
-        }
+    <!-- Scripts de Firebase -->
+    <script type="module">
+        // Importar los módulos necesarios de Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, updateProfile, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+        // ¡NUEVO! Importar el SDK de Storage para subir archivos
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-storage.js";
+        import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
 
-        // Determinar si hay cambios en el nombre o la imagen
-        const isDisplayNameChanged = currentDisplayName !== initialDisplayName;
-        const isImageChanged = file !== undefined; // Si hay un archivo seleccionado
+        // Configuración de Firebase (usa tus propias credenciales)
+        const firebaseConfig = {
+            apiKey: "AIzaSyARMkC0EBYElA8wVOpefSgMD4oADAIqD4o",
+            authDomain: "turismo-4e958.firebaseapp.com",
+            projectId: "turismo-4e958",
+            storageBucket: "turismo-4e958.appspot.com",
+            messagingSenderId: "442508451378",
+            appId: "1:442508451378:web:65bed298dffe5b22e6262b"
+        };
 
-        if (!isDisplayNameChanged && !isImageChanged) {
-            showAlert('{{ translate("ℹ️ No hay cambios para guardar.") }}', 'info');
-            console.log('No changes detected to save.');
-            return;
-        }
+        // Inicialización de servicios de Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const storage = getStorage(app); // Inicializar Storage
+        const db = getFirestore(app);
 
-        showLoading(true);
-        console.log('Starting save process...');
+        // Elementos del DOM
+        const profileImage = document.getElementById('profileImage');
+        const imageUploadInput = document.getElementById('imageUploadInput');
+        const displayNameInput = document.getElementById('displayNameInput');
+        const emailInput = document.getElementById('emailInput');
+        const saveChangesBtn = document.getElementById('saveChangesBtn');
+        const volverBtn = document.getElementById('volverBtn');
+        const alertMessage = document.getElementById('alertMessage');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const profileForm = document.getElementById('profileForm');
+        const displayNameError = document.getElementById('displayNameError');
+        const imageContainer = document.getElementById('imageContainer');
 
-        try {
-            let photoUrlToUpdate = initialPhotoURL; // Por defecto, la URL actual
-            let newPhotoStoragePath = initialPhotoStoragePath; // Por defecto, la ruta de Storage actual
+        let currentUser = null;
+        let initialDisplayName = "";
+        let initialPhotoURL = "";
 
-            if (isImageChanged) {
-                console.log('Uploading new image via backend proxy...');
-                const formData = new FormData();
-                formData.append('profile_image', file);
-                formData.append('userId', currentUser.uid); // Send user ID to backend for folder structure
+        // --- LÓGICA DE LA APLICACIÓN ---
 
-                const response = await fetch('/api/upload-profile-image', { // Your backend endpoint
-                    method: 'POST',
-                    body: formData,
+        // Listener de autenticación
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Usuario autenticado
+                currentUser = user;
+                loadUserProfile(user);
+                loadUserReviews(user.uid);
+                displayRandomRecommendation();
+            } else {
+                // No hay usuario, iniciar sesión anónimamente para demostración
+                console.log("No user found. Signing in anonymously for demo purposes.");
+                signInAnonymously(auth).catch((error) => {
+                    console.error("Anonymous sign-in failed:", error);
+                    showAlert("No se pudo iniciar sesión. La app no funcionará.", "danger");
                 });
+            }
+        });
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Error uploading image to backend.');
+        function loadUserProfile(user) {
+            emailInput.value = user.email || 'usuario@anónimo.com';
+            initialDisplayName = user.displayName || '';
+            displayNameInput.value = initialDisplayName;
+            initialPhotoURL = user.photoURL || 'https://placehold.co/150x150/0F52BA/FFFFFF?text=Perfil';
+            profileImage.src = initialPhotoURL;
+            profileImage.onerror = () => {
+                // Si la URL de la imagen falla, mostrar una por defecto
+                profileImage.src = 'https://placehold.co/150x150/0F52BA/FFFFFF?text=Error';
+            };
+        }
+
+        // Listener para el formulario de perfil
+        profileForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (!currentUser) return;
+
+            const newDisplayName = displayNameInput.value.trim();
+            const file = imageUploadInput.files[0];
+
+            if (!validateDisplayName(newDisplayName)) {
+                showAlert("El nombre de usuario no es válido.", 'danger');
+                return;
+            }
+
+            const isNameChanged = newDisplayName !== initialDisplayName;
+            const isFileSelected = file !== undefined;
+
+            if (!isNameChanged && !isFileSelected) {
+                showAlert("No hay cambios para guardar.", 'info');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                let photoUrlToUpdate = currentUser.photoURL;
+
+                // --- ¡NUEVA LÓGICA DE SUBIDA DE IMAGEN! ---
+                if (isFileSelected) {
+                    console.log("Uploading new image...");
+                    // 1. Crear una referencia en Firebase Storage
+                    // La ruta será 'profile_images/[USER_ID]/[NOMBRE_DEL_ARCHIVO]'
+                    const filePath = `profile_images/${currentUser.uid}/${file.name}`;
+                    const storageRef = ref(storage, filePath);
+
+                    // 2. Subir el archivo
+                    const uploadTask = await uploadBytes(storageRef, file);
+                    console.log("Image uploaded successfully!", uploadTask);
+
+                    // 3. Obtener la URL de descarga pública
+                    photoUrlToUpdate = await getDownloadURL(uploadTask.ref);
+                    console.log("Download URL:", photoUrlToUpdate);
                 }
 
-                const result = await response.json();
-                photoUrlToUpdate = result.photoURL; // URL pública de la imagen
-                newPhotoStoragePath = result.storagePath; // Ruta interna en Firebase Storage
-
-                console.log('Image uploaded via proxy. URL:', photoUrlToUpdate);
-                console.log('Storage Path:', newPhotoStoragePath);
-
-                // Update the image in the DOM immediately
-                profileImage.src = photoUrlToUpdate; 
-                initialPhotoURL = photoUrlToUpdate; // Update initial photo URL
-                initialPhotoStoragePath = newPhotoStoragePath; // Update initial storage path
-
-                // No intentamos eliminar la imagen anterior desde el frontend directamente.
-                // Esta lógica debería estar en el backend si es necesaria,
-                // ya que el backend tiene acceso a las credenciales de Firebase Admin SDK.
-            }
-
-            // Update Firebase Auth profile
-            if (isDisplayNameChanged || isImageChanged) {
-                console.log('Updating Firebase Auth profile...');
-                await updateProfile(currentUser, { 
-                    displayName: currentDisplayName,
-                    photoURL: photoUrlToUpdate // Update photoURL in Firebase Auth profile
+                // 4. Actualizar el perfil de Firebase Auth (nombre y/o URL de la foto)
+                await updateProfile(currentUser, {
+                    displayName: newDisplayName,
+                    photoURL: photoUrlToUpdate
                 });
-                localStorage.setItem(`customDisplayName_${currentUser.uid}`, currentDisplayName);
-                localStorage.setItem(`customPhotoPath_${currentUser.uid}`, newPhotoStoragePath); // Save new storage path
-                showAlert('{{ translate("✅ Perfil actualizado exitosamente.") }}', 'success');
-                initialDisplayName = currentDisplayName; // Update initial name
-                console.log('Firebase Auth profile updated.');
+
+                // Actualizar la UI y los valores iniciales
+                initialDisplayName = newDisplayName;
+                initialPhotoURL = photoUrlToUpdate;
+                profileImage.src = photoUrlToUpdate;
+
+                showAlert("Perfil actualizado exitosamente.", 'success');
+
+            } catch (error) {
+                console.error("Error updating profile:", error);
+                let errorMessage = "Ocurrió un error al actualizar el perfil.";
+                if (error.code === 'storage/unauthorized') {
+                    errorMessage = "Error de permisos. Asegúrate de que las reglas de Storage estén bien configuradas.";
+                }
+                showAlert(errorMessage, 'danger');
+            } finally {
+                showLoading(false);
+                imageUploadInput.value = ''; // Limpiar el input de archivo
             }
-        } catch (error) {
-            console.error('❌ {{ translate("Error al actualizar el perfil:") }}', error);
-            showAlert(`{{ translate("Error:") }} ${error.message}`, 'danger');
-        } finally {
-            showLoading(false);
-            imageUploadInput.value = ''; // Clear file input after upload
-            console.log('Save process finished.');
+        });
+
+        // --- FUNCIONES AUXILIARES Y DE UI ---
+
+        function validateDisplayName(name) {
+            if (name.length < 3) {
+                displayNameError.style.display = 'block';
+                return false;
+            }
+            displayNameError.style.display = 'none';
+            return true;
         }
-    });
 
-    // Listener para el botón "Volver"
-    volverBtn.addEventListener('click', () => { 
-        console.log('Redirecting to main page.');
-        window.location.href = principalUrl; 
-    });
-
-    // Listener para cambiar la imagen de perfil al hacer clic en el contenedor de la imagen
-    imageContainer.addEventListener('click', () => {
-        console.log('Click on image container, opening file selector.');
-        imageUploadInput.click(); // Simulate click on file input
-    });
-
-    // Previsualizar la imagen seleccionada
-    imageUploadInput.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            console.log('File selected for preview:', file.name, file.type, file.size, 'bytes');
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                profileImage.src = e.target.result;
-                console.log('Image previewed.');
-            };
-            reader.readAsDataURL(file);
-        } else {
-            console.log('No file selected, restoring initial image.');
-            // If no file is selected, revert to the initial or default image
-            profileImage.src = initialPhotoURL || '/static/imagenes/default-user.jpg';
+        function showLoading(isLoading) {
+            loadingOverlay.classList.toggle('show', isLoading);
+            saveChangesBtn.disabled = isLoading;
+            volverBtn.disabled = isLoading;
         }
-    });
 
-    // Validar el nombre de usuario en tiempo real
-    displayNameInput.addEventListener('input', () => {
-        validateDisplayName(displayNameInput.value.trim());
-    });
-</script>
+        function showAlert(message, type = 'info') {
+            alertMessage.textContent = message;
+            alertMessage.className = `alert alert--${type}`;
+            alertMessage.classList.add('show');
+            setTimeout(() => {
+                alertMessage.classList.remove('show');
+            }, 4000);
+        }
 
-{% endblock %}
+        // Abrir selector de archivos al hacer clic en la imagen
+        imageContainer.addEventListener('click', () => imageUploadInput.click());
+
+        // Previsualizar la imagen seleccionada
+        imageUploadInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    profileImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        volverBtn.addEventListener('click', () => {
+            // Aquí iría la lógica para volver a la página principal
+            showAlert('Funcionalidad "Volver" no implementada en esta demo.', 'info');
+        });
+
+        // --- FUNCIONES PARA CARGAR DATOS (HISTORIAL Y RECOMENDACIONES) ---
+
+        function loadUserReviews(uid) {
+            const reviewsHistoryDiv = document.getElementById('reviewHistory');
+            const q = query(collection(db, "Reseñas"), where("userId", "==", uid));
+            onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    reviewsHistoryDiv.innerHTML = `<p>Aún no has visitado ningún lugar.</p>`;
+                    return;
+                }
+                reviewsHistoryDiv.innerHTML = '';
+                snapshot.docs
+                    .map(doc => doc.data())
+                    .sort((a, b) => (b.fecha?.seconds || 0) - (a.fecha?.seconds || 0))
+                    .forEach(review => {
+                        const reviewDate = review.fecha?.seconds ? new Date(review.fecha.seconds * 1000).toLocaleDateString() : "N/A";
+                        reviewsHistoryDiv.innerHTML += `
+                            <div class="history-item">
+                                <div class="history-item__header">
+                                    <strong class="history-item__place-name">${review.lugar}</strong>
+                                    <span class="history-item__date">${reviewDate}</span>
+                                </div>
+                                <p class="history-item__comment">“${review.comentario}”</p>
+                                <div class="history-item__footer">
+                                    <span class="history-item__accessibility">
+                                        <i class="fa-solid fa-wheelchair-move"></i> &nbsp; Accesibilidad: ${renderStars(review.accesibilidad)}
+                                    </span>
+                                </div>
+                            </div>`;
+                    });
+            }, (error) => {
+                console.error("Error al cargar historial: ", error);
+                reviewsHistoryDiv.innerHTML = `<p style="color: var(--danger-color);">No se pudo cargar tu historial.</p>`;
+            });
+        }
+        
+        function renderStars(level) {
+            const levels = { 'Baja': 1, 'Media': 3, 'Alta': 5 };
+            const count = levels[level] || 0;
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                stars += `<span class="star ${i <= count ? 'filled' : 'empty'}">${i <= count ? '★' : '☆'}</span>`;
+            }
+            return `<span class="stars-wrapper">${stars}</span>`;
+        }
+
+        function displayRandomRecommendation() {
+            const lugares = [
+                { nombre: "Parque de la Identidad Wanka", descripcion: "Parque escultórico que celebra la cultura Wanka con arte y arquitectura tradicional.", imagenUrl: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0b/93/e6/0f/20160610-140918-largejpg.jpg?w=1200&h=-1&s=1" },
+                { nombre: "Laguna de Paca", descripcion: "Serena laguna andina ideal para paseos en bote y observación de aves, rodeada de mitos.", imagenUrl: "https://portal.andina.pe/EDPfotografia/Thumbnail/2015/08/08/000307867W.jpg" },
+                { nombre: "Nevado Huaytapallana", descripcion: "Majestuoso nevado andino y fuente de ríos, ideal para andinismo y ecoturismo.", imagenUrl: "https://portal.andina.pe/EDPfotografia2/Thumbnail/2011/01/20/000146347W.jpg" }
+            ];
+            const lugar = lugares[Math.floor(Math.random() * lugares.length)];
+            document.getElementById('recommendedPlaceName').textContent = lugar.nombre;
+            document.getElementById('recommendedPlaceDescription').textContent = lugar.descripcion;
+            document.getElementById('recommendedPlaceImage').src = lugar.imagenUrl;
+        }
+
+        /*
+        ¡IMPORTANTE! Para que la subida de archivos funcione, necesitas configurar
+        las Reglas de Seguridad de Firebase Storage. Ve a tu consola de Firebase,
+        a la sección de Storage -> Reglas y pega lo siguiente:
+
+        rules_version = '2';
+        service firebase.storage {
+          match /b/{bucket}/o {
+            // Permite leer cualquier archivo a cualquier usuario
+            match /{allPaths=**} {
+              allow read;
+            }
+            // Permite escribir en la carpeta 'profile_images' solo al usuario autenticado
+            // y dueño de esa carpeta (su ID de usuario debe coincidir).
+            match /profile_images/{userId}/{fileName} {
+              allow write: if request.auth != null && request.auth.uid == userId;
+            }
+          }
+        }
+        */
+    </script>
+
+</body>
+</html>
