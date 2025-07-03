@@ -105,12 +105,6 @@
         border: 3px solid var(--light-background-transparent); /* Borde para el efecto visual */
     }
 
-    /* Se eliminan los estilos de la barra de navegación ya que se removió el elemento */
-    /* .navbar { ... } */
-    /* .navbar .logo { ... } */
-    /* .navbar .nav-links { ... } */
-    /* .navbar .nav-links a { ... } */
-
     main {
         max-width: 1200px;
         margin: 80px auto 20px auto; /* Ajustado el margin-top a 80px, sin navbar */
@@ -423,12 +417,62 @@
     @media (max-width: 992px) {
         .profile-page-container {
             flex-direction: column;
+            padding: 1rem; /* Ajuste de padding para pantallas más pequeñas */
+            gap: 1.5rem; /* Reducir el espacio entre elementos */
         }
         .profile-card {
-            position: static;
+            position: static; /* Eliminar sticky en móviles */
             width: 100%;
+            padding: 1.5rem; /* Ajuste de padding */
+        }
+        .history-card, .recommendation-card {
+            padding: 1.5rem; /* Ajuste de padding */
         }
     }
+
+    /* Media query para pantallas muy pequeñas (ej. iPhone 5/SE) */
+    @media (max-width: 375px) {
+        .profile-page-container {
+            padding: 0.5rem; /* Reducir aún más el padding */
+        }
+        .profile-card, .history-card, .recommendation-card {
+            padding: 1rem; /* Reducir aún más el padding de las tarjetas */
+        }
+        .profile-card__title, .history-card__title, .recommendation-card__title {
+            font-size: 1.5rem; /* Ajustar tamaño de título */
+        }
+        .form-group__label {
+            font-size: 0.8rem; /* Ajustar tamaño de etiqueta */
+        }
+        .form-group__input {
+            padding: 10px 12px; /* Ajustar padding del input */
+            font-size: 0.9rem; /* Ajustar tamaño de fuente del input */
+        }
+        .buttons-container {
+            flex-direction: column; /* Apilar botones en pantallas muy pequeñas */
+            gap: 0.8rem;
+        }
+        .btn-custom {
+            padding: 10px 15px; /* Ajustar padding del botón */
+            font-size: 0.9rem; /* Ajustar tamaño de fuente del botón */
+        }
+        .history-item__place-name {
+            font-size: 1rem; /* Ajustar tamaño de nombre de lugar en historial */
+        }
+        .history-item__date {
+            font-size: 0.7rem; /* Ajustar tamaño de fecha en historial */
+        }
+        .history-item__comment {
+            font-size: 0.85rem; /* Ajustar tamaño de comentario */
+        }
+        .recommendation-card__place-name {
+            font-size: 1.3rem; /* Ajustar tamaño de nombre de lugar recomendado */
+        }
+        .recommendation-card__description {
+            font-size: 0.9rem; /* Ajustar tamaño de descripción recomendada */
+        }
+    }
+
 
     .profile-card__title, .history-card__title, .recommendation-card__title {
         font-size: 1.8rem;
@@ -837,7 +881,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
-    // Se han eliminado las importaciones de Firebase Storage del frontend, ya que la subida se manejará en el backend.
+    // Ya no necesitamos getStorage, ref, uploadBytes, getDownloadURL, deleteObject directamente en el frontend para la subida
     // import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-storage.js";
     import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
 
@@ -880,8 +924,8 @@
     let initialPhotoStoragePath = ""; // Para guardar la ruta de Storage si la imagen es personalizada
 
     /**
-     * [MODIFIED] Data for featured places with image URLs.
-     * IMPORTANT! Replace placehold.co URLs with your actual image URLs.
+     * [MODIFICADO] Datos de los lugares destacados con URL de imagen.
+     * ¡IMPORTANTE! Reemplaza las URLs de placehold.co con las URLs de tus imágenes reales.
      */
     const lugaresDestacados = [
         {
@@ -917,7 +961,7 @@
         {
             nombre: "Plaza Constitución",
             descripcion: "Corazón de Huancayo, rodeada por la Catedral. Punto de encuentro vibrante.",
-            imagenUrl: "https://scontent-lim1-1.xx.fbcdn.net/v/t1.6435-9/158796412_2459978877482346_6650320610651766138_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFaRNxogFMW7jlDllTsNNjTV_pdaBmjseFX-l1oGaOx4cEdrG5JQvqB_j1Q1GRlCvf1sJ-NJv1C1TqLBHl47yTj&_nc_ohc=HktSqptoac4Q7kNvwE4zldj&_nc_oc=AdmMGbqvaQDR7yn_WJXTee3Mm1-YXt-MjhzvRaf1qYZl1r1D3-YUyBlwyKP44GV3dGXxThSPP9_3Vri1OFjbo6WS&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=6GxDttK2L2njxLfhr0xcWA&oh=00_AfPtJv7CkjnfyOD9twY2d7yZyDJ2RBiqm1vPpDEknzOCIg&oe=68685B78"
+            imagenUrl: "https://scontent-lim1-1.xx.fbcdn.net/v/t1.6435-9/158796412_2459978877482346_6650320610651766138_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFaRNxogFMW7jlDllTsNNjTV_pdaBmjseFX-l1oGaOx4cEdrG5JQvqB_j1Q1GRlCvf1sJ-NJv1C1TqLBHl47yTj&_nc_ohc=HktSqptoac4Q7kNvwE4zldj&_nc_oc=AdmMGbqvaQDR7yn_WJXTee3Mm1-YXt-MjhzvRaf1qYZl1r1D3-YUyBlwyKP44GV3dGXxThSPP9_3Vri1OFjbo6WS&_nc_zt=23&_nc_ht=scontent-lim1-1.xx&_nc_gid=E6ym5uF-NoF2lhUdcvTPhA&oh=00_AfPtJv7CkjnfyOD9twY2d7yZyDJ2RBiqm1vPpDEknzOCIg&oe=68685B78"
         },
         {
             nombre: "Hualhuas (Centro Artesanal)",
@@ -932,22 +976,22 @@
     ];
 
     /**
-     * Shows a random recommendation with its image.
+     * Muestra una recomendación aleatoria con su imagen.
      */
     function displayRandomRecommendation() {
         const nameEl = document.getElementById('recommendedPlaceName');
         const descEl = document.getElementById('recommendedPlaceDescription');
-        const imgEl = document.getElementById('recommendedPlaceImage'); // Image element
+        const imgEl = document.getElementById('recommendedPlaceImage'); // Elemento de la imagen
         
-        // Select a random place
+        // Seleccionar un lugar al azar
         const randomIndex = Math.floor(Math.random() * lugaresDestacados.length);
         const lugar = lugaresDestacados[randomIndex];
 
-        // Update the DOM with place information
+        // Actualizar el DOM con la información del lugar
         nameEl.textContent = lugar.nombre;
         descEl.textContent = lugar.descripcion;
-        imgEl.src = lugar.imagenUrl; // Assign the image URL
-        imgEl.alt = `${'{{ translate("Image of") }}'} ${lugar.nombre}`; // Accessible alt text
+        imgEl.src = lugar.imagenUrl; // Asignar la URL de la imagen
+        imgEl.alt = `${'{{ translate("Imagen de") }}'} ${lugar.nombre}`; // Texto alternativo accesible
     }
 
     function accesibilidadANumero(nivel) {
@@ -983,35 +1027,37 @@
         saveChangesBtn.disabled = show; 
         volverBtn.disabled = show; 
         displayNameInput.disabled = show;
-        imageUploadInput.disabled = show; // Disable the file input as well
+        imageUploadInput.disabled = show; // Deshabilitar también el input de archivo
     }
 
-    // Authentication listener
+    // Listener de autenticación
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             currentUser = user;
             emailInput.value = user.email;
             
-            // Load username
+            // Cargar nombre de usuario
             const storedName = localStorage.getItem(`customDisplayName_${user.uid}`);
             initialDisplayName = storedName || user.displayName || user.email.split('@')[0];
             displayNameInput.value = initialDisplayName;
 
-            // Load profile image
-            // If there's a custom path saved, try to load it
+            // Cargar imagen de perfil
+            // Si hay una ruta personalizada guardada, intenta cargarla
             initialPhotoStoragePath = localStorage.getItem(`customPhotoPath_${user.uid}`) || '';
-            let photoUrl = user.photoURL || '/static/imagenes/default-user.jpg'; // Default: Firebase Auth URL or local
+            let photoUrl = user.photoURL || '/static/imagenes/default-user.jpg'; // Por defecto, la URL de Firebase Auth o la local
 
-            // If there's a custom Storage path, we try to get its URL
+            // Si hay una ruta de Storage personalizada, intentamos obtener su URL
             if (initialPhotoStoragePath && initialPhotoStoragePath !== 'default') {
-                // To get the URL of an image uploaded to Firebase Storage via the backend,
-                // we cannot use getDownloadURL directly in the frontend without CORS configuration.
-                // We assume the backend will return a public URL that we can use.
-                // For simplicity, if Firebase Auth's photoURL already exists, we use it.
-                // Otherwise, and if we have a Storage path, we assume the backend should have made it accessible.
-                // To avoid a CORS error when trying to get the URL from the frontend,
-                // we will trust that user.photoURL is already updated if the image was uploaded correctly.
-                photoUrl = user.photoURL; // Rely on Firebase Auth's photoURL being updated by the backend
+                // Para obtener la URL de una imagen subida a Firebase Storage a través del backend,
+                // no podemos usar getDownloadURL directamente en el frontend sin la configuración CORS.
+                // Asumimos que el backend nos devolverá una URL pública que podemos usar.
+                // Por ahora, si la ruta existe, la usaremos directamente si es una URL,
+                // o la de Firebase Auth si es un path de Storage (que debería ser manejado por el backend para obtener la URL).
+                // Para simplificar, si el photoURL de Firebase Auth ya existe, lo usamos.
+                // Si no, y tenemos un path de Storage, asumimos que el backend debería haberlo hecho accesible.
+                // Para evitar un error de CORS al intentar obtener la URL desde el frontend,
+                // vamos a confiar en que user.photoURL ya está actualizado si la imagen fue subida correctamente.
+                photoUrl = user.photoURL || '/static/imagenes/default-user.jpg';
                 console.log('User Photo URL from Firebase Auth:', photoUrl);
             } else if (user.photoURL) {
                 photoUrl = user.photoURL;
@@ -1021,18 +1067,16 @@
             }
             
             profileImage.src = photoUrl;
-            initialPhotoURL = photoUrl; // Save the initial photo URL
-            initialPhotoStoragePath = initialPhotoStoragePath; // Keep the initial storage path
-
+            initialPhotoURL = photoUrl; // Guardar la URL inicial de la foto
             loadUserReviews(user.uid);
-            displayRandomRecommendation(); // Call the recommendation function
+            displayRandomRecommendation(); // Llamada a la función de recomendación
         } else {
             console.log('User not authenticated, redirecting to login.');
             window.location.href = "{{ url_for('login') }}";
         }
     });
 
-    // Username validation
+    // Validación del nombre de usuario
     function validateDisplayName(name) {
         if (name.length < 3) {
             displayNameError.style.display = 'block';
@@ -1042,7 +1086,7 @@
         return true;
     }
 
-    // Listener for the profile form
+    // Listener para el formulario de perfil
     profileForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         if (!currentUser) {
@@ -1053,16 +1097,16 @@
         const currentDisplayName = displayNameInput.value.trim();
         const file = imageUploadInput.files[0];
 
-        // Validate username
+        // Validar nombre de usuario
         if (!validateDisplayName(currentDisplayName)) {
             showAlert('{{ translate("❌ El nombre de usuario no es válido.") }}', 'danger');
             console.log('Display name validation failed.');
             return;
         }
 
-        // Determine if there are changes in name or image
+        // Determinar si hay cambios en el nombre o la imagen
         const isDisplayNameChanged = currentDisplayName !== initialDisplayName;
-        const isImageChanged = file !== undefined; // If a file is selected
+        const isImageChanged = file !== undefined; // Si hay un archivo seleccionado
 
         if (!isDisplayNameChanged && !isImageChanged) {
             showAlert('{{ translate("ℹ️ No hay cambios para guardar.") }}', 'info');
@@ -1074,16 +1118,14 @@
         console.log('Starting save process...');
 
         try {
-            let photoUrlToUpdate = initialPhotoURL; // Default: current URL
-            let newPhotoStoragePath = initialPhotoStoragePath; // Default: current Storage path
+            let photoUrlToUpdate = initialPhotoURL; // Por defecto, la URL actual
+            let newPhotoStoragePath = initialPhotoStoragePath; // Por defecto, la ruta de Storage actual
 
             if (isImageChanged) {
                 console.log('Uploading new image via backend proxy...');
                 const formData = new FormData();
                 formData.append('profile_image', file);
                 formData.append('userId', currentUser.uid); // Send user ID to backend for folder structure
-                // Send the old storage path to the backend so it can delete the old image
-                formData.append('oldPhotoStoragePath', initialPhotoStoragePath); 
 
                 const response = await fetch('/api/upload-profile-image', { // Your backend endpoint
                     method: 'POST',
@@ -1096,8 +1138,8 @@
                 }
 
                 const result = await response.json();
-                photoUrlToUpdate = result.photoURL; // Public URL of the image
-                newPhotoStoragePath = result.storagePath; // Internal path in Firebase Storage
+                photoUrlToUpdate = result.photoURL; // URL pública de la imagen
+                newPhotoStoragePath = result.storagePath; // Ruta interna en Firebase Storage
 
                 console.log('Image uploaded via proxy. URL:', photoUrlToUpdate);
                 console.log('Storage Path:', newPhotoStoragePath);
@@ -1106,6 +1148,10 @@
                 profileImage.src = photoUrlToUpdate; 
                 initialPhotoURL = photoUrlToUpdate; // Update initial photo URL
                 initialPhotoStoragePath = newPhotoStoragePath; // Update initial storage path
+
+                // No intentamos eliminar la imagen anterior desde el frontend directamente.
+                // Esta lógica debería estar en el backend si es necesaria,
+                // ya que el backend tiene acceso a las credenciales de Firebase Admin SDK.
             }
 
             // Update Firebase Auth profile
@@ -1131,19 +1177,19 @@
         }
     });
 
-    // Listener for the "Volver" button
+    // Listener para el botón "Volver"
     volverBtn.addEventListener('click', () => { 
         console.log('Redirecting to main page.');
         window.location.href = principalUrl; 
     });
 
-    // Listener to change profile image when clicking the image container
+    // Listener para cambiar la imagen de perfil al hacer clic en el contenedor de la imagen
     imageContainer.addEventListener('click', () => {
         console.log('Click on image container, opening file selector.');
         imageUploadInput.click(); // Simulate click on file input
     });
 
-    // Preview selected image
+    // Previsualizar la imagen seleccionada
     imageUploadInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -1161,7 +1207,7 @@
         }
     });
 
-    // Validate username in real-time
+    // Validar el nombre de usuario en tiempo real
     displayNameInput.addEventListener('input', () => {
         validateDisplayName(displayNameInput.value.trim());
     });
