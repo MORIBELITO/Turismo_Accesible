@@ -837,7 +837,8 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-storage.js";
+    // Ya no necesitamos getStorage, ref, uploadBytes, getDownloadURL, deleteObject directamente en el frontend para la subida
+    // import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-storage.js";
     import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
 
     const principalUrl = "{{ url_for('principal') }}";
@@ -856,7 +857,8 @@
     // Inicialización de servicios de Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const storage = getStorage(app);
+    // Ya no necesitamos 'storage' aquí, ya que la subida se hará vía backend
+    // const storage = getStorage(app);
     const db = getFirestore(app);
 
     // Obtención de elementos del DOM
@@ -875,6 +877,7 @@
     let currentUser = null;
     let initialDisplayName = "";
     let initialPhotoURL = "";
+    let initialPhotoStoragePath = ""; // Para guardar la ruta de Storage si la imagen es personalizada
 
     /**
      * [MODIFICADO] Datos de los lugares destacados con URL de imagen.
@@ -929,7 +932,7 @@
     ];
 
     /**
-     * [MODIFICADO] Muestra una recomendación aleatoria con su imagen.
+     * Muestra una recomendación aleatoria con su imagen.
      */
     function displayRandomRecommendation() {
         const nameEl = document.getElementById('recommendedPlaceName');
@@ -947,7 +950,6 @@
         imgEl.alt = `${'{{ translate("Imagen de") }}'} ${lugar.nombre}`; // Texto alternativo accesible
     }
 
-    // --- El resto de las funciones (accesibilidadANumero, renderStars, loadUserReviews, etc.) permanecen sin cambios ---
     function accesibilidadANumero(nivel) {
         const baja = "{{ translate('Baja') }}"; const media = "{{ translate('Media') }}"; const alta = "{{ translate('Alta') }}";
         if (nivel === baja) return 1; if (nivel === media) return 3; if (nivel === alta) return 5; return 0;
@@ -996,24 +998,37 @@
             displayNameInput.value = initialDisplayName;
 
             // Cargar imagen de perfil
-            const storedPhotoPath = localStorage.getItem(`customPhotoPath_${user.uid}`);
-            let photoUrl = user.photoURL || '/static/imagenes/default-user.jpg';
-            if (storedPhotoPath && storedPhotoPath !== 'default') { // 'default' para indicar que no hay imagen personalizada
-                try { 
-                    const imageRef = ref(storage, storedPhotoPath); 
-                    photoUrl = await getDownloadURL(imageRef); 
-                } catch (error) { 
-                    console.warn('⚠️ {{ translate("Error al cargar imagen personalizada, usando la de por defecto:") }}', error); 
-                    photoUrl = '/static/imagenes/default-user.jpg'; // Asegurarse de usar la imagen por defecto si falla
-                    localStorage.removeItem(`customPhotoPath_${user.uid}`); // Limpiar path inválido
-                }
+            // Si hay una ruta personalizada guardada, intenta cargarla
+            initialPhotoStoragePath = localStorage.getItem(`customPhotoPath_${user.uid}`) || '';
+            let photoUrl = user.photoURL || '/static/imagenes/default-user.jpg'; // Por defecto, la URL de Firebase Auth o la local
+
+            // Si hay una ruta de Storage personalizada, intentamos obtener su URL
+            if (initialPhotoStoragePath && initialPhotoStoragePath !== 'default') {
+                // Para obtener la URL de una imagen subida a Firebase Storage a través del backend,
+                // no podemos usar getDownloadURL directamente en el frontend sin la configuración CORS.
+                // Asumimos que el backend nos devolverá una URL pública que podemos usar.
+                // Por ahora, si la ruta existe, la usaremos directamente si es una URL,
+                // o la de Firebase Auth si es un path de Storage (que debería ser manejado por el backend para obtener la URL).
+                // Para simplificar, si el photoURL de Firebase Auth ya existe, lo usamos.
+                // Si no, y tenemos un path de Storage, asumimos que el backend debería haberlo hecho accesible.
+                // Para evitar un error de CORS al intentar obtener la URL desde el frontend,
+                // vamos a confiar en que user.photoURL ya está actualizado si la imagen fue subida correctamente.
+                photoUrl = user.photoURL || '/static/imagenes/default-user.jpg';
+                console.log('User Photo URL from Firebase Auth:', photoUrl);
+            } else if (user.photoURL) {
+                photoUrl = user.photoURL;
+                console.log('User Photo URL from Firebase Auth:', photoUrl);
+            } else {
+                console.log('Using default profile image.');
             }
+            
             profileImage.src = photoUrl;
             initialPhotoURL = photoUrl; // Guardar la URL inicial de la foto
 
             loadUserReviews(user.uid);
             displayRandomRecommendation(); // Llamada a la función de recomendación
         } else {
+            console.log('User not authenticated, redirecting to login.');
             window.location.href = "{{ url_for('login') }}";
         }
     });
@@ -1031,7 +1046,10 @@
     // Listener para el formulario de perfil
     profileForm.addEventListener('submit', async (event) => {
         event.preventDefault();
-        if (!currentUser) return;
+        if (!currentUser) {
+            console.warn('Attempt to save without authenticated user.');
+            return;
+        }
 
         const currentDisplayName = displayNameInput.value.trim();
         const file = imageUploadInput.files[0];
@@ -1039,6 +1057,7 @@
         // Validar nombre de usuario
         if (!validateDisplayName(currentDisplayName)) {
             showAlert('{{ translate("❌ El nombre de usuario no es válido.") }}', 'danger');
+            console.log('Display name validation failed.');
             return;
         }
 
@@ -1048,74 +1067,99 @@
 
         if (!isDisplayNameChanged && !isImageChanged) {
             showAlert('{{ translate("ℹ️ No hay cambios para guardar.") }}', 'info');
+            console.log('No changes detected to save.');
             return;
         }
 
         showLoading(true);
+        console.log('Starting save process...');
+
         try {
             let photoUrlToUpdate = initialPhotoURL; // Por defecto, la URL actual
+            let newPhotoStoragePath = initialPhotoStoragePath; // Por defecto, la ruta de Storage actual
 
             if (isImageChanged) {
-                // Subir la nueva imagen a Firebase Storage
-                const imageRef = ref(storage, `profile_images/${currentUser.uid}/${file.name}`);
-                await uploadBytes(imageRef, file);
-                photoUrlToUpdate = await getDownloadURL(imageRef);
+                console.log('Uploading new image via backend proxy...');
+                const formData = new FormData();
+                formData.append('profile_image', file);
+                formData.append('userId', currentUser.uid); // Send user ID to backend for folder structure
 
-                // Si había una imagen personalizada anterior, intentar eliminarla
-                const oldPhotoPath = localStorage.getItem(`customPhotoPath_${currentUser.uid}`);
-                if (oldPhotoPath && oldPhotoPath !== 'default' && oldPhotoPath !== `profile_images/${currentUser.uid}/${file.name}`) {
-                    try {
-                        const oldImageRef = ref(storage, oldPhotoPath);
-                        await deleteObject(oldImageRef);
-                        console.log('✅ Imagen anterior eliminada de Storage.');
-                    } catch (error) {
-                        console.warn('⚠️ Error al eliminar la imagen anterior de Storage:', error);
-                        // No es crítico si falla la eliminación de la imagen anterior
-                    }
+                const response = await fetch('/api/upload-profile-image', { // Your backend endpoint
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Error uploading image to backend.');
                 }
-                localStorage.setItem(`customPhotoPath_${currentUser.uid}`, `profile_images/${currentUser.uid}/${file.name}`);
-                profileImage.src = photoUrlToUpdate; // Actualizar la imagen en el DOM inmediatamente
-                initialPhotoURL = photoUrlToUpdate; // Actualizar la URL inicial de la foto
+
+                const result = await response.json();
+                photoUrlToUpdate = result.photoURL; // URL pública de la imagen
+                newPhotoStoragePath = result.storagePath; // Ruta interna en Firebase Storage
+
+                console.log('Image uploaded via proxy. URL:', photoUrlToUpdate);
+                console.log('Storage Path:', newPhotoStoragePath);
+
+                // Update the image in the DOM immediately
+                profileImage.src = photoUrlToUpdate; 
+                initialPhotoURL = photoUrlToUpdate; // Update initial photo URL
+                initialPhotoStoragePath = newPhotoStoragePath; // Update initial storage path
+
+                // No intentamos eliminar la imagen anterior desde el frontend directamente.
+                // Esta lógica debería estar en el backend si es necesaria,
+                // ya que el backend tiene acceso a las credenciales de Firebase Admin SDK.
             }
 
-            // Actualizar el perfil de Firebase Auth
+            // Update Firebase Auth profile
             if (isDisplayNameChanged || isImageChanged) {
+                console.log('Updating Firebase Auth profile...');
                 await updateProfile(currentUser, { 
                     displayName: currentDisplayName,
-                    photoURL: photoUrlToUpdate // Actualizar photoURL en el perfil de Firebase Auth
+                    photoURL: photoUrlToUpdate // Update photoURL in Firebase Auth profile
                 });
                 localStorage.setItem(`customDisplayName_${currentUser.uid}`, currentDisplayName);
+                localStorage.setItem(`customPhotoPath_${currentUser.uid}`, newPhotoStoragePath); // Save new storage path
                 showAlert('{{ translate("✅ Perfil actualizado exitosamente.") }}', 'success');
-                initialDisplayName = currentDisplayName; // Actualizar el nombre inicial
+                initialDisplayName = currentDisplayName; // Update initial name
+                console.log('Firebase Auth profile updated.');
             }
         } catch (error) {
             console.error('❌ {{ translate("Error al actualizar el perfil:") }}', error);
             showAlert(`{{ translate("Error:") }} ${error.message}`, 'danger');
         } finally {
             showLoading(false);
-            imageUploadInput.value = ''; // Limpiar el input de archivo después de la subida
+            imageUploadInput.value = ''; // Clear file input after upload
+            console.log('Save process finished.');
         }
     });
 
     // Listener para el botón "Volver"
-    volverBtn.addEventListener('click', () => { window.location.href = principalUrl; });
+    volverBtn.addEventListener('click', () => { 
+        console.log('Redirecting to main page.');
+        window.location.href = principalUrl; 
+    });
 
     // Listener para cambiar la imagen de perfil al hacer clic en el contenedor de la imagen
     imageContainer.addEventListener('click', () => {
-        imageUploadInput.click(); // Simular clic en el input de tipo file
+        console.log('Click on image container, opening file selector.');
+        imageUploadInput.click(); // Simulate click on file input
     });
 
     // Previsualizar la imagen seleccionada
     imageUploadInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
         if (file) {
+            console.log('File selected for preview:', file.name, file.type, file.size, 'bytes');
             const reader = new FileReader();
             reader.onload = (e) => {
                 profileImage.src = e.target.result;
+                console.log('Image previewed.');
             };
             reader.readAsDataURL(file);
         } else {
-            // Si no se selecciona ningún archivo, volver a la imagen inicial o por defecto
+            console.log('No file selected, restoring initial image.');
+            // If no file is selected, revert to the initial or default image
             profileImage.src = initialPhotoURL || '/static/imagenes/default-user.jpg';
         }
     });
