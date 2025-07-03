@@ -335,33 +335,6 @@
         .destino-card .card-content p {
             font-size: 0.9em;
         }
-
-        /* Ajustes adicionales para el contenedor principal de perfil en móvil */
-        .profile-page-container {
-            flex-direction: column; /* Apila las tarjetas verticalmente */
-            padding: 1rem; /* Reduce el padding general */
-            gap: 1.5rem; /* Reduce el espacio entre elementos */
-        }
-
-        .profile-card {
-            position: static; /* Elimina el sticky en móviles */
-            width: 100%; /* Ocupa todo el ancho disponible */
-            margin-bottom: 1.5rem; /* Añade margen inferior para separación */
-        }
-
-        .history-card, .recommendation-card {
-            flex-basis: auto; /* Permite que el tamaño se ajuste automáticamente */
-            width: 100%; /* Ocupa todo el ancho disponible */
-        }
-
-        .buttons-container {
-            flex-direction: column; /* Apila los botones verticalmente */
-            gap: 0.75rem; /* Espacio entre botones apilados */
-        }
-
-        .btn-custom {
-            width: 100%; /* Asegura que los botones ocupen todo el ancho */
-        }
     }
 
     @media (max-width: 480px) {
@@ -393,25 +366,6 @@
         }
         .destino-card .card-content p {
             font-size: 0.8em;
-        }
-
-        /* Ajustes finos para el perfil en pantallas muy pequeñas */
-        .profile-card, .history-card, .recommendation-card {
-            padding: 1.5rem; /* Reduce el padding de las tarjetas */
-        }
-
-        .profile-card__title, .history-card__title, .recommendation-card__title {
-            font-size: 1.5rem; /* Reduce el tamaño del título */
-        }
-
-        .form-group__input {
-            padding: 10px 12px; /* Reduce el padding del input */
-            font-size: 0.9rem; /* Reduce el tamaño de la fuente del input */
-        }
-
-        .btn-custom {
-            padding: 10px 15px; /* Reduce el padding de los botones */
-            font-size: 0.9rem; /* Reduce el tamaño de la fuente de los botones */
         }
     }
     /* =================================================================== */
@@ -450,8 +404,6 @@
         flex-basis: 350px;
         position: sticky;
         top: 2rem;
-        /* Asegura que la tarjeta de perfil no se desborde en pantallas pequeñas */
-        min-width: 280px; 
     }
 
     .history-card {
@@ -468,13 +420,41 @@
         }
     }
 
+    @media (max-width: 992px) {
+        .profile-page-container {
+            flex-direction: column;
+        }
+        .profile-card {
+            position: static;
+            width: 100%;
+        }
+    }
+
+    .profile-card__title, .history-card__title, .recommendation-card__title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--dark-text); /* Color de texto oscuro */
+        margin-bottom: 1.5rem;
+        text-align: center;
+        position: relative;
+    }
+
+    .profile-card__title::after, .history-card__title::after, .recommendation-card__title::after {
+        content: '';
+        display: block;
+        width: 50px;
+        height: 4px;
+        background-color: var(--dark-text); /* Línea de color oscuro */
+        border-radius: 2px;
+        margin: 0.5rem auto 0;
+    }
+
     /* Estilos de la imagen de perfil (adaptados) */
     .profile-image-container { 
         position: relative; 
         width: 150px; 
         height: 150px; 
         margin: 0 auto 1.5rem; 
-        cursor: pointer; /* Indica que es clickeable */
     }
     .profile-image { 
         width: 100%; 
@@ -483,33 +463,7 @@
         object-fit: cover; 
         border: 4px solid var(--dark-text); /* Borde con color oscuro */
         box-shadow: 0 4px 15px rgba(15, 82, 186, 0.4); /* Sombra azul zafiro */
-        transition: transform 0.3s ease;
     }
-    .profile-image-container:hover .profile-image {
-        transform: scale(1.05); /* Efecto de zoom al pasar el ratón */
-    }
-    .profile-image-container::after {
-        content: '\f030'; /* Icono de cámara de Font Awesome */
-        font-family: "Font Awesome 6 Free";
-        font-weight: 900;
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        background-color: var(--dark-text);
-        color: white;
-        border-radius: 50%;
-        padding: 8px;
-        font-size: 1.2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        transition: background-color 0.3s ease;
-    }
-    .profile-image-container:hover::after {
-        background-color: var(--light-dark-text);
-    }
-
     .loading-overlay { 
         position: absolute; 
         top: 0; 
@@ -822,7 +776,6 @@
         <h1 class="profile-card__title">{{ translate('Mi Perfil') }}</h1>
         <div class="profile-image-container" id="imageContainer">
             <img id="profileImage" src="/static/imagenes/default-user.jpg" alt="{{ translate('Foto de perfil del usuario') }}" class="profile-image">
-            <input type="file" id="photoUploadInput" accept="image/*" style="display: none;"> {# Input de archivo oculto #}
             <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
         </div>
         <form id="profileForm">
@@ -871,7 +824,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-storage.js";
+    import { getStorage, ref, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-storage.js";
     import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
 
     const principalUrl = "{{ url_for('principal') }}";
@@ -902,8 +855,6 @@
     const alertMessage = document.getElementById('alertMessage');
     const loadingOverlay = document.getElementById('loadingOverlay');
     const profileForm = document.getElementById('profileForm');
-    const imageContainer = document.getElementById('imageContainer'); // Contenedor de la imagen
-    const photoUploadInput = document.getElementById('photoUploadInput'); // Input de archivo
 
     let currentUser = null;
     let initialDisplayName = "";
@@ -1010,8 +961,6 @@
     }
     function showLoading(show) {
         loadingOverlay.classList.toggle('show', show); saveChangesBtn.disabled = show; volverBtn.disabled = show; displayNameInput.disabled = show;
-        // Deshabilitar el input de archivo durante la carga
-        photoUploadInput.disabled = show;
     }
 
     // Listener de autenticación
@@ -1025,14 +974,7 @@
             const storedPhotoPath = localStorage.getItem(`customPhotoPath_${user.uid}`);
             let photoUrl = user.photoURL || '/static/imagenes/default-user.jpg';
             if (storedPhotoPath) {
-                try { 
-                    const imageRef = ref(storage, storedPhotoPath); 
-                    photoUrl = await getDownloadURL(imageRef); 
-                } catch (error) { 
-                    console.warn('⚠️ {{ translate("Error al cargar imagen personalizada, usando la de por defecto:") }}', error); 
-                    // Si falla la carga de la imagen personalizada, se usa la por defecto y se limpia el localStorage
-                    localStorage.removeItem(`customPhotoPath_${user.uid}`);
-                }
+                try { const imageRef = ref(storage, storedPhotoPath); photoUrl = await getDownloadURL(imageRef); } catch (error) { console.warn('⚠️ {{ translate("Error al cargar imagen personalizada, usando la de por defecto:") }}', error); }
             }
             profileImage.src = photoUrl;
             loadUserReviews(user.uid);
@@ -1064,52 +1006,6 @@
 
     // Listener para el botón "Volver"
     volverBtn.addEventListener('click', () => { window.location.href = principalUrl; });
-
-    // NUEVA FUNCIONALIDAD: Cambiar foto de perfil
-    // Al hacer clic en el contenedor de la imagen, se activa el input de archivo oculto
-    imageContainer.addEventListener('click', () => {
-        photoUploadInput.click();
-    });
-
-    // Cuando se selecciona un archivo en el input de tipo 'file'
-    photoUploadInput.addEventListener('change', async (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        if (!currentUser) {
-            showAlert('{{ translate("❌ Debes iniciar sesión para cambiar tu foto de perfil.") }}', 'danger');
-            return;
-        }
-
-        showLoading(true); // Mostrar spinner de carga
-
-        const storageRef = ref(storage, `profile_pictures/${currentUser.uid}/${file.name}`);
-        try {
-            // Subir la imagen a Firebase Storage
-            const snapshot = await uploadBytes(storageRef, file);
-            // Obtener la URL de descarga de la imagen
-            const photoURL = await getDownloadURL(snapshot.ref);
-
-            // Actualizar el perfil del usuario en Firebase Authentication
-            await updateProfile(currentUser, { photoURL: photoURL });
-
-            // Guardar la ruta de almacenamiento en localStorage para futuras cargas
-            localStorage.setItem(`customPhotoPath_${currentUser.uid}`, `profile_pictures/${currentUser.uid}/${file.name}`);
-
-            // Actualizar la imagen en el DOM
-            profileImage.src = photoURL;
-            showAlert('{{ translate("✅ Foto de perfil actualizada exitosamente.") }}', 'success');
-
-        } catch (error) {
-            console.error('❌ {{ translate("Error al subir la imagen:") }}', error);
-            showAlert(`{{ translate("Error al subir la imagen:") }} ${error.message}`, 'danger');
-        } finally {
-            showLoading(false); // Ocultar spinner de carga
-            // Limpiar el valor del input de archivo para permitir subir la misma imagen de nuevo si es necesario
-            event.target.value = ''; 
-        }
-    });
-
 </script>
 
 {% endblock %}
