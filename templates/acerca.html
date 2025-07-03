@@ -9,6 +9,9 @@
 <!-- Enlace a Font Awesome para los iconos -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+<!-- Meta Viewport Tag para asegurar la responsividad en dispositivos móviles -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
     /* --- Paleta de Colores Invertida con MÁS Transparencia --- */
     :root {
@@ -347,13 +350,16 @@
         }
         .intro-section .title {
             font-size: 1.8em;
-            word-break: break-word;
+            word-break: break-word; /* Para evitar desbordamiento en títulos largos */
         }
         .intro-section .title::after {
             width: 50px;
         }
         .intro-section .intro-text {
             font-size: 0.85em;
+        }
+        .destinos-section {
+            gap: 20px; /* Reducir el espacio entre tarjetas en móviles */
         }
         .destino-card .image-container {
             flex: 0 0 160px;
@@ -363,10 +369,49 @@
         }
         .destino-card .card-content h3 {
             font-size: 1.3em;
+            gap: 8px; /* Reducir el espacio entre el icono y el texto en h3 */
         }
         .destino-card .card-content p {
             font-size: 0.8em;
         }
+        .card-content p .icon-inline {
+            margin-right: 5px; /* Ajustar margen del icono en línea */
+        }
+    }
+
+    /* Media Query adicional para pantallas muy pequeñas (e.g., iPhone 5/SE) */
+    @media (max-width: 375px) {
+        .intro-section .title {
+            font-size: 1.6em;
+        }
+        .intro-section .intro-text {
+            font-size: 0.8em;
+        }
+        .destino-card .image-container {
+            flex: 0 0 140px;
+        }
+        .destino-card .card-content h3 {
+            font-size: 1.2em;
+        }
+        .destino-card .card-content p {
+            font-size: 0.75em;
+        }
+    }
+
+    /* Estilos para el mensaje de error de imagen (validación) */
+    .image-error-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(255, 0, 0, 0.7);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 0.9em;
+        text-align: center;
+        z-index: 10; /* Asegura que esté por encima de la imagen */
+        display: none; /* Oculto por defecto */
     }
 </style>
 
@@ -381,7 +426,9 @@
     <section class="destinos-section">
         <div class="destino-card">
             <div class="image-container">
-                <img src="https://consultasenlinea.mincetur.gob.pe/fichaInventario//foto.aspx?cod=569569" alt="{{ translate('Cerrito de la Libertad') }}">
+                <img src="https://consultasenlinea.mincetur.gob.pe/fichaInventario//foto.aspx?cod=569569" alt="{{ translate('Cerrito de la Libertad') }}" onerror="this.onerror=null; this.src='https://placehold.co/400x220/CCCCCC/333333?text=Imagen+no+disponible'; this.nextElementSibling.style.display='block';">
+                <!-- Mensaje de error para la imagen -->
+                <div class="image-error-message">Error al cargar imagen.</div>
             </div>
             <div class="card-content">
                 <h3><i class="fas fa-mountain"></i> {{ translate('Cerrito de la Libertad') }}</h3>
@@ -396,7 +443,8 @@
 
         <div class="destino-card">
             <div class="image-container">
-                <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0b/93/e6/0f/20160610-140918-largejpg.jpg?w=1200&h=-1&s=1" alt="{{ translate('Parque de la Identidad Wanka') }}">
+                <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0b/93/e6/0f/20160610-140918-largejpg.jpg?w=1200&h=-1&s=1" alt="{{ translate('Parque de la Identidad Wanka') }}" onerror="this.onerror=null; this.src='https://placehold.co/400x220/CCCCCC/333333?text=Imagen+no+disponible'; this.nextElementSibling.style.display='block';">
+                <div class="image-error-message">Error al cargar imagen.</div>
             </div>
             <div class="card-content">
                 <h3><i class="fas fa-hand-holding-heart"></i> {{ translate('Parque de la Identidad Wanka') }}</h3>
@@ -411,7 +459,8 @@
 
         <div class="destino-card">
             <div class="image-container">
-                <img src="https://portal.andina.pe/EDPfotografia3/Thumbnail/2025/04/11/001160517W.jpg" alt="{{ translate('Convento de Ocopa') }}">
+                <img src="https://portal.andina.pe/EDPfotografia3/Thumbnail/2025/04/11/001160517W.jpg" alt="{{ translate('Convento de Ocopa') }}" onerror="this.onerror=null; this.src='https://placehold.co/400x220/CCCCCC/333333?text=Imagen+no+disponible'; this.nextElementSibling.style.display='block';">
+                <div class="image-error-message">Error al cargar imagen.</div>
             </div>
             <div class="card-content">
                 <h3><i class="fas fa-church"></i> {{ translate('Convento de Ocopa') }}</h3>
@@ -426,7 +475,8 @@
 
         <div class="destino-card">
             <div class="image-container">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Ingenio-huancayo.jpg/1024px-Ingenio-huancayo.jpg" alt="{{ translate('Ingenio - Criadero de Truchas') }}">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Ingenio-huancayo.jpg/1024px-Ingenio-huancayo.jpg" alt="{{ translate('Ingenio - Criadero de Truchas') }}" onerror="this.onerror=null; this.src='https://placehold.co/400x220/CCCCCC/333333?text=Imagen+no+disponible'; this.nextElementSibling.style.display='block';">
+                <div class="image-error-message">Error al cargar imagen.</div>
             </div>
             <div class="card-content">
                 <h3><i class="fas fa-fish"></i> {{ translate('Ingenio - Criadero de Truchas') }}</h3>
@@ -441,7 +491,8 @@
 
         <div class="destino-card">
             <div class="image-container">
-                <img src="https://blog.redbus.pe/wp-content/uploads/2017/11/torre-torre.jpg" alt="{{ translate('Torre Torre') }}">
+                <img src="https://blog.redbus.pe/wp-content/uploads/2017/11/torre-torre.jpg" alt="{{ translate('Torre Torre') }}" onerror="this.onerror=null; this.src='https://placehold.co/400x220/CCCCCC/333333?text=Imagen+no+disponible'; this.nextElementSibling.style.display='block';">
+                <div class="image-error-message">Error al cargar imagen.</div>
             </div>
             <div class="card-content">
                 <h3><i class="fas fa-layer-group"></i> {{ translate('Torre Torre') }}</h3>
@@ -456,7 +507,8 @@
 
         <div class="destino-card">
             <div class="image-container">
-                <img src="https://consultasenlinea.mincetur.gob.pe/fichaInventario/foto.aspx?cod=530976" alt="{{ translate('Laguna de Paca') }}">
+                <img src="https://consultasenlinea.mincetur.gob.pe/fichaInventario/foto.aspx?cod=530976" alt="{{ translate('Laguna de Paca') }}" onerror="this.onerror=null; this.src='https://placehold.co/400x220/CCCCCC/333333?text=Imagen+no+disponible'; this.nextElementSibling.style.display='block';">
+                <div class="image-error-message">Error al cargar imagen.</div>
             </div>
             <div class="card-content">
                 <h3><i class="fas fa-water"></i> {{ translate('Laguna de Paca') }}</h3>
@@ -471,7 +523,8 @@
 
         <div class="destino-card">
             <div class="image-container">
-                <img src="https://comercial.cronosmedia.glr.pe/original/2024/04/17/66206c5b668554375811f2df.jpg" alt="{{ translate('Nevado de Huaytapallana') }}">
+                <img src="https://comercial.cronosmedia.glr.pe/original/2024/04/17/66206c5b668554375811f2df.jpg" alt="{{ translate('Nevado de Huaytapallana') }}" onerror="this.onerror=null; this.src='https://placehold.co/400x220/CCCCCC/333333?text=Imagen+no+disponible'; this.nextElementSibling.style.display='block';">
+                <div class="image-error-message">Error al cargar imagen.</div>
             </div>
             <div class="card-content">
                 <h3><i class="fas fa-snowflake"></i> {{ translate('Nevado de Huaytapallana') }}</h3>
@@ -486,7 +539,8 @@
 
         <div class="destino-card">
             <div class="image-container">
-                <img src="https://usercontent.one/wp/www.explorandoperu.com/wp-content/uploads/2021/11/Orcotuna.jpg?media=1731642292" alt="{{ translate('Valle del Mantaro') }}">
+                <img src="https://usercontent.one/wp/www.explorandoperu.com/wp-content/uploads/2021/11/Orcotuna.jpg?media=1731642292" alt="{{ translate('Valle del Mantaro') }}" onerror="this.onerror=null; this.src='https://placehold.co/400x220/CCCCCC/333333?text=Imagen+no+disponible'; this.nextElementSibling.style.display='block';">
+                <div class="image-error-message">Error al cargar imagen.</div>
             </div>
             <div class="card-content">
                 <h3><i class="fas fa-seedling"></i> {{ translate('Valle del Mantaro') }}</h3>
@@ -500,5 +554,22 @@
         </div>
     </section>
 </main>
+
+<script>
+    // Script para manejar la validación de carga de imágenes
+    document.addEventListener('DOMContentLoaded', function() {
+        const images = document.querySelectorAll('.destino-card .image-container img');
+
+        images.forEach(img => {
+            // Si la imagen ya está en caché y cargada, no se disparará el 'error'
+            // Por eso, también verificamos el 'complete' y 'naturalWidth'
+            if (!img.complete || img.naturalWidth === 0) {
+                // Si la imagen no se ha cargado o tiene un ancho natural de 0 (falló la carga)
+                // Disparar manualmente el error para mostrar el placeholder y el mensaje
+                img.onerror();
+            }
+        });
+    });
+</script>
 
 {% endblock %}
