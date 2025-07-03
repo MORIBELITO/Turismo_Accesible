@@ -17,36 +17,32 @@ TRANSLATIONS_DIR = os.path.join(app.root_path, 'translations')
 TRANSLATIONS_CACHE = {}
 
 # --- Configuración e inicialización de Firebase Admin SDK ---
-# RECOMENDADO: Cargar las credenciales desde una variable de entorno por seguridad.
-# Asegúrate de haber configurado FIREBASE_ADMIN_SDK_CREDENTIALS en Railway.app
-try:
-    service_account_info_json = os.environ.get("FIREBASE_ADMIN_SDK_CREDENTIALS")
-    if service_account_info_json:
-        service_account_info = json.loads(service_account_info_json)
-        cred = credentials.Certificate(service_account_info)
-        firebase_admin.initialize_app(cred, {
-            'storageBucket': 'turismo-4e958.appspot.com' # Reemplaza con el nombre de tu bucket de Firebase Storage
-        })
-        print("Firebase Admin SDK inicializado correctamente desde variable de entorno.")
-    else:
-        print("ADVERTENCIA: Variable de entorno FIREBASE_ADMIN_SDK_CREDENTIALS no encontrada.")
-        # Fallback para desarrollo local si no se usa la variable de entorno,
-        # pero NO RECOMENDADO para producción.
-        # Asegúrate de que "serviceAccountKey.json" esté en la raíz de tu proyecto
-        # y que Railway.app lo incluya en el despliegue.
-        if os.path.exists("serviceAccountKey.json"):
-            cred = credentials.Certificate("serviceAccountKey.json")
-            firebase_admin.initialize_app(cred, {
-                'storageBucket': 'turismo-4e958.appspot.com'
-            })
-            print("Firebase Admin SDK inicializado correctamente desde archivo local.")
-        else:
-            print("ERROR: serviceAccountKey.json no encontrado localmente y variable de entorno no configurada.")
-            # Si esto ocurre en Railway, es un problema crítico de despliegue/configuración.
-            # Puedes lanzar una excepción o manejarlo según tu lógica de inicio.
+# ATENCIÓN: Credenciales incrustadas directamente en el código.
+# Esto NO es la mejor práctica de seguridad para producción.
+# Se hace a petición explícita para simplificar el despliegue.
+# Para un entorno de producción, se recomienda encarecidamente usar variables de entorno.
+FIREBASE_SERVICE_ACCOUNT_INFO = {
+  "type": "service_account",
+  "project_id": "turismo-4e958",
+  "private_key_id": "23e9c6e527d6584cecea454cc291d32bef57e91c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEugIBADANBgkqhkiG9w0BAQEFAASCBKQwggSgAgEAAoIBAQCONCk8dKgzcleO\n7ErRj9KjqKGCl+Pw6HAVrTGbaWC92W8cm9r1tT8+NpyiT/fhAIrzP35L+ii5Mf7B\nEIrMR4X+JfxXxWAz3uwxL5Q6KScJRp7nOm3e6IeKoJbRhLXz9sMw0U8PrCUfhTk6\nIpCaPjKdddZiz6frpVR8BjfDBNV/YZB5yz40r7zDpfg3VXswPs7wItgVXVaZyipn\nvil1+fDyTu3qurpS5S1x+ysBzm/uwWwHpc/tIPV7nsJD/g22I3Vp9CDhwQBaGmPG\nmehovGiaraG9h+uM7TE2nsny2ANlUtbMKBHmMY4ClXOLsLJOvtVjryRgV1OfGZGV\nPHYo4C/bAgMBAAECggEABNJjhVd9h0EOoaoFCh0vPJ1pas7fPY+HrzR64T+DRLPX\nMKvRIOAyq+XRuBLMUV9+AVbbJs20t1n+MIabg5G+oH+FrvQ3tfxVjQ5MZp4+m7kF\nv63ioS/k2nWep5FqNnuHjYA2FTH2c9ebR2Drxk8j0uTMADFKYFpFeG8hGHg4mmPA\neMxb0EJVa6IPHvyV86FSaKtiPmAsX7tH0STCZVRRXrehvb6tevECKhH77HQYbxRn\nG6pRN+CUjMHLly//Vkh8jlbuLY56ZfypiZQ4NtMfCL8mGBO59ckg6I6HsEHSsjJn\nVSuqFN0mPnc5CA7X6zr1xKCA24VgSO3Fj9/kzw+OAQKBgQDA+QthFNm7GWMqGWsj\nWVGtkyK8PcwcTlOWYyx/znbeeyzZgR7HF0sZFGB/fblZEUvnsUlyeheqeLjxugqu\nNvZ/xsydD7rIL38CeOQyIEdsoNhwBN0IRe1sly/xXBrxiarh7n82YZZukQgFZ/cd\nqKebo3CtqabLyHxG1PYNEne0swKBgQC8pi7y0C1qjVd62PuXgepi+iGq5Z/2uMOI\nWLoCmqfHXRxK4mSW/Rtv3SBUCqI/dZSMUROcRmMzxBzDa70rKeWRHQSwxOSI9Sjz\noYbPon3vWEAHUIWVlhsN86uktZd0uRJg8mii7q21c+Rs/l0Dg462uf3vLzaLGwll\nPJMUoCU8OQKBgGRtd+GXU1UO+k+/mMV1x4844rvqwV392XyLsm31SmGw4v9zNkxQ\nsBGmTC4thRd4a/NxjZLZPZXHbCDJPKO8EP8gu/4FYKSsK0JjHgeESweakemCbnHO\nyqhX6miHEbKgfeFFGMl5ciuqqOz/VVkHG+tg3NRUVWz6ssq+LCtTcB8HAoGAOPlz\num+3F7QiVH7N1V8uO8BRhLyfCDObEkXBv+GXhHWRguhG+vbsX2eISPmBMOtA9vPR\nmWQEt/Clwzt5wVyA8ceyz/RXlSn9uT7yaSkpIa0kgVEHVzsjZp5OG4ugd2chrtfn\nVDYDjoa22VglHVeRNYyMrb0zmuWKe+HEhfkr5bkCf1DhxYvQ+ss7g/a4qiH5u7qC\nMJkbGWhxGZTmUaBUx/TJq5HRupgetD6NPf44keW51OGcRXk1PtqfyTa0DTB6vPoI\nVLo3P/Dwyr9IEsd7SfARB1A2x2ZPi+CsS7pvJLqBs4pPWPMSrtW7F2px9DtZzN3T\nA2DAP9BT8F4RxplCrzk=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@turismo-4e958.iam.gserviceaccount.com",
+  "client_id": "118117002295102319140",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40turismo-4e958.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
 
+try:
+    cred = credentials.Certificate(FIREBASE_SERVICE_ACCOUNT_INFO)
+    firebase_admin.initialize_app(cred, {
+        'storageBucket': 'turismo-4e958.appspot.com' # Reemplaza con el nombre de tu bucket de Firebase Storage
+    })
+    print("Firebase Admin SDK inicializado correctamente con credenciales incrustadas.")
 except Exception as e:
-    print(f"ERROR CRÍTICO: Fallo al inicializar Firebase Admin SDK: {e}")
+    print(f"ERROR CRÍTICO: Fallo al inicializar Firebase Admin SDK con credenciales incrustadas: {e}")
     # En un entorno de producción, esto debería evitar que la aplicación se inicie
     # o al menos registrar un error severo.
 
