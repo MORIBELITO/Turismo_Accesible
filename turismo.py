@@ -1,19 +1,15 @@
 import json
 import os
-from flask import Flask, render_template, request, redirect, url_for, session, g, jsonify
-import firebase_admin
-from firebase_admin import credentials, auth, storage # Importa storage y auth
-from firebase_admin.exceptions import FirebaseError # Importa para manejar errores específicos de Firebase
-from werkzeug.utils import secure_filename # Para asegurar nombres de archivo seguros
-import uuid # Para generar nombres de archivo únicos
-from flask_cors import CORS # Importa CORS para permitir peticiones desde tu frontend
+from flask import Flask, render_template, request, redirect, url_for, session, g
+import firebase_admin # Asegúrate de tener esta línea si usas firebase_admin
+from firebase_admin import credentials, auth # Asegúrate de tener esta línea
 
 from flask import Flask, render_template, request, redirect, url_for, session, g
 
 app = Flask(__name__)
 # ¡IMPORTANTE! Cambia esto por una clave secreta fuerte y guárdala de forma segura.
 # Puedes generar una con: import os; os.urandom(24).hex()
-app.secret_key = 'tu_clave_secreta_super_secreta_aqui_cambiala_por_favor'
+app.secret_key = os.environ.get('SECRET_KEY', 'AIzaSyARMkC0EBYElA8wVOpefSgMD4oADAIqD4o')
 
 # Ruta a la carpeta de traducciones
 TRANSLATIONS_DIR = os.path.join(app.root_path, 'translations')
