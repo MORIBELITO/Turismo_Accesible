@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
 
  <style>
-    /* --- Paleta de Colores con MÁS Transparencia --- */
+    /* --- Paleta de Cores com MÁS Transparencia --- */
     :root {
         /* Azul Zafiro con 80% de opacidad para el efecto translúcido */
         --sapphire-blue-transparent: rgba(15, 82, 186, 0.8); 
@@ -24,16 +24,16 @@
     }
 
     body {
-        padding-top: 80px;
+        padding-top: 80px; /* Espaçamento para a barra de navegação fixa */
         background-color: #f4f6f9;
         font-family: 'Segoe UI', 'Roboto', sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
 
-    /* --- Barra de Navegación con Efecto Glass Mejorado --- */
+    /* --- Barra de Navegação com Efecto Glass Mejorado --- */
     .navbar {
-        background-color: var(--sapphire-blue-transparent) !important; /* !important para sobreescribir bg-dark de Bootstrap */
+        background-color: var(--sapphire-blue-transparent) !important; /* !important para sobreescrever bg-dark de Bootstrap */
         -webkit-backdrop-filter: blur(12px);
         backdrop-filter: blur(12px);
         transition: background-color 0.3s ease;
@@ -52,34 +52,34 @@
         transform: scale(1.03);
     }
     
-    /* --- NUEVAS ANIMACIONES PARA ICONOS --- */
-    /* Transición base para todos los íconos */
+    /* --- NOVAS ANIMAÇÕES PARA ÍCONES --- */
+    /* Transição base para todos os ícones */
     .nav-link i, .navbar-brand i {
         margin-right: 8px;
         transition: transform 0.5s ease-in-out;
     }
     
-    /* Animación para el logo (mapa) */
+    /* Animação para o logo (mapa) */
     .navbar-brand:hover .fa-map-marked-alt {
         transform: rotate(10deg) scale(1.1);
     }
 
-    /* Animación para Reseñas (estrella) */
+    /* Animação para Resenhas (estrela) */
     .nav-link:hover .fa-star {
         transform: translateY(-2px) scale(1.25) rotate(25deg);
     }
     
-    /* Animación para Acerca de (paisaje) */
+    /* Animação para Acerca de (paisagem) */
     .nav-link:hover .fa-info-circle, .nav-link:hover .fa-mountain-sun {
          transform: translateY(-3px) scale(1.15);
     }
     
-    /* Animación para Contacto (sobre) */
+    /* Animação para Contacto (sobre) */
     .nav-link:hover .fa-envelope {
         transform: scale(1.15) rotate(8deg);
     }
     
-    /* Animación para Mapa Interactivo (globo) */
+    /* Animação para Mapa Interactivo (globo) */
     .nav-link:hover .fa-globe-americas {
         transform: rotateY(360deg);
         transition-duration: 0.8s;
@@ -148,20 +148,74 @@
     .language-selector .dropdown-toggle:hover { background-color: var(--hover-background); }
     .language-selector .flag-icon { font-size: 1.2em; margin-right: 8px; }
 
-    .content { padding: 25px; margin-top: 25px; animation: fadeInContent 0.5s ease-in-out forwards; }
+    .content { 
+        padding: 25px; 
+        margin-top: 25px; 
+        animation: fadeInContent 0.5s ease-in-out forwards; 
+        /* Garante que o conteúdo ocupe a largura total em telas pequenas */
+        width: 100%; 
+        box-sizing: border-box; /* Inclui padding na largura total */
+    }
     @keyframes fadeInContent { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
+    /* Media query para telas menores que 992px (típico para tablets e celulares) */
     @media (max-width: 991.98px) {
-        body { padding-top: 65px; }
+        body { padding-top: 65px; } /* Ajusta o padding para a navbar menor em mobile */
         .navbar-collapse {
-            background-color: var(--sapphire-darker-transparent); margin-top: 10px; padding: 15px;
-            border-radius: 8px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            background-color: var(--sapphire-darker-transparent); 
+            margin-top: 10px; 
+            padding: 15px;
+            border-radius: 8px; 
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            /* Garante que o menu colapsado ocupe a largura total */
+            width: 100%; 
+            box-sizing: border-box;
         }
-        .navbar-nav .nav-link:hover { transform: none; }
-        .navbar-nav .nav-link::after { display: none; }
-        .d-flex.align-items-center { flex-direction: column; align-items: center !important; margin-top: 15px; }
-        .language-selector, .d-flex .dropdown { margin: 10px 0; }
-        #userImage { margin-right: 0; margin-bottom: 10px; }
+        .navbar-nav .nav-link:hover { transform: none; } /* Remove a animação de translateY em mobile para evitar saltos */
+        .navbar-nav .nav-link::after { display: none; } /* Remove o sublinhado animado em mobile */
+        
+        /* Ajusta o alinhamento dos elementos de usuário e idioma para empilhar verticalmente */
+        .d-flex.align-items-center { 
+            flex-direction: column; 
+            align-items: center !important; 
+            margin-top: 15px; 
+            width: 100%; /* Garante que o container ocupe a largura total */
+        }
+        .language-selector, .d-flex .dropdown { 
+            margin: 10px 0; /* Adiciona margem vertical entre os elementos empilhados */
+            width: 100%; /* Garante que os dropdowns ocupem a largura total */
+            text-align: center; /* Centraliza o texto dentro dos dropdowns */
+        }
+        #userImage { 
+            margin-right: 0; 
+            margin-bottom: 10px; /* Adiciona margem abaixo da imagem do usuário */
+        }
+        /* Ajustes para o texto do usuário e dropdowns em mobile */
+        #usuarioMenu {
+            text-align: center;
+            width: 100%;
+            display: block; /* Garante que o span ocupe toda a largura disponível */
+        }
+        .dropdown-menu-end {
+            left: 50% !important; /* Centraliza o dropdown */
+            transform: translateX(-50%) !important; /* Centraliza o dropdown */
+            min-width: 80%; /* Garante que o dropdown seja legível em mobile */
+        }
+    }
+
+    /* Media query para telas muito pequenas (ex: iPhone 5/SE) */
+    @media (max-width: 575.98px) {
+        .navbar-brand {
+            font-size: 1.3rem; /* Reduz o tamanho da fonte do logo em telas muito pequenas */
+        }
+        .navbar-nav .nav-link {
+            padding: 10px 15px; /* Ajusta o padding dos links de navegação */
+            font-size: 0.95rem; /* Reduz um pouco o tamanho da fonte dos links */
+        }
+        .language-selector .dropdown-toggle,
+        .d-flex .dropdown .nav-link {
+            font-size: 0.95rem; /* Ajusta o tamanho da fonte dos dropdowns */
+        }
     }
 </style>
 </head>
@@ -263,6 +317,7 @@
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
     import { getStorage, ref, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-storage.js";
 
+    // Configuração do Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyARMkC0EBYElA8wVOpefSgMD4oADAIqD4o",
         authDomain: "turismo-4e958.firebaseapp.com",
@@ -273,15 +328,17 @@
         measurementId: "G-XSDKJ73NKW"
     };
 
+    // Inicializa o Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const storage = getStorage(app);
 
+    // Elementos do DOM
     const userImageElement = document.getElementById('userImage');
     const usuarioMenuElement = document.getElementById('usuarioMenu');
     const logoutBtnElement = document.getElementById('logoutBtn');
 
-    // FUNCIÓN ORIGINAL RESTAURADA
+    // Função para obter parâmetros da URL
     function getUrlParameter(name) {
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
         var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
@@ -289,38 +346,42 @@
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     };
 
+    // Atualiza a bandeira do idioma ao carregar o DOM
     document.addEventListener('DOMContentLoaded', () => {
         const currentLang = "{{ current_lang }}";
         const currentFlag = document.getElementById('currentFlag');
         if (currentFlag) {
             let flagClassSuffix = currentLang;
-            if (currentLang === 'en') flagClassSuffix = 'gb';
-            if (currentLang === 'qu') flagClassSuffix = 'pe';
+            if (currentLang === 'en') flagClassSuffix = 'gb'; // Usa 'gb' para bandeira do Reino Unido para inglês
+            if (currentLang === 'qu') flagClassSuffix = 'pe'; // Usa 'pe' para bandeira do Peru para Quechua
             currentFlag.className = `flag-icon flag-icon-${flagClassSuffix}`;
         }
     });
 
-    // FUNCIÓN ORIGINAL RESTAURADA
+    // Função auxiliar para obter elementos de forma segura
     function getElementSafe(id) {
         return document.getElementById(id);
     }
 
+    // Listener para mudanças no estado de autenticação do Firebase
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            console.log("Navbar: Usuario autenticado:", user.uid);
+            console.log("Navbar: Usuário autenticado:", user.uid);
 
+            // Obtém o nome de exibição personalizado ou padrão
             const customDisplayName = localStorage.getItem(`customDisplayName_${user.uid}`);
             let displayName = customDisplayName || user.displayName || user.email.split('@')[0];
             if (usuarioMenuElement) {
                 usuarioMenuElement.textContent = displayName;
             }
             
-            // LÓGICA ORIGINAL RESTAURADA
+            // Atualiza o nome de usuário em outras partes da página, se existirem
             const nombreUsuarioOnPage = getElementSafe('nombreUsuario');
             if (nombreUsuarioOnPage) {
                 nombreUsuarioOnPage.textContent = displayName;
             }
 
+            // Carrega a imagem de perfil personalizada ou padrão
             const customPhotoPath = localStorage.getItem(`customPhotoPath_${user.uid}`);
             if (customPhotoPath) {
                 try {
@@ -328,34 +389,45 @@
                     const photoURL = await getDownloadURL(imageRef);
                     if (userImageElement) userImageElement.src = photoURL;
                 } catch (error) {
-                    console.error("Navbar: Error al cargar imagen de Storage:", error);
+                    console.error("Navbar: Erro ao carregar imagem do Storage:", error);
+                    // Fallback para imagem padrão se houver erro
                     if (userImageElement) userImageElement.src = user.photoURL || "{{ url_for('static', filename='imagenes/default-user.jpg') }}";
                 }
             } else {
+                // Fallback para imagem padrão do Firebase ou local
                 if (userImageElement) userImageElement.src = user.photoURL || "{{ url_for('static', filename='imagenes/default-user.jpg') }}";
             }
         } else {
-            console.log("Navbar: No hay usuario. Redirigiendo a login.");
+            console.log("Navbar: Não há usuário. Redirecionando para login.");
+            // Redireciona para a página de login se não houver usuário autenticado
             const currentLang = getUrlParameter('lang') || "{{ current_lang }}";
             window.location.href = `{{ url_for('login') }}?lang=${currentLang}`;
         }
     });
 
-    // LÓGICA DE LOGOUT ORIGINAL RESTAURADA
+    // Listener para o botão de logout
     if (logoutBtnElement) {
         logoutBtnElement.addEventListener('click', async (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Previne o comportamento padrão do link
             try {
+                // Remove dados do usuário do localStorage ao fazer logout
                 if (auth.currentUser) {
                     localStorage.removeItem(`customDisplayName_${auth.currentUser.uid}`);
                     localStorage.removeItem(`customPhotoPath_${auth.currentUser.uid}`);
                 }
-                await signOut(auth);
-                // La redirección es manejada por el href del enlace después del signOut
+                await signOut(auth); // Realiza o logout do Firebase
+                // Redireciona para a página de logout (o href do link já contém a URL)
                 window.location.href = logoutBtnElement.href; 
             } catch (error) {
-                console.error("Navbar: Error al cerrar sesión:", error);
-                alert("Hubo un error al cerrar sesión. Por favor, inténtalo de nuevo.");
+                console.error("Navbar: Erro ao fechar sessão:", error);
+                // Exibe uma mensagem de erro personalizada (em vez de alert())
+                // Você pode substituir isso por um modal Bootstrap ou uma div de mensagem
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'alert alert-danger fixed-top text-center';
+                errorMessage.style.zIndex = '1060';
+                errorMessage.textContent = "Houve um erro ao fechar a sessão. Por favor, tente novamente.";
+                document.body.prepend(errorMessage);
+                setTimeout(() => errorMessage.remove(), 3000); // Remove a mensagem após 3 segundos
             }
         });
     }
